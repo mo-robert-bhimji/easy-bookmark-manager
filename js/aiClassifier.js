@@ -1,6 +1,5 @@
 // ========================================
-// 🤖 AI CLASSIFIER
-// Handles DeepSeek API calls for classification
+// 🤖 AI CLASSIFIER - FIXED
 // ========================================
 
 export class AIClassifier {
@@ -10,19 +9,160 @@ export class AIClassifier {
         this.model = 'deepseek-v4-flash';
         
         this.categoryKeywords = {
-            'Religious': ['dua', 'aamal', 'quran', 'islamic', 'prayer', 'supplication', 'allah', 'prophet', 'surah', 'masjid', 'mosque', 'imam', 'ramadan', 'hajj', 'umrah', 'sunnah', 'hadith', 'taqwa', 'ibadah', 'dhikr', 'tawbah'],
-            'Career': ['career', 'job', 'work', 'professional', 'indispensable', 'promotion', 'salary', 'interview', 'resume', 'linkedin', 'networking', 'leadership', 'management', 'skill', 'development', 'mentor', 'career path'],
-            'Technology': ['tech', 'coding', 'programming', 'software', 'developer', 'ai', 'machine learning', 'data', 'cloud', 'api', 'framework', 'javascript', 'python', 'react', 'node', 'docker', 'kubernetes'],
-            'Health': ['health', 'fitness', 'wellness', 'nutrition', 'exercise', 'mental health', 'medical', 'doctor', 'therapy', 'diet', 'yoga', 'meditation'],
-            'Finance': ['finance', 'investing', 'stock', 'money', 'budget', 'saving', 'retirement', 'crypto', 'banking', 'tax', 'financial', 'wealth', 'market'],
-            'Education': ['learn', 'study', 'course', 'tutorial', 'education', 'university', 'college', 'research', 'student', 'classroom', 'lecture', 'knowledge'],
-            'Entertainment': ['movie', 'music', 'game', 'entertainment', 'streaming', 'netflix', 'youtube', 'podcast', 'comedy', 'drama', 'festival'],
-            'News': ['news', 'breaking', 'headline', 'politics', 'world', 'local', 'current events', 'journalism', 'media', 'press'],
-            'Shopping': ['shop', 'buy', 'product', 'amazon', 'ebay', 'deal', 'discount', 'coupon', 'sale', 'retail', 'cart', 'checkout'],
-            'Travel': ['travel', 'trip', 'vacation', 'hotel', 'flight', 'booking', 'tourist', 'adventure', 'destination', 'passport', 'backpacking'],
-            'Social Media': ['social media', 'instagram', 'twitter', 'facebook', 'tiktok', 'snapchat', 'social network', 'influencer', 'like', 'share', 'post'],
-            'Productivity': ['productivity', 'task', 'goal', 'focus', 'time management', 'workflow', 'organize', 'efficiency', 'habit', 'routine']
+            'Social Media + Entertainment': [
+                'social media', 'instagram', 'twitter', 'facebook', 'tiktok', 'snapchat',
+                'social network', 'influencer', 'like', 'share', 'post', 'follow', 'trending',
+                'hashtag', 'reel', 'stories', 'youtube', 'tumblr', 'pinterest', 'reddit',
+                'discord', 'twitch', 'viral', 'content creator', 'influencer marketing',
+                'social platform', 'online community', 'fan', 'engagement',
+                'movie', 'music', 'game', 'entertainment', 'streaming', 'netflix',
+                'podcast', 'comedy', 'drama', 'festival', 'concert', 'singer', 'band',
+                'album', 'song', 'playlist', 'spotify', 'apple music', 'trailer', 'oscar',
+                'television', 'tv show', 'series', 'binge', 'hollywood', 'bollywood',
+                'actor', 'actress', 'director', 'cinema', 'theater', 'anime', 'manga',
+                'gaming', 'video game', 'esports', 'fun', 'entertain'
+            ],
+            'Finance': [
+                'finance', 'investing', 'stock', 'money', 'budget', 'saving', 'retirement',
+                'crypto', 'banking', 'tax', 'financial', 'wealth', 'market', 'trading',
+                'dividend', 'etf', 'mutual fund', 'index fund', 'portfolio', 'risk',
+                'insurance', 'loan', 'mortgage', 'credit', 'debt', 'cash flow', 'net worth',
+                'financial planning', 'wealth management', 'financial freedom', 'passive income',
+                'interest', 'annual percentage', 'rate', 'investment', 'capital', 'fund'
+            ],
+            'Shopping': [
+                'shop', 'buy', 'product', 'amazon', 'ebay', 'deal', 'discount', 'coupon',
+                'sale', 'retail', 'cart', 'checkout', 'price', 'compare', 'reviews',
+                'marketplace', 'walmart', 'target', 'best buy', 'etsy', 'shopify',
+                'store', 'online store', 'ecommerce', 'shipping', 'free shipping',
+                'return policy', 'customer service', 'fashion', 'electronics',
+                'clothing', 'accessories', 'gadget', 'order', 'delivery', 'purchase'
+            ],
+            'Education': [
+                'learn', 'study', 'course', 'tutorial', 'education', 'university', 'college',
+                'research', 'student', 'classroom', 'lecture', 'knowledge', 'online learning',
+                'coursera', 'udemy', 'edx', 'khan academy', 'educational', 'teacher',
+                'school', 'academy', 'scholarship', 'degree', 'certificate', 'training',
+                'elearning', 'distance learning', 'curriculum', 'lesson plan', 'tutor',
+                'homework', 'assignment', 'exam', 'quiz', 'learning management system',
+                'textbook', 'academic', 'science', 'math', 'history', 'language learning'
+            ],
+            'Technology': [
+                'tech', 'coding', 'programming', 'software', 'developer', 'ai', 'machine learning',
+                'data', 'cloud', 'api', 'framework', 'javascript', 'python', 'react', 'node',
+                'docker', 'kubernetes', 'git', 'github', 'devops', 'linux', 'terminal', 'bash',
+                'sql', 'database', 'backend', 'frontend', 'fullstack', 'web development', 'mobile app',
+                'ios', 'android', 'swift', 'kotlin', 'java', 'c#', 'ruby', 'php', 'laravel',
+                'django', 'flask', 'rails', 'vue', 'angular', 'typescript', 'html', 'css',
+                'responsive', 'ux', 'ui', 'design system', 'wireframe', 'prototype',
+                'algorithm', 'debugging', 'open source', 'stack overflow', 'tech news'
+            ],
+            'Health & Fitness': [
+                'health', 'fitness', 'wellness', 'nutrition', 'exercise', 'mental health',
+                'medical', 'doctor', 'therapy', 'diet', 'yoga', 'meditation', 'weight loss',
+                'workout', 'gym', 'running', 'cardio', 'strength', 'healthy eating', 'recipes',
+                'healthcare', 'patient', 'hospital', 'clinic', 'symptom', 'treatment', 'diagnosis',
+                'disease', 'prevention', 'immunity', 'vitamins', 'supplements', 'sleep',
+                'anxiety', 'depression', 'mindfulness', 'self care', 'mental wellness',
+                'training', 'muscle', 'protein', 'bodybuilding', 'pilates', 'zumba',
+                'health tips', 'healthy lifestyle', 'wellbeing', 'nutritionist', 'personal trainer'
+            ],
+            'Career': [
+                'career', 'job', 'work', 'professional', 'promotion', 
+                'salary', 'interview', 'resume', 'linkedin', 'networking', 'leadership', 
+                'management', 'skill', 'development', 'mentor', 'career path', 'hiring',
+                'recruiter', 'employee', 'employer', 'compensation', 'benefits', 'career change',
+                'career advice', 'job search', 'cover letter', 'cv', 'job board', 'opportunity',
+                'remote work', 'flexible', 'career growth', 'professional development', 'training',
+                'certification', 'coach', 'mentoring', 'soft skills', 'work life balance',
+                'employment', 'occupation', 'profession', 'career coach'
+            ],
+            'Productivity': [
+                'productivity', 'task', 'goal', 'focus', 'time management', 'workflow',
+                'organize', 'efficiency', 'habit', 'routine', 'project management', 'todo',
+                'calendar', 'planning', 'schedule', 'deadline', 'prioritize', 'notion',
+                'trello', 'asana', 'evernote', 'keep', 'notepad', 'brainstorm', 'mind map',
+                'optimization', 'work smarter', 'hack', 'life hack', 'motivation', 'discipline',
+                'productivity tools', 'tracking', 'performance', 'methodology', 'agile', 'scrum'
+            ],
+            'Religious': [
+                'dua', 'aamal', 'quran', 'islamic', 'prayer', 'supplication', 'allah', 
+                'prophet', 'surah', 'masjid', 'mosque', 'imam', 'ramadan', 'hajj', 'umrah', 
+                'sunnah', 'hadith', 'taqwa', 'ibadah', 'dhikr', 'tawbah', 'salah', 'zakah',
+                'sawm', 'hijab', 'halal', 'haram', 'muslim', 'islam',
+                'bible', 'jesus', 'christian', 'church', 'pastor', 'sermon', 'worship',
+                'gospel', 'faith', 'god', 'lord', 'holy', 'spirit', 'grace',
+                'religion', 'spiritual', 'meditation', 'zen', 'buddhist', 'hindu', 'jewish',
+                'torah', 'scripture', 'devotional', 'ministry', 'religion'
+            ],
+            'News': [
+                'news', 'breaking', 'headline', 'politics', 'world', 'local', 'current events',
+                'journalism', 'media', 'press', 'cnn', 'bbc', 'nytimes', 'washington post',
+                'report', 'analysis', 'opinion', 'editorial', 'investigation', 'interview',
+                'broadcast', 'newspaper', 'magazine', 'newsletter', 'trending', 'update',
+                'coverage', 'story', 'exclusive', 'sources', 'breaking news', 'latest'
+            ],
+            'Travel': [
+                'travel', 'trip', 'vacation', 'hotel', 'flight', 'booking', 'tourist',
+                'adventure', 'destination', 'passport', 'backpacking', 'resort', 'airbnb',
+                'flight tickets', 'cheap flights', 'baggage', 'check in', 'travel guide',
+                'tour', 'hiking', 'beach', 'mountain', 'road trip', 'travel blog', 'itinerary',
+                'wanderlust', 'explore', 'travel tips', 'luggage', 'travel insurance'
+            ],
+            'Cooking/Food': [
+                'recipe', 'cooking', 'food', 'meal', 'dinner', 'lunch', 'breakfast',
+                'dessert', 'baking', 'chef', 'kitchen', 'ingredient', 'spice', 'seasoning',
+                'cook', 'grill', 'roast', 'bake', 'fry', 'steam', 'blend', 'mix',
+                'soup', 'salad', 'pasta', 'rice', 'chicken', 'beef', 'pork', 'fish',
+                'vegetarian', 'vegan', 'gluten free', 'healthy recipe', 'meal prep',
+                'smoothie', 'juice', 'snack', 'appetizer', 'main course', 'side dish',
+                'restaurant', 'food blog', 'foodie', 'food network', 'cooking show'
+            ],
+            'Sports': [
+                'sports', 'football', 'soccer', 'basketball', 'baseball', 'hockey',
+                'tennis', 'golf', 'swimming', 'track', 'cycling', 'running', 'marathon',
+                'olympics', 'world cup', 'super bowl', 'nfl', 'nba', 'mlb', 'nhl', 'mls',
+                'team', 'player', 'coach', 'game', 'match', 'tournament', 'championship',
+                'league', 'stadium', 'athlete', 'training', 'sports news', 'score',
+                'highlights', 'sports betting', 'fantasy football', 'sports analysis'
+            ],
+            'DIY/Crafts': [
+                'diy', 'craft', 'handmade', 'homemade', 'creative', 'decor', 'paint',
+                'woodworking', 'sewing', 'knitting', 'crochet', 'embroidery', 'quilting',
+                'paper craft', 'origami', 'scrapbooking', 'jewelry making', 'beading',
+                'pottery', 'clay', 'sculpture', 'drawing', 'sketch', 'watercolor',
+                'paint', 'brush', 'canvas', 'art', 'artist', 'craft supply', 'tutorial',
+                'step by step', 'do it yourself', 'home decor', 'upcycle', 'recycle'
+            ],
+            'Parenting/Family': [
+                'parenting', 'parent', 'mother', 'father', 'mom', 'dad', 'family',
+                'children', 'kids', 'baby', 'toddler', 'teen', 'child', 'infant',
+                'pregnancy', 'newborn', 'breastfeeding', 'baby gear', 'stroller',
+                'diaper', 'family activities', 'play', 'learning', 'education', 'school',
+                'family time', 'bonding', 'parenting tips', 'mom blog', 'dad blog',
+                'grandparent', 'relatives', 'family travel', 'family health', 'childcare'
+            ]
         };
+        
+        // ----- Allowed categories list -----
+        this.allowedCategories = [
+            'To Review',
+            'Career',
+            'Education',
+            'Finance',
+            'Health & Fitness',
+            'News',
+            'Productivity',
+            'Religious',
+            'Shopping',
+            'Social Media + Entertainment',
+            'Technology',
+            'Travel',
+            'Cooking/Food',
+            'Sports',
+            'DIY/Crafts',
+            'Parenting/Family'
+        ];
     }
     
     async fetchPageMetadata(url) {
@@ -75,7 +215,8 @@ export class AIClassifier {
     }
     
     async classifySingleBookmark(bookmark, categories) {
-        let category = 'Uncategorized';
+        // Default category
+        let category = 'To Review';
         let tags = [];
         
         const combinedText = [
@@ -85,7 +226,7 @@ export class AIClassifier {
         ].join(' ').toLowerCase();
         
         // Keyword matching first
-        let bestCategory = 'Uncategorized';
+        let bestCategory = 'To Review';
         let highestScore = 0;
         
         for (const [cat, keywords] of Object.entries(this.categoryKeywords)) {
@@ -105,13 +246,23 @@ export class AIClassifier {
             category = bestCategory;
         } else {
             try {
-                const aiCategory = await this.classifyWithAI(combinedText, categories);
-                if (aiCategory && aiCategory !== 'Uncategorized') {
+                let aiCategory = await this.classifyWithAI(combinedText, categories);
+                // Clean the AI response and validate it
+                aiCategory = this.cleanCategoryName(aiCategory);
+                
+                if (aiCategory && aiCategory !== 'To Review') {
                     category = aiCategory;
+                } else {
+                    category = 'To Review';
                 }
             } catch (e) {
-                // Fallback to keyword matching
+                category = 'To Review';
             }
+        }
+        
+        // Final validation - ensure category is in the allowed list
+        if (!this.allowedCategories.includes(category)) {
+            category = 'To Review';
         }
         
         // Extract tags
@@ -125,7 +276,7 @@ export class AIClassifier {
         
         tags = uniqueWords.slice(0, 2);
         
-        if (category !== 'Uncategorized') {
+        if (category !== 'To Review') {
             tags = [category, ...tags.slice(0, 1)];
         }
         
@@ -135,10 +286,24 @@ export class AIClassifier {
         };
     }
     
+    // ----- Helper: Clean category name -----
+    cleanCategoryName(name) {
+        if (!name) return 'To Review';
+        let cleaned = name.trim();
+        // Remove quotes
+        cleaned = cleaned.replace(/^["']+|["']+$/g, '');
+        // Remove extra spaces
+        cleaned = cleaned.replace(/\s+/g, ' ');
+        // Only allow letters, spaces, &, +, /, -
+        cleaned = cleaned.replace(/[^a-zA-Z0-9\s&\+\/\-]/g, '');
+        // If it's a single word or common word, check if it matches a real category
+        return cleaned;
+    }
+    
     async classifyWithAI(text, categories) {
         try {
             const prompt = `Classify this text into one of these categories: ${categories.join(', ')}.
-If none fit, return "Uncategorized".
+If none fit, return "To Review".
 Only return the category name, nothing else.
 
 Text: ${text.slice(0, 300)}`;
@@ -147,12 +312,12 @@ Text: ${text.slice(0, 300)}`;
             return response.trim();
         } catch (error) {
             console.error('Error in AI classification:', error);
-            return 'Uncategorized';
+            return 'To Review';
         }
     }
     
     async getCategories(bookmarks) {
-        if (!bookmarks || bookmarks.length === 0) return ['Uncategorized'];
+        if (!bookmarks || bookmarks.length === 0) return ['To Review'];
         
         const sample = bookmarks.slice(0, 30);
         const titles = sample.map(b => b.title).join('\n');
@@ -170,13 +335,47 @@ ${titles}`;
                 .filter(line => line.length > 0 && !line.includes('#'))
                 .slice(0, 12);
             
-            const commonCategories = ['Uncategorized', 'Technology', 'Career', 'Health', 'Finance', 'Education'];
+            const commonCategories = [
+                'To Review',
+                'Career',
+                'Education',
+                'Finance',
+                'Health & Fitness',
+                'News',
+                'Productivity',
+                'Religious',
+                'Shopping',
+                'Social Media + Entertainment',
+                'Technology',
+                'Travel',
+                'Cooking/Food',
+                'Sports',
+                'DIY/Crafts',
+                'Parenting/Family'
+            ];
             const allCategories = [...new Set([...categories, ...commonCategories])];
             
             return allCategories;
         } catch (error) {
             console.error('Error getting categories:', error);
-            return ['Uncategorized', 'Technology', 'Career', 'Health', 'Finance', 'Education'];
+            return [
+                'To Review',
+                'Career',
+                'Education',
+                'Finance',
+                'Health & Fitness',
+                'News',
+                'Productivity',
+                'Religious',
+                'Shopping',
+                'Social Media + Entertainment',
+                'Technology',
+                'Travel',
+                'Cooking/Food',
+                'Sports',
+                'DIY/Crafts',
+                'Parenting/Family'
+            ];
         }
     }
     
