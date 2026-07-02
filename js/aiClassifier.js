@@ -1,5 +1,5 @@
 // ========================================
-// 🤖 AI CLASSIFIER - FIXED
+// 🤖 AI CLASSIFIER - UPDATED CATEGORIES
 // ========================================
 
 export class AIClassifier {
@@ -10,17 +10,19 @@ export class AIClassifier {
         
         this.categoryKeywords = {
             'Social Media + Entertainment': [
+                // Social Media
                 'social media', 'instagram', 'twitter', 'facebook', 'tiktok', 'snapchat',
                 'social network', 'influencer', 'like', 'share', 'post', 'follow', 'trending',
                 'hashtag', 'reel', 'stories', 'youtube', 'tumblr', 'pinterest', 'reddit',
                 'discord', 'twitch', 'viral', 'content creator', 'influencer marketing',
                 'social platform', 'online community', 'fan', 'engagement',
+                // Entertainment
                 'movie', 'music', 'game', 'entertainment', 'streaming', 'netflix',
                 'podcast', 'comedy', 'drama', 'festival', 'concert', 'singer', 'band',
                 'album', 'song', 'playlist', 'spotify', 'apple music', 'trailer', 'oscar',
                 'television', 'tv show', 'series', 'binge', 'hollywood', 'bollywood',
                 'actor', 'actress', 'director', 'cinema', 'theater', 'anime', 'manga',
-                'gaming', 'video game', 'esports', 'fun', 'entertain'
+                'fun', 'entertain', 'viral video', 'entertainment news'
             ],
             'Finance': [
                 'finance', 'investing', 'stock', 'money', 'budget', 'saving', 'retirement',
@@ -28,7 +30,8 @@ export class AIClassifier {
                 'dividend', 'etf', 'mutual fund', 'index fund', 'portfolio', 'risk',
                 'insurance', 'loan', 'mortgage', 'credit', 'debt', 'cash flow', 'net worth',
                 'financial planning', 'wealth management', 'financial freedom', 'passive income',
-                'interest', 'annual percentage', 'rate', 'investment', 'capital', 'fund'
+                'interest', 'annual percentage', 'rate', 'investment', 'capital', 'fund',
+                'stock market', 'real estate investment'
             ],
             'Shopping': [
                 'shop', 'buy', 'product', 'amazon', 'ebay', 'deal', 'discount', 'coupon',
@@ -36,7 +39,8 @@ export class AIClassifier {
                 'marketplace', 'walmart', 'target', 'best buy', 'etsy', 'shopify',
                 'store', 'online store', 'ecommerce', 'shipping', 'free shipping',
                 'return policy', 'customer service', 'fashion', 'electronics',
-                'clothing', 'accessories', 'gadget', 'order', 'delivery', 'purchase'
+                'clothing', 'accessories', 'gadget', 'order', 'delivery', 'purchase',
+                'fashion', 'shoes', 'handbag', 'watch'
             ],
             'Education': [
                 'learn', 'study', 'course', 'tutorial', 'education', 'university', 'college',
@@ -45,7 +49,8 @@ export class AIClassifier {
                 'school', 'academy', 'scholarship', 'degree', 'certificate', 'training',
                 'elearning', 'distance learning', 'curriculum', 'lesson plan', 'tutor',
                 'homework', 'assignment', 'exam', 'quiz', 'learning management system',
-                'textbook', 'academic', 'science', 'math', 'history', 'language learning'
+                'textbook', 'academic', 'science', 'math', 'history', 'language learning',
+                'language', 'grammar', 'vocabulary', 'writing', 'reading'
             ],
             'Technology': [
                 'tech', 'coding', 'programming', 'software', 'developer', 'ai', 'machine learning',
@@ -55,7 +60,8 @@ export class AIClassifier {
                 'ios', 'android', 'swift', 'kotlin', 'java', 'c#', 'ruby', 'php', 'laravel',
                 'django', 'flask', 'rails', 'vue', 'angular', 'typescript', 'html', 'css',
                 'responsive', 'ux', 'ui', 'design system', 'wireframe', 'prototype',
-                'algorithm', 'debugging', 'open source', 'stack overflow', 'tech news'
+                'algorithm', 'debugging', 'open source', 'stack overflow', 'tech news',
+                'software engineering', 'computer science', 'cybersecurity', 'blockchain'
             ],
             'Health & Fitness': [
                 'health', 'fitness', 'wellness', 'nutrition', 'exercise', 'mental health',
@@ -65,7 +71,8 @@ export class AIClassifier {
                 'disease', 'prevention', 'immunity', 'vitamins', 'supplements', 'sleep',
                 'anxiety', 'depression', 'mindfulness', 'self care', 'mental wellness',
                 'training', 'muscle', 'protein', 'bodybuilding', 'pilates', 'zumba',
-                'health tips', 'healthy lifestyle', 'wellbeing', 'nutritionist', 'personal trainer'
+                'health tips', 'healthy lifestyle', 'wellbeing', 'nutritionist', 'personal trainer',
+                'health news', 'medical research'
             ],
             'Career': [
                 'career', 'job', 'work', 'professional', 'promotion', 
@@ -75,7 +82,7 @@ export class AIClassifier {
                 'career advice', 'job search', 'cover letter', 'cv', 'job board', 'opportunity',
                 'remote work', 'flexible', 'career growth', 'professional development', 'training',
                 'certification', 'coach', 'mentoring', 'soft skills', 'work life balance',
-                'employment', 'occupation', 'profession', 'career coach'
+                'employment', 'occupation', 'profession', 'career coach', 'job opportunity'
             ],
             'Productivity': [
                 'productivity', 'task', 'goal', 'focus', 'time management', 'workflow',
@@ -83,7 +90,8 @@ export class AIClassifier {
                 'calendar', 'planning', 'schedule', 'deadline', 'prioritize', 'notion',
                 'trello', 'asana', 'evernote', 'keep', 'notepad', 'brainstorm', 'mind map',
                 'optimization', 'work smarter', 'hack', 'life hack', 'motivation', 'discipline',
-                'productivity tools', 'tracking', 'performance', 'methodology', 'agile', 'scrum'
+                'productivity tools', 'tracking', 'performance', 'methodology', 'agile', 'scrum',
+                'kanban', 'sprint', 'retrospective', 'planning'
             ],
             'Religious': [
                 'dua', 'aamal', 'quran', 'islamic', 'prayer', 'supplication', 'allah', 
@@ -93,21 +101,23 @@ export class AIClassifier {
                 'bible', 'jesus', 'christian', 'church', 'pastor', 'sermon', 'worship',
                 'gospel', 'faith', 'god', 'lord', 'holy', 'spirit', 'grace',
                 'religion', 'spiritual', 'meditation', 'zen', 'buddhist', 'hindu', 'jewish',
-                'torah', 'scripture', 'devotional', 'ministry', 'religion'
+                'torah', 'scripture', 'devotional', 'ministry', 'religion', 'catholic'
             ],
             'News': [
                 'news', 'breaking', 'headline', 'politics', 'world', 'local', 'current events',
                 'journalism', 'media', 'press', 'cnn', 'bbc', 'nytimes', 'washington post',
                 'report', 'analysis', 'opinion', 'editorial', 'investigation', 'interview',
                 'broadcast', 'newspaper', 'magazine', 'newsletter', 'trending', 'update',
-                'coverage', 'story', 'exclusive', 'sources', 'breaking news', 'latest'
+                'coverage', 'story', 'exclusive', 'sources', 'breaking news', 'latest',
+                'news article', 'press release'
             ],
             'Travel': [
                 'travel', 'trip', 'vacation', 'hotel', 'flight', 'booking', 'tourist',
                 'adventure', 'destination', 'passport', 'backpacking', 'resort', 'airbnb',
                 'flight tickets', 'cheap flights', 'baggage', 'check in', 'travel guide',
                 'tour', 'hiking', 'beach', 'mountain', 'road trip', 'travel blog', 'itinerary',
-                'wanderlust', 'explore', 'travel tips', 'luggage', 'travel insurance'
+                'wanderlust', 'explore', 'travel tips', 'luggage', 'travel insurance',
+                'travel agency', 'travel deals'
             ],
             'Cooking/Food': [
                 'recipe', 'cooking', 'food', 'meal', 'dinner', 'lunch', 'breakfast',
@@ -116,7 +126,19 @@ export class AIClassifier {
                 'soup', 'salad', 'pasta', 'rice', 'chicken', 'beef', 'pork', 'fish',
                 'vegetarian', 'vegan', 'gluten free', 'healthy recipe', 'meal prep',
                 'smoothie', 'juice', 'snack', 'appetizer', 'main course', 'side dish',
-                'restaurant', 'food blog', 'foodie', 'food network', 'cooking show'
+                'restaurant', 'food blog', 'foodie', 'food network', 'cooking show',
+                'home cooking', 'quick recipe', 'easy recipe', 'meal planning'
+            ],
+            'Gaming': [
+                'minecraft', 'gaming', 'game', 'games', 'gamer', 'roblox', 'steam',
+                'epic games', 'xbox', 'playstation', 'nintendo', 'switch', 'ps5',
+                'xbox series', 'gaming news', 'esports', 'twitch', 'streamer',
+                'gameplay', 'walkthrough', 'mod', 'mods', 'server', 'multiplayer',
+                'online game', 'pc gaming', 'console', 'gaming community', 'game review',
+                'game trailer', 'gaming setup', 'gaming gear', 'minecraft server',
+                'bukkit', 'spigot', 'paper', 'plugin', 'modpack', 'gaming laptop',
+                'gaming chair', 'gaming headset', 'rpg', 'fps', 'strategy game',
+                'sandbox', 'survival game', 'game development', 'indie game', 'game studio'
             ],
             'Sports': [
                 'sports', 'football', 'soccer', 'basketball', 'baseball', 'hockey',
@@ -124,7 +146,8 @@ export class AIClassifier {
                 'olympics', 'world cup', 'super bowl', 'nfl', 'nba', 'mlb', 'nhl', 'mls',
                 'team', 'player', 'coach', 'game', 'match', 'tournament', 'championship',
                 'league', 'stadium', 'athlete', 'training', 'sports news', 'score',
-                'highlights', 'sports betting', 'fantasy football', 'sports analysis'
+                'highlights', 'sports betting', 'fantasy football', 'sports analysis',
+                'sports injury', 'recovery'
             ],
             'DIY/Crafts': [
                 'diy', 'craft', 'handmade', 'homemade', 'creative', 'decor', 'paint',
@@ -132,7 +155,8 @@ export class AIClassifier {
                 'paper craft', 'origami', 'scrapbooking', 'jewelry making', 'beading',
                 'pottery', 'clay', 'sculpture', 'drawing', 'sketch', 'watercolor',
                 'paint', 'brush', 'canvas', 'art', 'artist', 'craft supply', 'tutorial',
-                'step by step', 'do it yourself', 'home decor', 'upcycle', 'recycle'
+                'step by step', 'do it yourself', 'home decor', 'upcycle', 'recycle',
+                'repurpose', 'crafting', 'handmade crafts'
             ],
             'Parenting/Family': [
                 'parenting', 'parent', 'mother', 'father', 'mom', 'dad', 'family',
@@ -140,7 +164,25 @@ export class AIClassifier {
                 'pregnancy', 'newborn', 'breastfeeding', 'baby gear', 'stroller',
                 'diaper', 'family activities', 'play', 'learning', 'education', 'school',
                 'family time', 'bonding', 'parenting tips', 'mom blog', 'dad blog',
-                'grandparent', 'relatives', 'family travel', 'family health', 'childcare'
+                'grandparent', 'relatives', 'family travel', 'family health', 'childcare',
+                'parenting advice', 'baby name', 'family fun'
+            ],
+            'Business': [
+                'business', 'entrepreneur', 'startup', 'small business', 'business plan',
+                'marketing', 'sales', 'strategy', 'leadership', 'management', 'funding',
+                'venture capital', 'angel investor', 'seed funding', 'series a', 'b2b',
+                'b2c', 'customer acquisition', 'growth hacking', 'scale', 'business model',
+                'revenue', 'profit', 'roi', 'kpi', 'business development', 'partnership',
+                'business owner', 'ceo', 'founder', 'executive', 'board', 'advisory',
+                'business news', 'entrepreneurship', 'startup life', 'business growth'
+            ],
+            'Science': [
+                'science', 'scientific', 'research', 'biology', 'chemistry', 'physics',
+                'astronomy', 'space', 'nasa', 'esa', 'spacex', 'rocket', 'planet',
+                'star', 'galaxy', 'universe', 'microscope', 'laboratory', 'experiment',
+                'discovery', 'innovation', 'scientist', 'peer review', 'journal',
+                'nature', 'science daily', 'sciencedirect', 'pubmed', 'arxiv',
+                'quantum', 'particle', 'gene', 'dna', 'protein', 'molecule', 'biology'
             ]
         };
         
@@ -148,20 +190,22 @@ export class AIClassifier {
         this.allowedCategories = [
             'To Review',
             'Career',
+            'Cooking/Food',
+            'DIY/Crafts',
             'Education',
             'Finance',
+            'Gaming',
             'Health & Fitness',
             'News',
             'Productivity',
             'Religious',
             'Shopping',
             'Social Media + Entertainment',
+            'Sports',
             'Technology',
             'Travel',
-            'Cooking/Food',
-            'Sports',
-            'DIY/Crafts',
-            'Parenting/Family'
+            'Business',
+            'Science'
         ];
     }
     
@@ -242,12 +286,12 @@ export class AIClassifier {
             }
         }
         
-        if (highestScore >= 2) {
+        // Lower threshold to 1 match
+        if (highestScore >= 1) {
             category = bestCategory;
         } else {
             try {
                 let aiCategory = await this.classifyWithAI(combinedText, categories);
-                // Clean the AI response and validate it
                 aiCategory = this.cleanCategoryName(aiCategory);
                 
                 if (aiCategory && aiCategory !== 'To Review') {
@@ -286,17 +330,12 @@ export class AIClassifier {
         };
     }
     
-    // ----- Helper: Clean category name -----
     cleanCategoryName(name) {
         if (!name) return 'To Review';
         let cleaned = name.trim();
-        // Remove quotes
         cleaned = cleaned.replace(/^["']+|["']+$/g, '');
-        // Remove extra spaces
         cleaned = cleaned.replace(/\s+/g, ' ');
-        // Only allow letters, spaces, &, +, /, -
         cleaned = cleaned.replace(/[^a-zA-Z0-9\s&\+\/\-]/g, '');
-        // If it's a single word or common word, check if it matches a real category
         return cleaned;
     }
     
@@ -338,20 +377,22 @@ ${titles}`;
             const commonCategories = [
                 'To Review',
                 'Career',
+                'Cooking/Food',
+                'DIY/Crafts',
                 'Education',
                 'Finance',
+                'Gaming',
                 'Health & Fitness',
                 'News',
                 'Productivity',
                 'Religious',
                 'Shopping',
                 'Social Media + Entertainment',
+                'Sports',
                 'Technology',
                 'Travel',
-                'Cooking/Food',
-                'Sports',
-                'DIY/Crafts',
-                'Parenting/Family'
+                'Business',
+                'Science'
             ];
             const allCategories = [...new Set([...categories, ...commonCategories])];
             
@@ -361,20 +402,22 @@ ${titles}`;
             return [
                 'To Review',
                 'Career',
+                'Cooking/Food',
+                'DIY/Crafts',
                 'Education',
                 'Finance',
+                'Gaming',
                 'Health & Fitness',
                 'News',
                 'Productivity',
                 'Religious',
                 'Shopping',
                 'Social Media + Entertainment',
+                'Sports',
                 'Technology',
                 'Travel',
-                'Cooking/Food',
-                'Sports',
-                'DIY/Crafts',
-                'Parenting/Family'
+                'Business',
+                'Science'
             ];
         }
     }
