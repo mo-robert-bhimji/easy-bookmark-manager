@@ -1,0 +1,280 @@
+/* ========================================
+   📊 CLASSIFICATION PROGRESS
+   ======================================== */
+
+/* ----- Progress Section ----- */
+.progress-section {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+/* ----- Progress Header ----- */
+.progress-header {
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background: #F9FAFB;
+    transition: background 0.2s;
+    user-select: none;
+}
+
+.progress-header:hover {
+    background: #F3F4F6;
+}
+
+.progress-header .left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.progress-header .left .icon {
+    font-size: 1.2rem;
+}
+
+.progress-header .left .title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #111827;
+}
+
+.progress-header .right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    color: #6B7280;
+}
+
+.progress-header .right .percentage {
+    font-weight: 700;
+    color: #4F46E5;
+    font-size: 1.1rem;
+}
+
+.progress-header .right .toggle-icon {
+    transition: transform 0.3s ease;
+    font-size: 0.8rem;
+}
+
+/* ----- Progress Body ----- */
+.progress-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+    padding: 0 1rem;
+}
+
+.progress-body.expanded {
+    max-height: 500px;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+/* ----- Progress Bar ----- */
+.progress-body .progress-bar-container {
+    width: 100%;
+    height: 6px;
+    background: #E5E7EB;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.progress-body .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4F46E5, #7C3AED);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+    width: 0%;
+}
+
+/* ----- Progress Details ----- */
+.progress-body .progress-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #6B7280;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.progress-body .progress-details .counts {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.progress-body .progress-details .counts span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.progress-body .progress-details .counts .number {
+    font-weight: 600;
+    color: #111827;
+}
+
+.progress-body .progress-details .eta {
+    color: #6B7280;
+}
+
+.progress-body .progress-details .eta .spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid #E5E7EB;
+    border-top: 2px solid #4F46E5;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 0.3rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ----- Steps ----- */
+.progress-body .steps {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.progress-body .steps .step {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 16px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    background: #F3F4F6;
+    color: #6B7280;
+    transition: all 0.3s;
+}
+
+.progress-body .steps .step.active {
+    background: #EEF2FF;
+    color: #4F46E5;
+}
+
+.progress-body .steps .step.completed {
+    background: #D1FAE5;
+    color: #059669;
+}
+
+.progress-body .steps .step .step-check {
+    display: none;
+}
+
+.progress-body .steps .step.completed .step-check {
+    display: inline;
+}
+
+/* ----- Log Section ----- */
+.progress-body .log-section {
+    background: #1F2937;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    max-height: 120px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+    color: #D1D5DB;
+    margin-top: 0.5rem;
+}
+
+.progress-body .log-section .log-entry {
+    padding: 0.1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    white-space: nowrap;
+}
+
+.progress-body .log-section .log-entry:last-child {
+    border-bottom: none;
+}
+
+.progress-body .log-section .log-entry .time {
+    color: #6B7280;
+    margin-right: 0.5rem;
+}
+
+.progress-body .log-section .log-entry .level-info {
+    color: #60A5FA;
+}
+
+.progress-body .log-section .log-entry .level-success {
+    color: #34D399;
+}
+
+.progress-body .log-section .log-entry .level-warning {
+    color: #FBBF24;
+}
+
+.progress-body .log-section .log-entry .level-error {
+    color: #F87171;
+}
+
+/* ----- Progress Controls ----- */
+.progress-body .progress-controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.progress-body .progress-controls .btn-sm {
+    padding: 0.3rem 0.8rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.progress-body .progress-controls .btn-sm:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ----- Progress Stats ----- */
+.progress-stats {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0.5rem 0;
+    font-size: 0.75rem;
+    color: #6B7280;
+    flex-wrap: wrap;
+    border-top: 1px solid #F3F4F6;
+    margin-top: 0.5rem;
+}
+
+.progress-stats span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.progress-stats .stat-value {
+    font-weight: 600;
+    color: #111827;
+}
+
+/* ----- Animations ----- */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}

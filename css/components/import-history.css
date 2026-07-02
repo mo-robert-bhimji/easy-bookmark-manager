@@ -1,0 +1,31 @@
+/* ========================================
+   📥 IMPORT HISTORY
+   ======================================== */
+
+#importHistory {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.import-item {
+    font-size: 0.75rem;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.import-item:last-child {
+    border-bottom: none;
+}
+
+.import-item .filename {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.import-item .metadata {
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+}

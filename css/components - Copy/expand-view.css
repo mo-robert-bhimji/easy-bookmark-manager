@@ -1,0 +1,160 @@
+/* ========================================
+   🔍 EXPAND VIEW - VISIBLE
+   ======================================== */
+
+.expand-view {
+    display: none !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: #F3F4F6 !important;
+    z-index: 2000 !important;
+    padding: 2rem !important;
+    overflow-y: auto !important;
+    flex-direction: column !important;
+}
+
+.expand-view.active {
+    display: flex !important;
+}
+
+.expand-view .expand-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding-bottom: 1rem !important;
+    border-bottom: 1px solid #E5E7EB !important;
+    margin-bottom: 1.5rem !important;
+    flex-shrink: 0 !important;
+    background: #F3F4F6 !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+}
+
+.expand-view .expand-header .expand-title {
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    color: #111827 !important;
+}
+
+.expand-view .expand-header .expand-title .domain-name {
+    color: #7C3AED !important;
+}
+
+.expand-view .expand-header .back-btn {
+    padding: 0.4rem 1rem !important;
+    border: none !important;
+    border-radius: 6px !important;
+    background: #4F46E5 !important;
+    color: white !important;
+    font-size: 0.85rem !important;
+    cursor: pointer !important;
+    font-weight: 500 !important;
+    transition: all 0.2s !important;
+}
+
+.expand-view .expand-header .back-btn:hover {
+    background: #4338CA !important;
+}
+
+.expand-view .expand-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: 1.5rem !important;
+    padding-bottom: 2rem !important;
+}
+
+.expand-view .expand-card {
+    background: white !important;
+    border-radius: 12px !important;
+    border: 1px solid #E5E7EB !important;
+    padding: 1rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.2s !important;
+    min-height: 220px !important;
+}
+
+.expand-view .expand-card:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.expand-view .expand-card .card-thumbnail {
+    width: 100% !important;
+    height: 100px !important;
+    background: linear-gradient(135deg, #f0f0f0, #e0e0e0) !important;
+    border-radius: 6px !important;
+    margin-bottom: 0.5rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 2.5rem !important;
+    flex-shrink: 0 !important;
+}
+
+.expand-view .expand-card .card-title {
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    color: #111827 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    margin-bottom: 0.2rem !important;
+}
+
+.expand-view .expand-card .card-url {
+    font-size: 0.65rem !important;
+    color: #6B7280 !important;
+    margin-bottom: 0.2rem !important;
+    word-break: break-all !important;
+}
+
+.expand-view .expand-card .card-footer {
+    margin-top: auto !important;
+    padding-top: 0.4rem !important;
+    border-top: 1px solid #F3F4F6 !important;
+    font-size: 0.6rem !important;
+    color: #6B7280 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.expand-view .expand-card .card-footer .card-actions {
+    display: flex !important;
+    gap: 0.3rem !important;
+}
+
+.expand-view .expand-card .card-footer .card-actions .btn-sm {
+    padding: 0.15rem 0.4rem !important;
+    border: none !important;
+    border-radius: 4px !important;
+    font-size: 0.6rem !important;
+    cursor: pointer !important;
+    font-weight: 500 !important;
+    transition: all 0.15s !important;
+}
+
+.expand-view .expand-card .card-footer .card-actions .btn-archive {
+    background: #EEF2FF !important;
+    color: #4F46E5 !important;
+}
+
+.expand-view .expand-card .card-footer .card-actions .btn-archive:hover {
+    background: #C7D2FE !important;
+}
+
+.expand-view .expand-card .card-footer .card-actions .btn-delete {
+    background: #FEE2E2 !important;
+    color: #DC2626 !important;
+}
+
+.expand-view .expand-card .card-footer .card-actions .btn-delete:hover {
+    background: #FECACA !important;
+}

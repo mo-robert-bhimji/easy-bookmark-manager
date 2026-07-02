@@ -1,0 +1,76 @@
+/* ========================================
+   📚 STACKED CARDS - COMPLETE
+   ======================================== */
+
+.stack-container {
+    position: relative !important;
+    height: 320px !important;
+    min-height: 320px !important;
+    max-height: 320px !important;
+    overflow: hidden !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.stack {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* The card inside the stack - ONLY position/size, NOT styles */
+.stack .card {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Ensure the card's internal styles are preserved */
+.stack .card .bookmark-card {
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    cursor: pointer !important;
+}
+
+.stack .card:nth-child(1) {
+    transform: translate(0px, 0px) scale(1) !important;
+    z-index: 10 !important;
+    opacity: 1 !important;
+}
+
+/* ----- Hover effect for stacked card - FIXED ----- */
+.stack-container:hover .stack .card .bookmark-card {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Also ensure the card itself gets the hover effect */
+.stack .card .bookmark-card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Keep container height fixed on hover */
+.stack-container:hover {
+    height: 320px !important;
+    min-height: 320px !important;
+    max-height: 320px !important;
+    overflow: hidden !important;
+}
+
+.stack-container:hover .stack {
+    height: 100% !important;
+}
+
+.stack-container:hover .stack .card {
+    height: 100% !important;
+}

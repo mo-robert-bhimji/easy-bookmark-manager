@@ -1,0 +1,101 @@
+/* ========================================
+   🏷️ BADGES
+   ======================================== */
+
+/* ----- Domain Badge (Purple) ----- */
+.domain-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--domain-badge);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    box-shadow: 0 2px 10px rgba(124, 58, 237, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    z-index: 20;
+    pointer-events: all;
+}
+
+.domain-badge:hover {
+    background: var(--domain-badge-hover);
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.5);
+}
+
+.domain-badge .count {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 0.05rem 0.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+.domain-badge .domain {
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ----- Duplicate Badge (Blue) ----- */
+.duplicate-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--duplicate-badge);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    box-shadow: 0 2px 10px rgba(79, 70, 229, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    z-index: 20;
+    pointer-events: all;
+}
+
+.duplicate-badge:hover {
+    background: var(--duplicate-badge-hover);
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.5);
+}
+
+.duplicate-badge .count {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 0.05rem 0.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+/* ----- Archived Duplicate Marker ----- */
+.archived-duplicate-marker {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #6B7280;
+    color: white;
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.6rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    z-index: 10;
+}
+
+.archived-duplicate-marker .icon {
+    font-size: 0.7rem;
+}

@@ -1,0 +1,217 @@
+/* ========================================
+   🃏 BOOKMARK CARDS
+   ======================================== */
+
+/* ----- Card Container ----- */
+.bookmark-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    min-height: 280px;
+    position: relative;
+    border: 1px solid #E5E7EB;
+}
+
+.bookmark-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+.bookmark-card.archived {
+    opacity: 0.6;
+    border-color: var(--border);
+    border-style: dashed;
+}
+
+/* Make stack cards the same height as regular cards */
+.stack-container .bookmark-card {
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+}
+
+/* ----- Thumbnail ----- */
+.bookmark-thumbnail {
+    width: 100%;
+    height: 140px;
+    background: var(--background);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bookmark-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.bookmark-thumbnail .fallback-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: white;
+    width: 100%;
+}
+
+/* ----- Card Content ----- */
+.bookmark-content {
+    padding: 0.75rem 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.bookmark-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: var(--text-primary);
+    text-decoration: none;
+    line-height: 1.3;
+}
+
+.bookmark-title:hover {
+    color: var(--primary);
+}
+
+.bookmark-url {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bookmark-description {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+    margin: 0.1rem 0;
+}
+
+.bookmark-folder-path {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    background: var(--background);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 0.2rem;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: fit-content;
+}
+
+.bookmark-date {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    margin-top: 0.2rem;
+}
+
+/* ----- Tags ----- */
+.bookmark-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.3rem;
+}
+
+.tag {
+    background: var(--background);
+    padding: 0.15rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.tag.primary {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+/* ----- Newest Badge on Card ----- */
+.newest-badge-on-card {
+    background: #D1FAE5;
+    color: #059669;
+    padding: 0.05rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.6rem;
+    font-weight: 500;
+    margin-left: 0.3rem;
+}
+
+/* ----- Card Footer ----- */
+.bookmark-footer {
+    padding: 0.5rem 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.bookmark-footer .source {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* ----- Card Actions ----- */
+.card-actions {
+    display: flex;
+    gap: 0.3rem;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+}
+
+.bookmark-card:hover .card-actions,
+.stack-container:hover .card .card-actions {
+    opacity: 1;
+}
+
+.card-actions .btn-icon {
+    font-size: 0.9rem;
+    padding: 0.1rem 0.3rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s;
+    color: var(--text-secondary);
+}
+
+.card-actions .btn-icon:hover {
+    background: var(--background);
+    color: var(--text-primary);
+}
+
+.card-actions .btn-icon.delete:hover {
+    color: #EF4444;
+    background: #FEE2E2;
+}

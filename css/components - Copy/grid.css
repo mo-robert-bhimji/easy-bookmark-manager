@@ -1,0 +1,33 @@
+/* ========================================
+   📊 BOOKMARK GRID
+   ======================================== */
+
+/* ----- Grid ----- */
+.bookmarks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* ----- Empty State ----- */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+    grid-column: 1 / -1;
+}
+
+.empty-state .icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.empty-state p {
+    margin-bottom: 1rem;
+}

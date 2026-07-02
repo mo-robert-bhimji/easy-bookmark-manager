@@ -1,0 +1,5 @@
+/* ===== GLOBAL STACK CONFIGURATION ===== */
+:root {
+    /* Change this to 'subtle' for Option D */
+    --stack-style: 'fan';
+}

@@ -1,0 +1,190 @@
+/* ========================================
+   🔘 BUTTONS
+   ======================================== */
+
+/* ----- Base Button ----- */
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition);
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* ----- Button Variants ----- */
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+}
+
+.btn-secondary {
+    background: var(--background);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--border);
+}
+
+.btn-success {
+    background: #10B981;
+    color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+    background: #059669;
+}
+
+.btn-danger {
+    background: #EF4444;
+    color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+    background: #DC2626;
+}
+
+/* ----- Icon Button ----- */
+.btn-icon {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: var(--transition);
+}
+
+.btn-icon:hover {
+    background: var(--background);
+}
+
+/* ----- Small Buttons ----- */
+.btn-sm {
+    padding: 0.2rem 0.6rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.btn-sm:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ----- Progress Controls ----- */
+.btn-primary-sm {
+    background: #4F46E5;
+    color: white;
+}
+
+.btn-primary-sm:hover:not(:disabled) {
+    background: #4338CA;
+}
+
+.btn-secondary-sm {
+    background: #F3F4F6;
+    color: #6B7280;
+    border: 1px solid #E5E7EB;
+}
+
+.btn-secondary-sm:hover:not(:disabled) {
+    background: #E5E7EB;
+}
+
+.btn-danger-sm {
+    background: #EF4444;
+    color: white;
+}
+
+.btn-danger-sm:hover:not(:disabled) {
+    background: #DC2626;
+}
+
+.btn-success-sm {
+    background: #10B981;
+    color: white;
+}
+
+.btn-success-sm:hover:not(:disabled) {
+    background: #059669;
+}
+
+/* ----- Popup Actions ----- */
+.btn-archive {
+    background: #EEF2FF;
+    color: #4F46E5;
+}
+
+.btn-archive:hover {
+    background: #C7D2FE;
+}
+
+.btn-delete {
+    background: #FEE2E2;
+    color: #DC2626;
+}
+
+.btn-delete:hover {
+    background: #FECACA;
+}
+
+.btn-keep-newest {
+    background: #D1FAE5;
+    color: #059669;
+}
+
+.btn-keep-newest:hover {
+    background: #A7F3D0;
+}
+
+.btn-archive-all {
+    background: #EEF2FF;
+    color: #4F46E5;
+}
+
+.btn-archive-all:hover {
+    background: #C7D2FE;
+}
+
+.btn-delete-all {
+    background: #FEE2E2;
+    color: #DC2626;
+}
+
+.btn-delete-all:hover {
+    background: #FECACA;
+}
+
+.btn-view-all {
+    background: #F3F4F6;
+    color: #4F46E5;
+    border: 1px solid #E5E7EB;
+}
+
+.btn-view-all:hover {
+    background: #E5E7EB;
+}

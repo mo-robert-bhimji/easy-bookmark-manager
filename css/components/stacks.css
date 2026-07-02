@@ -1,0 +1,59 @@
+/* ========================================
+   📚 STACKED CARDS - SHADOW FIX
+   ======================================== */
+
+.stack-container {
+    position: relative !important;
+    height: 320px !important;
+    min-height: 320px !important;
+    max-height: 320px !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;  /* CHANGE: Allow shadow to overflow */
+}
+
+.stack {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;  /* CHANGE: Allow shadow to overflow */
+}
+
+/* The card inside the stack - positioned absolutely */
+.stack .bookmark-card {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    z-index: 10 !important;
+    cursor: pointer !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+/* ----- SHADOW ON HOVER - MATCHES SINGLE CARD ----- */
+.stack .bookmark-card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Also handle hover on the container */
+.stack-container:hover .stack .bookmark-card {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Make sure the thumbnail and content don't overflow */
+.stack .bookmark-card .bookmark-thumbnail {
+    height: 140px !important;
+    min-height: 140px !important;
+    max-height: 140px !important;
+    flex-shrink: 0 !important;
+}
+
+.stack .bookmark-card .bookmark-content {
+    flex: 1 !important;
+    overflow: hidden !important;
+}
