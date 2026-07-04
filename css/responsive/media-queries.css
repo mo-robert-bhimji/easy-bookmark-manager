@@ -46,6 +46,15 @@
         gap: 1rem;
     }
     
+    /* Stack containers in mobile */
+    .bookmarks-grid .stack-container {
+        min-height: 280px !important;
+    }
+    
+    .bookmarks-grid .stack-container .bookmark-card {
+        min-height: 280px !important;
+    }
+    
     /* Content */
     .content {
         padding: 1rem;
@@ -100,6 +109,15 @@
     /* Grid */
     .bookmarks-grid {
         grid-template-columns: 1fr;
+    }
+    
+    /* Stack containers in small mobile */
+    .bookmarks-grid .stack-container {
+        min-height: 260px !important;
+    }
+    
+    .bookmarks-grid .stack-container .bookmark-card {
+        min-height: 260px !important;
     }
     
     /* Modal */

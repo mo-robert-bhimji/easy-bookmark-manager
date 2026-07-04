@@ -2,189 +2,214 @@
    🔘 BUTTONS
    ======================================== */
 
-/* ----- Base Button ----- */
+/* Base button styles */
 .btn {
-    padding: 0.5rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 16px;
+    height: 36px;
+    min-height: 36px;
+    line-height: 36px;
     border: none;
-    border-radius: 8px;
-    cursor: pointer;
+    border-radius: 6px;
+    font-size: 14px;
     font-weight: 500;
-    transition: var(--transition);
-    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
     white-space: nowrap;
+    text-decoration: none;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    box-sizing: border-box;
+}
+
+.btn:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: translateY(0);
 }
 
 .btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
 }
 
-.btn.loading {
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
-/* ----- Button Variants ----- */
+/* Primary button */
 .btn-primary {
-    background: var(--primary);
+    background: var(--primary-color);
     color: white;
 }
 
-.btn-primary:hover:not(:disabled) {
-    background: var(--primary-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+.btn-primary:hover {
+    background: var(--primary-hover);
 }
 
+/* Secondary button */
 .btn-secondary {
-    background: var(--background);
+    background: var(--bg-secondary);
     color: var(--text-primary);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-color);
 }
 
-.btn-secondary:hover:not(:disabled) {
-    background: var(--border);
+.btn-secondary:hover {
+    background: var(--bg-hover);
 }
 
-.btn-success {
-    background: #10B981;
-    color: white;
-}
-
-.btn-success:hover:not(:disabled) {
-    background: #059669;
-}
-
+/* Danger button */
 .btn-danger {
-    background: #EF4444;
+    background: var(--danger-color);
     color: white;
 }
 
-.btn-danger:hover:not(:disabled) {
-    background: #DC2626;
+.btn-danger:hover {
+    background: var(--danger-hover);
 }
 
-/* ----- Icon Button ----- */
-.btn-icon {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-    transition: var(--transition);
+/* Success button */
+.btn-success {
+    background: var(--success-color);
+    color: white;
 }
 
-.btn-icon:hover {
-    background: var(--background);
+.btn-success:hover {
+    background: var(--success-hover);
 }
 
-/* ----- Small Buttons ----- */
+/* Warning button */
+.btn-warning {
+    background: var(--warning-color);
+    color: white;
+}
+
+.btn-warning:hover {
+    background: var(--warning-hover);
+}
+
+/* Small button */
 .btn-sm {
-    padding: 0.2rem 0.6rem;
+    height: 28px;
+    min-height: 28px;
+    line-height: 28px;
+    padding: 0 12px;
+    font-size: 12px;
+}
+
+/* Large button */
+.btn-lg {
+    height: 44px;
+    min-height: 44px;
+    line-height: 44px;
+    padding: 0 24px;
+    font-size: 16px;
+}
+
+/* Icon button */
+.btn-icon {
+    padding: 0 10px;
+    width: 36px;
+    height: 36px;
+    min-height: 36px;
+    justify-content: center;
+}
+
+/* Action buttons in header */
+.action-btn {
+    height: 36px;
+    min-height: 36px;
+    line-height: 36px;
+    padding: 0 16px;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     border: none;
     border-radius: 6px;
-    font-size: 0.65rem;
     cursor: pointer;
-    transition: all 0.2s;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
     font-weight: 500;
 }
 
-.btn-sm:disabled {
+.action-btn:hover:not(:disabled) {
+    background: var(--bg-hover);
+    transform: translateY(-1px);
+}
+
+.action-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
 }
 
-/* ----- Progress Controls ----- */
-.btn-primary-sm {
-    background: #4F46E5;
-    color: white;
+/* Fix for Clear Thumbnails button height consistency */
+#clearThumbnailCacheBtn {
+    height: 36px !important;
+    min-height: 36px !important;
+    line-height: 36px !important;
+    padding: 0 16px !important;
+    font-size: 13px !important;
 }
 
-.btn-primary-sm:hover:not(:disabled) {
-    background: #4338CA;
+/* ========================================
+   🔘 FORCE BUTTON STYLES (OVERRIDE)
+   ======================================== */
+
+/* Force all header buttons to have consistent styling */
+.header-right .btn,
+.header-right .btn-secondary,
+.header-right .btn-primary,
+.header-right .btn-danger {
+    border-radius: 6px !important;
+    border: 1px solid #D1D5DB !important;
+    background: #F9FAFB !important;
+    color: #1F2937 !important;
+    padding: 0 16px !important;
+    height: 36px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
 }
 
-.btn-secondary-sm {
-    background: #F3F4F6;
-    color: #6B7280;
-    border: 1px solid #E5E7EB;
+.header-right .btn-primary {
+    background: #4F46E5 !important;
+    color: white !important;
+    border-color: #4F46E5 !important;
 }
 
-.btn-secondary-sm:hover:not(:disabled) {
-    background: #E5E7EB;
+.header-right .btn-primary:hover {
+    background: #4338CA !important;
 }
 
-.btn-danger-sm {
-    background: #EF4444;
-    color: white;
+.header-right .btn-danger {
+    background: #EF4444 !important;
+    color: white !important;
+    border-color: #EF4444 !important;
 }
 
-.btn-danger-sm:hover:not(:disabled) {
-    background: #DC2626;
+.header-right .btn-danger:hover {
+    background: #DC2626 !important;
 }
 
-.btn-success-sm {
-    background: #10B981;
-    color: white;
+.header-right .btn-secondary:hover {
+    background: #F3F4F6 !important;
 }
 
-.btn-success-sm:hover:not(:disabled) {
-    background: #059669;
-}
-
-/* ----- Popup Actions ----- */
-.btn-archive {
-    background: #EEF2FF;
-    color: #4F46E5;
-}
-
-.btn-archive:hover {
-    background: #C7D2FE;
-}
-
-.btn-delete {
-    background: #FEE2E2;
-    color: #DC2626;
-}
-
-.btn-delete:hover {
-    background: #FECACA;
-}
-
-.btn-keep-newest {
-    background: #D1FAE5;
-    color: #059669;
-}
-
-.btn-keep-newest:hover {
-    background: #A7F3D0;
-}
-
-.btn-archive-all {
-    background: #EEF2FF;
-    color: #4F46E5;
-}
-
-.btn-archive-all:hover {
-    background: #C7D2FE;
-}
-
-.btn-delete-all {
-    background: #FEE2E2;
-    color: #DC2626;
-}
-
-.btn-delete-all:hover {
-    background: #FECACA;
-}
-
-.btn-view-all {
-    background: #F3F4F6;
-    color: #4F46E5;
-    border: 1px solid #E5E7EB;
-}
-
-.btn-view-all:hover {
-    background: #E5E7EB;
+/* Make sure Clear Thumbnails matches */
+#clearThumbnailCacheBtn {
+    border-radius: 6px !important;
+    border: 1px solid #D1D5DB !important;
+    background: #F9FAFB !important;
+    color: #1F2937 !important;
+    padding: 0 16px !important;
+    height: 36px !important;
+    font-size: 13px !important;
 }

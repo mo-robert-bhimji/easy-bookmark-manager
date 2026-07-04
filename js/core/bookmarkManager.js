@@ -1,5 +1,5 @@
 // ========================================
-// 📚 BOOKMARK MANAGER - FIXED SORTING
+// 📚 BOOKMARK MANAGER - COMPLETE
 // ========================================
 
 export class BookmarkManager {
@@ -13,6 +13,11 @@ export class BookmarkManager {
 
     getBookmarks() {
         return this.bookmarks;
+    }
+
+    // ----- Get a single bookmark by ID (ADD THIS) -----
+    getBookmarkById(id) {
+        return this.bookmarks.find(b => b.id === id);
     }
 
     getActiveBookmarks() {
@@ -34,7 +39,7 @@ export class BookmarkManager {
     }
 
     archiveBookmark(id) {
-        const bookmark = this.bookmarks.find(b => b.id === id);
+        const bookmark = this.getBookmarkById(id);
         if (bookmark) {
             bookmark.isArchived = !bookmark.isArchived;
             bookmark.archivedDate = bookmark.isArchived ? new Date().toISOString() : null;
@@ -44,7 +49,7 @@ export class BookmarkManager {
 
     bulkArchive(ids) {
         ids.forEach(id => {
-            const bookmark = this.bookmarks.find(b => b.id === id);
+            const bookmark = this.getBookmarkById(id);
             if (bookmark) {
                 bookmark.isArchived = true;
                 bookmark.archivedDate = new Date().toISOString();
@@ -76,22 +81,18 @@ export class BookmarkManager {
         };
     }
 
-    // ----- Helper: Clean title for sorting (removes ALL special characters at start) -----
+    // ----- Helper: Clean title for sorting -----
     cleanTitleForSorting(title) {
         if (!title) return '';
-        // Remove leading special characters: :, ., -, _, [, ], (, ), spaces, commas, etc.
         let cleaned = title.replace(/^[\s:.\-_\[\]\(\)\{\}\<\>\"\'\,\;\|\!\?\*\&\^\%\$\#\@\~\`\\\/]+/, '');
-        // Also remove leading numbers with dots or dashes (like "1. ", "2- ")
         cleaned = cleaned.replace(/^[\d]+[\s\.\-\)\:]+/, '');
         return cleaned.trim().toLowerCase();
     }
 
-    // ----- Sort bookmarks by various criteria -----
     sortBookmarks(bookmarks, sortOption) {
         const sorted = [...bookmarks];
         switch(sortOption) {
             case 'date-desc':
-                // Newest first
                 sorted.sort((a, b) => {
                     const dateA = a.addedDate ? new Date(a.addedDate).getTime() : 0;
                     const dateB = b.addedDate ? new Date(b.addedDate).getTime() : 0;
@@ -99,13 +100,10 @@ export class BookmarkManager {
                 });
                 break;
             case 'date-asc':
-                // Oldest first - missing dates go to the end
                 sorted.sort((a, b) => {
                     const dateA = a.addedDate ? new Date(a.addedDate).getTime() : 0;
                     const dateB = b.addedDate ? new Date(b.addedDate).getTime() : 0;
-                    if (dateA > 0 && dateB > 0) {
-                        return dateA - dateB;
-                    }
+                    if (dateA > 0 && dateB > 0) return dateA - dateB;
                     if (dateA > 0 && dateB === 0) return -1;
                     if (dateA === 0 && dateB > 0) return 1;
                     return 0;
@@ -142,7 +140,6 @@ export class BookmarkManager {
         return sorted;
     }
 
-    // ----- Extract domain from URL -----
     extractDomain(url) {
         if (!url) return null;
         try {
@@ -157,7 +154,6 @@ export class BookmarkManager {
         }
     }
 
-    // ----- Group by exact URL (blue badge) -----
     groupByUrl(bookmarks) {
         const groups = new Map();
         const singles = [];
@@ -184,7 +180,6 @@ export class BookmarkManager {
         return { stacks, singles };
     }
 
-    // ----- Group by domain (purple badge) -----
     groupByDomain(bookmarks) {
         const groups = new Map();
         const singles = [];
@@ -226,7 +221,6 @@ export class BookmarkManager {
         return { stacks, singles: allSingles };
     }
 
-    // ----- Combined grouping (URL + Domain) -----
     groupBookmarks(bookmarks) {
         const { stacks: urlStacks, singles: urlSingles } = this.groupByUrl(bookmarks);
         const { stacks: domainStacks, singles: finalSingles } = this.groupByDomain(urlSingles);

@@ -1,5 +1,5 @@
 // ========================================
-// 🤖 AI CLASSIFIER - UPDATED CATEGORIES
+// 🤖 AI CLASSIFIER - FINAL VERSION (FIXED)
 // ========================================
 
 export class AIClassifier {
@@ -7,16 +7,16 @@ export class AIClassifier {
         this.apiKey = apiKey;
         this.baseUrl = 'https://api.deepseek.com/v1';
         this.model = 'deepseek-v4-flash';
+        this.classifiedCount = 0;
+        this.toReviewCount = 0;
         
         this.categoryKeywords = {
             'Social Media + Entertainment': [
-                // Social Media
                 'social media', 'instagram', 'twitter', 'facebook', 'tiktok', 'snapchat',
                 'social network', 'influencer', 'like', 'share', 'post', 'follow', 'trending',
                 'hashtag', 'reel', 'stories', 'youtube', 'tumblr', 'pinterest', 'reddit',
                 'discord', 'twitch', 'viral', 'content creator', 'influencer marketing',
                 'social platform', 'online community', 'fan', 'engagement',
-                // Entertainment
                 'movie', 'music', 'game', 'entertainment', 'streaming', 'netflix',
                 'podcast', 'comedy', 'drama', 'festival', 'concert', 'singer', 'band',
                 'album', 'song', 'playlist', 'spotify', 'apple music', 'trailer', 'oscar',
@@ -183,10 +183,17 @@ export class AIClassifier {
                 'discovery', 'innovation', 'scientist', 'peer review', 'journal',
                 'nature', 'science daily', 'sciencedirect', 'pubmed', 'arxiv',
                 'quantum', 'particle', 'gene', 'dna', 'protein', 'molecule', 'biology'
+            ],
+            'Anomalies': [
+                'chrome://', 'about:', 'blob:', 'data:', 'javascript:', 'edge://',
+                'opera://', 'brave://', 'vivaldi://', 'file://', 'ftp://',
+                'mailto:', 'tel:', 'sms:', 'whatsapp://', 'skype://',
+                'chrome-extension://', 'moz-extension://', 'safari-extension://',
+                'view-source:', 'wyciwyg://', 'resource://', 'internal://'
             ]
         };
         
-        // ----- Allowed categories list -----
+        // ----- Allowed categories list (includes ALL categories) -----
         this.allowedCategories = [
             'To Review',
             'Career',
@@ -205,7 +212,8 @@ export class AIClassifier {
             'Technology',
             'Travel',
             'Business',
-            'Science'
+            'Science',
+            'Anomalies'  // ✅ ADDED - This was missing!
         ];
     }
     
@@ -259,7 +267,6 @@ export class AIClassifier {
     }
     
     async classifySingleBookmark(bookmark, categories) {
-        // Default category
         let category = 'To Review';
         let tags = [];
         
@@ -269,11 +276,33 @@ export class AIClassifier {
             bookmark.url || ''
         ].join(' ').toLowerCase();
         
+        // Check for anomalies first (URLs with special protocols)
+        const url = (bookmark.url || '').toLowerCase();
+        const anomalyKeywords = [
+            'chrome://', 'about:', 'blob:', 'data:', 'javascript:', 'edge://',
+            'opera://', 'brave://', 'vivaldi://', 'file://', 'ftp://',
+            'mailto:', 'tel:', 'sms:', 'whatsapp://', 'skype://',
+            'chrome-extension://', 'moz-extension://', 'safari-extension://',
+            'view-source:', 'wyciwyg://', 'resource://', 'internal://'
+        ];
+        
+        // Check if URL starts with any anomaly protocol
+        const isAnomaly = anomalyKeywords.some(protocol => url.startsWith(protocol));
+        if (isAnomaly) {
+            return {
+                category: 'Anomalies',
+                tags: ['anomaly', 'special']
+            };
+        }
+        
         // Keyword matching first
         let bestCategory = 'To Review';
         let highestScore = 0;
         
         for (const [cat, keywords] of Object.entries(this.categoryKeywords)) {
+            // Skip Anomalies in keyword matching (already handled above)
+            if (cat === 'Anomalies') continue;
+            
             let score = 0;
             for (const keyword of keywords) {
                 if (combinedText.includes(keyword.toLowerCase())) {
@@ -286,7 +315,7 @@ export class AIClassifier {
             }
         }
         
-        // Lower threshold to 1 match
+        // If no keyword match, use AI
         if (highestScore >= 1) {
             category = bestCategory;
         } else {
@@ -294,7 +323,8 @@ export class AIClassifier {
                 let aiCategory = await this.classifyWithAI(combinedText, categories);
                 aiCategory = this.cleanCategoryName(aiCategory);
                 
-                if (aiCategory && aiCategory !== 'To Review') {
+                // Ensure the category is in the allowed list, otherwise use "To Review"
+                if (aiCategory && this.allowedCategories.includes(aiCategory)) {
                     category = aiCategory;
                 } else {
                     category = 'To Review';
@@ -304,7 +334,7 @@ export class AIClassifier {
             }
         }
         
-        // Final validation - ensure category is in the allowed list
+        // Final validation - ensure category is in allowed list
         if (!this.allowedCategories.includes(category)) {
             category = 'To Review';
         }
@@ -320,7 +350,7 @@ export class AIClassifier {
         
         tags = uniqueWords.slice(0, 2);
         
-        if (category !== 'To Review') {
+        if (category !== 'To Review' && category !== 'Anomalies') {
             tags = [category, ...tags.slice(0, 1)];
         }
         
@@ -392,7 +422,8 @@ ${titles}`;
                 'Technology',
                 'Travel',
                 'Business',
-                'Science'
+                'Science',
+                'Anomalies'
             ];
             const allCategories = [...new Set([...categories, ...commonCategories])];
             
@@ -417,7 +448,8 @@ ${titles}`;
                 'Technology',
                 'Travel',
                 'Business',
-                'Science'
+                'Science',
+                'Anomalies'
             ];
         }
     }

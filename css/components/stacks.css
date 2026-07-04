@@ -1,36 +1,46 @@
 /* ========================================
-   📚 STACKED CARDS - SHADOW FIX
+   📚 STACKED CARDS - FIXED
    ======================================== */
 
 .stack-container {
     position: relative !important;
-    height: 320px !important;
-    min-height: 320px !important;
-    max-height: 320px !important;
+    height: 100% !important;
+    min-height: 300px !important;
+    max-height: none !important;
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: visible !important;  /* CHANGE: Allow shadow to overflow */
+    overflow: visible !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
 .stack {
     position: relative !important;
     width: 100% !important;
     height: 100% !important;
-    overflow: visible !important;  /* CHANGE: Allow shadow to overflow */
+    min-height: 300px !important;
+    overflow: visible !important;
+    flex: 1 1 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
-/* The card inside the stack - positioned absolutely */
+/* The card inside the stack - NOT absolute positioned */
 .stack .bookmark-card {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
     width: 100% !important;
     height: 100% !important;
+    min-height: 300px !important;
     margin: 0 !important;
     z-index: 10 !important;
     cursor: pointer !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
 }
 
 /* ----- SHADOW ON HOVER - MATCHES SINGLE CARD ----- */
@@ -54,6 +64,28 @@
 }
 
 .stack .bookmark-card .bookmark-content {
-    flex: 1 !important;
+    flex: 1 1 auto !important;
     overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.stack .bookmark-card .bookmark-footer {
+    margin-top: auto !important;
+    flex-shrink: 0 !important;
+}
+
+/* ----- Stacked Badge (purple domain badge) ----- */
+.stack-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #8B5CF6;
+    color: white;
+    padding: 0.1rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.6rem;
+    font-weight: 500;
+    z-index: 20;
+    pointer-events: none;
 }

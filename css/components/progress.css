@@ -278,3 +278,17 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
 }
+
+/* ========================================
+   📊 CLASSIFICATION PROGRESS - HIDDEN BY DEFAULT
+   ======================================== */
+
+/* Hide progress section when not in use */
+.progress-section {
+    display: none;  /* Hidden by default */
+}
+
+.progress-section.active {
+    display: block;  /* Show when active */
+}
+

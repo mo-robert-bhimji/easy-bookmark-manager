@@ -1,11 +1,9 @@
 /* ========================================
    📚 Bookmark Manager - Main CSS
-   ========================================
-   This file imports all component CSS files.
-   All imports are relative paths.
    ======================================== */
 
 /* ===== BASE ===== */
+@import 'base/variables.css';    ← Add this line
 @import 'base/reset.css';
 @import 'base/typography.css';
 @import 'base/layout.css';
@@ -14,12 +12,15 @@
 @import 'components/buttons.css';
 @import 'components/search.css';
 @import 'components/navigation.css';
+@import 'components/grid.css';
 @import 'components/cards.css';
 @import 'components/stacks.css';
 @import 'components/badges.css';
 @import 'components/popups.css';
 @import 'components/modals.css';
 @import 'components/progress.css';
+@import 'components/import-history.css';
+@import 'components/toast.css';
 
 /* ===== RESPONSIVE ===== */
 @import 'responsive/media-queries.css';

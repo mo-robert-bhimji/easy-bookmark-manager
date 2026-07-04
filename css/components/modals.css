@@ -23,7 +23,7 @@
 
 /* ----- Modal Content ----- */
 .modal-content {
-    background-color: var(--card-bg);
+    background-color: #FFFFFF;
     margin: 5% auto;
     padding: 0;
     border-radius: var(--radius);
@@ -49,12 +49,14 @@
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
+    background: #F9FAFB;
+    border-radius: var(--radius) var(--radius) 0 0;
 }
 
 .modal-header h2 {
     margin: 0;
     font-size: 1.3rem;
-    color: var(--text-primary);
+    color: #1F2937;
 }
 
 .modal-close {
@@ -62,14 +64,14 @@
     border: none;
     font-size: 1.8rem;
     cursor: pointer;
-    color: var(--text-secondary);
+    color: #6B7280;
     padding: 0 0.5rem;
     line-height: 1;
     transition: var(--transition);
 }
 
 .modal-close:hover {
-    color: var(--text-primary);
+    color: #1F2937;
 }
 
 /* ----- Modal Body ----- */
@@ -77,6 +79,8 @@
     padding: 2rem;
     overflow-y: auto;
     flex: 1;
+    background: #FFFFFF;
+    color: #1F2937;
 }
 
 .modal-body .form-group {
@@ -85,9 +89,17 @@
 
 .modal-body .form-group label {
     display: block;
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 0.5rem;
-    color: var(--text-primary);
+    color: #1F2937;
+    font-size: 0.95rem;
+}
+
+.modal-body .form-group .description {
+    color: #6B7280;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
 }
 
 .modal-body .form-group input,
@@ -95,20 +107,43 @@
 .modal-body .form-group textarea {
     width: 100%;
     padding: 0.6rem 1rem;
-    border: 1px solid var(--border);
+    border: 1px solid #D1D5DB;
     border-radius: 8px;
     font-size: 0.95rem;
     font-family: inherit;
-    color: var(--text-primary);
-    background: var(--card-bg);
+    color: #1F2937;
+    background: #FFFFFF;
 }
 
 .modal-body .form-group input:focus,
 .modal-body .form-group select:focus,
 .modal-body .form-group textarea:focus {
     outline: none;
-    border-color: var(--primary);
+    border-color: #4F46E5;
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* ----- Checkbox styling ----- */
+.modal-body .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}
+
+.modal-body .checkbox-group input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #4F46E5;
+    cursor: pointer;
+}
+
+.modal-body .checkbox-group label {
+    font-weight: 400;
+    color: #374151;
+    cursor: pointer;
+    margin-bottom: 0;
 }
 
 /* ----- Modal Actions ----- */
@@ -122,4 +157,102 @@
 .modal-body .form-actions .btn {
     flex: 1;
     min-width: 100px;
+}
+
+/* ----- Import/Export specific styles ----- */
+.modal-body .info-box {
+    background: #F9FAFB;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #E5E7EB;
+}
+
+.modal-body .info-box .stat-row {
+    color: #1F2937;
+    padding: 0.2rem 0;
+}
+
+.modal-body .info-box .stat-row strong {
+    font-weight: 600;
+}
+
+.modal-body .info-box .stat-meta {
+    color: #6B7280;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.modal-body .divider {
+    border: none;
+    border-top: 1px solid #E5E7EB;
+    margin: 1.5rem 0;
+}
+
+/* ----- Modal buttons - match header buttons ----- */
+.modal-body .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 16px;
+    height: 36px;
+    min-height: 36px;
+    line-height: 36px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.modal-body .btn-primary {
+    background: #4F46E5;
+    color: #FFFFFF;
+}
+
+.modal-body .btn-primary:hover {
+    background: #4338CA;
+}
+
+.modal-body .btn-secondary {
+    background: #F9FAFB;
+    color: #1F2937;
+    border: 1px solid #D1D5DB;
+}
+
+.modal-body .btn-secondary:hover {
+    background: #F3F4F6;
+}
+
+.modal-body .btn-success {
+    background: #10B981;
+    color: #FFFFFF;
+}
+
+.modal-body .btn-success:hover {
+    background: #059669;
+}
+
+.modal-body .btn-danger {
+    background: #EF4444;
+    color: #FFFFFF;
+}
+
+.modal-body .btn-danger:hover {
+    background: #DC2626;
+}
+
+.modal-body .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ----- File input button overrides ----- */
+.modal-body .btn-full {
+    width: 100%;
+    justify-content: center;
 }

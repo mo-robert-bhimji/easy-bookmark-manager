@@ -1,5 +1,5 @@
 // ========================================
-// 📚 STACK RENDERER - COMPLETE
+// 📚 STACK RENDERER - WITH CHECKBOXES
 // ========================================
 
 import { PopupManager } from './popupManager.js';
@@ -20,6 +20,9 @@ export class StackRenderer {
         const container = document.createElement('div');
         container.className = 'stack-container';
         
+        const stack = document.createElement('div');
+        stack.className = 'stack';
+        
         const sorted = [...bookmarks].sort((a, b) => 
             new Date(b.addedDate || 0) - new Date(a.addedDate || 0)
         );
@@ -29,12 +32,15 @@ export class StackRenderer {
         }
         
         const isDomainStack = actions.isDomainStack || false;
-        const topBookmark = sorted[0];
         
-        // Create the card normally
+        // Store bookmarks in actions for popup
+        actions._bookmarks = sorted;
+        
+        // ONLY CREATE THE TOP CARD (index 0)
+        const topBookmark = sorted[0];
         const card = this.uiRenderer.createBookmarkCard(topBookmark, actions);
         
-        // Add badge to the card
+        // Add badge to the top card
         const thumbnail = card.querySelector('.bookmark-thumbnail');
         if (thumbnail) {
             const badge = document.createElement('button');
@@ -59,12 +65,30 @@ export class StackRenderer {
             thumbnail.appendChild(badge);
         }
         
-        // Wrap in stack div for positioning
-        const stack = document.createElement('div');
-        stack.className = 'stack';
         stack.appendChild(card);
         container.appendChild(stack);
         
+        // Store reference to the card for selection updates
+        container._topCard = card;
+        container._bookmarkIds = sorted.map(b => b.id);
+        
         return container;
+    }
+
+    // ----- Update selection state on stacked card -----
+    updateStackSelection(container, selectedIds) {
+        const card = container.querySelector('.bookmark-card');
+        if (card) {
+            const id = card.dataset.id;
+            const checkbox = card.querySelector('.bookmark-checkbox');
+            if (checkbox) {
+                checkbox.checked = selectedIds.has(id);
+            }
+            if (selectedIds.has(id)) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+        }
     }
 }

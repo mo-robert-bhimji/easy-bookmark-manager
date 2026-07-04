@@ -12,9 +12,10 @@
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    min-height: 280px;
+    min-height: 300px;
     position: relative;
     border: 1px solid #E5E7EB;
+    height: 100%;
 }
 
 .bookmark-card:hover {
@@ -23,16 +24,105 @@
 }
 
 .bookmark-card.archived {
-    opacity: 0.6;
-    border-color: var(--border);
-    border-style: dashed;
+    opacity: 0.7;
+    border: 2px dashed var(--border);
+    background: #FAFAFA;
 }
 
-/* Make stack cards the same height as regular cards */
+.bookmark-card.archived .bookmark-thumbnail {
+    filter: grayscale(0.3);
+    opacity: 0.7;
+}
+
+.bookmark-card.archived .bookmark-title {
+    color: var(--text-secondary);
+}
+
+.bookmark-card.archived .bookmark-footer .source {
+    color: #6B7280;
+    font-style: italic;
+}
+
+/* ----- Stack Container - FIXED ----- */
+.stack-container {
+    height: 100% !important;
+    min-height: 300px !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
 .stack-container .bookmark-card {
     height: 100% !important;
     min-height: 100% !important;
     max-height: 100% !important;
+    flex: 1 1 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.stack-container .bookmark-card .bookmark-content {
+    flex: 1 1 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.stack-container .bookmark-card .bookmark-footer {
+    margin-top: auto !important;
+    flex-shrink: 0 !important;
+}
+
+/* ----- Archived Badge - Right Side ----- */
+.bookmark-card .archived-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #6B7280;
+    color: white;
+    padding: 0.1rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.6rem;
+    font-weight: 500;
+    z-index: 10;
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+/* ----- Link Status Badges ----- */
+.bookmark-card .link-status-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 0.1rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.6rem;
+    font-weight: 500;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.bookmark-card .link-status-badge.verified {
+    background: #10B981;
+    color: white;
+}
+
+.bookmark-card .link-status-badge.redirect {
+    background: #F59E0B;
+    color: white;
+}
+
+.bookmark-card .link-status-badge.broken {
+    background: #EF4444;
+    color: white;
+}
+
+.bookmark-card .link-status-badge.timeout {
+    background: #F97316;
+    color: white;
+}
+
+.bookmark-card .link-status-badge.error {
+    background: #6B7280;
+    color: white;
 }
 
 /* ----- Thumbnail ----- */
@@ -174,6 +264,7 @@
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
+    margin-top: auto;
 }
 
 .bookmark-footer .source {
@@ -214,4 +305,184 @@
 .card-actions .btn-icon.delete:hover {
     color: #EF4444;
     background: #FEE2E2;
+}
+
+/* ========================================
+   ☑️ BULK SELECTION
+   ======================================== */
+
+.bookmark-checkbox {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 15;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--primary);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.bookmark-card:hover .bookmark-checkbox,
+.stack-container:hover .bookmark-checkbox {
+    opacity: 1;
+}
+
+.bookmark-card.selected .bookmark-checkbox,
+.stack-container .bookmark-card.selected .bookmark-checkbox {
+    opacity: 1 !important;
+}
+
+.bookmark-card.selected {
+    border: 2px solid var(--primary) !important;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2), var(--shadow-hover) !important;
+}
+
+/* ========================================
+   📐 GRID & ACTION BAR
+   ======================================== */
+
+.bookmarks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    align-items: stretch;
+}
+
+.bookmarks-grid .bookmark-card {
+    height: 100%;
+    min-height: 300px;
+    max-height: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.bookmarks-grid .bookmark-card .bookmark-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.bookmarks-grid .bookmark-card .bookmark-footer {
+    margin-top: auto;
+    flex-shrink: 0;
+}
+
+/* Fix for stack containers inside grid */
+.bookmarks-grid .stack-container {
+    height: 100% !important;
+    min-height: 300px !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.bookmarks-grid .stack-container .bookmark-card {
+    height: 100% !important;
+    min-height: 100% !important;
+    flex: 1 1 auto !important;
+}
+
+/* ----- Action Bar - Compact & Auto Width ----- */
+.action-bar {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.3rem 0.75rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin-bottom: 1rem;
+    min-height: 36px;
+    transition: all 0.3s ease;
+    width: auto;
+    max-width: fit-content;
+}
+
+.action-bar.visible {
+    display: flex;
+}
+
+.action-bar .action-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.action-bar .action-left #selectAll {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--primary);
+    margin: 0;
+}
+
+.action-bar .action-left #selectionCount {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-right: 0.75rem;
+}
+
+.action-bar .action-left #clearSelectionBtn {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.5rem;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    display: none;
+}
+
+.action-bar .action-left #clearSelectionBtn:hover {
+    background: var(--background);
+    color: var(--text-primary);
+}
+
+.action-bar .action-right {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.action-bar .action-right .btn {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+}
+
+.action-bar .action-right .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.action-bar .action-right .btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+@media (max-width: 768px) {
+    .action-bar {
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        padding: 0.3rem 0.5rem;
+        max-width: 100%;
+    }
+    
+    .action-bar .action-right {
+        flex-wrap: wrap;
+        gap: 0.3rem;
+    }
+    
+    .action-bar .action-right .btn {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.4rem;
+    }
+    
+    .bookmark-checkbox {
+        width: 14px;
+        height: 14px;
+        top: 6px;
+        left: 6px;
+    }
 }

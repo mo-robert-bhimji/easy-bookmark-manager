@@ -63,6 +63,20 @@
                     </div>
                 </div>
 
+                <!-- Action Bar for Bulk Selection -->
+                <div class="action-bar" id="actionBar">
+                    <div class="action-left">
+                        <input type="checkbox" id="selectAll" title="Select all visible bookmarks">
+                        <span id="selectionCount">0 selected</span>
+                    </div>
+                    <div class="action-right">
+                        <button id="bulkArchiveBtn" class="btn btn-secondary" disabled title="Archive selected bookmarks">📥 Archive</button>
+                        <button id="bulkDeleteBtn" class="btn btn-danger" disabled title="Delete selected bookmarks">🗑️ Delete</button>
+                        <button id="bulkReclassifyBtn" class="btn btn-secondary" disabled title="Reclassify selected bookmarks">🤖 Reclassify</button>
+                        <button id="clearSelectionBtn" class="btn btn-secondary" style="display:none;" title="Clear selection">✕ Clear</button>
+                    </div>
+                </div>
+
                 <!-- Classification Progress Section -->
                 <div class="progress-section">
                     <div class="progress-header" id="progressToggle">
@@ -163,7 +177,9 @@
     <!-- Popup Overlay -->
     <div class="popup-overlay" id="popupOverlay"></div>
 
-    <!-- Import Map for DeepSeek -->
+    <!-- Expand View Container -->
+    <div id="expandViewContainer"></div>
+
     <script type="importmap">
         {
             "imports": {
@@ -174,7 +190,5 @@
 
     <!-- Main App Script -->
     <script type="module" src="js/app.js"></script>
-    <!-- Expand View Container -->
-    <div id="expandViewContainer"></div>
 </body>
 </html>

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmark Manager - Project Summary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: white;
+            color: #111827;
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #4F46E5;
+        }
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+            color: #1F2937;
+            border-bottom: 2px solid #E5E7EB;
+            padding-bottom: 0.25rem;
+        }
+        h3 {
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.25rem;
+            color: #374151;
+        }
+        h4 {
+            font-size: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 0.25rem;
+            color: #4B5563;
+        }
+        p {
+            margin-bottom: 0.75rem;
+        }
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        li {
+            margin-bottom: 0.25rem;
+        }
+        .section {
+            margin-bottom: 2rem;
+        }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .card {
+            background: #F9FAFB;
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid #E5E7EB;
+        }
+        .card h4 {
+            margin-top: 0;
+            color: #4F46E5;
+        }
+        code {
+            background: #F3F4F6;
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: #1F2937;
+            color: #D1D5DB;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            margin-bottom: 0.75rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.75rem;
+        }
+        th, td {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #E5E7EB;
+            text-align: left;
+        }
+        th {
+            background: #F3F4F6;
+            font-weight: 600;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.05rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        .badge-green { background: #D1FAE5; color: #059669; }
+        .badge-red { background: #FEE2E2; color: #DC2626; }
+        .badge-yellow { background: #FEF3C7; color: #D97706; }
+        .badge-gray { background: #F3F4F6; color: #6B7280; }
+        .badge-purple { background: #EEF2FF; color: #4F46E5; }
+        .badge-blue { background: #DBEAFE; color: #2563EB; }
+        @media print {
+            body { padding: 0.5in; }
+            .no-print { display: none; }
+        }
+        @media (max-width: 768px) {
+            .two-col { grid-template-columns: 1fr; }
+        }
+        .footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #E5E7EB;
+            text-align: center;
+            color: #6B7280;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📚 Bookmark Manager</h1>
+    <p style="color: #6B7280; font-size: 1.1rem;">Complete Project Summary — July 3, 2026</p>
+
+    <div class="section">
+        <h2>🏗️ Architecture</h2>
+        <h3>Directory Structure</h3>
+        <pre>
+bookmark-manager/
+├── index.html                      # Main entry point
+├── css/
+│   ├── style.css                   # Main CSS import
+│   ├── base/
+│   │   ├── variables.css           # CSS custom properties
+│   │   ├── reset.css               # Reset & base styles
+│   │   ├── typography.css          # Fonts & text styles
+│   │   └── layout.css              # App layout
+│   ├── components/
+│   │   ├── buttons.css             # All button styles
+│   │   ├── search.css              # Search bar & filters
+│   │   ├── navigation.css          # Categories & alphabet nav
+│   │   ├── grid.css                # Bookmark grid
+│   │   ├── cards.css               # Bookmark cards
+│   │   ├── stacks.css              # Stacked cards
+│   │   ├── badges.css              # Domain & duplicate badges
+│   │   ├── popups.css              # Popup styles
+│   │   ├── modals.css              # Modal styles
+│   │   ├── progress.css            # Classification progress
+│   │   ├── import-history.css      # Import history
+│   │   └── toast.css               # Toast notifications
+│   └── responsive/
+│       └── media-queries.css       # Responsive styles
+├── js/
+│   ├── app.js                      # Thin orchestrator (~200 lines)
+│   ├── aiClassifier.js             # DeepSeek API integration
+│   ├── bookmarkParser.js           # Chrome HTML parser
+│   ├── core/
+│   │   ├── bookmarkManager.js      # CRUD, sorting, grouping
+│   │   ├── categoryManager.js      # Category operations
+│   │   └── storageManager.js       # localStorage operations
+│   ├── features/
+│   │   ├── classificationManager.js # AI classification with progress
+│   │   ├── importManager.js        # Chrome HTML & JSON import
+│   │   ├── exportManager.js        # JSON & Chrome HTML export
+│   │   ├── thumbnailManager.js     # Thumbnail generation & caching
+│   │   └── linkChecker.js          # Link rot detection
+│   ├── ui/
+│   │   ├── uiManager.js            # UI updates, progress, stats
+│   │   ├── uiRenderer.js           # Card rendering (orchestrator)
+│   │   ├── cardBuilder.js          # Card construction
+│   │   ├── badgeManager.js         # Badge management
+│   │   ├── stackRenderer.js        # Stacked card rendering
+│   │   ├── alphabetNav.js          # Alphabetical navigation
+│   │   ├── popupManager.js         # Popup management
+│   │   ├── expandView.js           # Expand view
+│   │   ├── bulkActions.js          # Bulk operations logic
+│   │   ├── bulkUI.js               # Bulk UI management
+│   │   └── linkCheckUI.js          # Link check UI
+│   ├── handlers/
+│   │   ├── eventHandlers.js        # Event listeners
+│   │   ├── importExportHandlers.js # Import/Export handlers
+│   │   ├── classificationHandlers.js # AI classification handlers
+│   │   ├── linkCheckHandlers.js    # Link check handlers
+│   │   └── renderHandlers.js       # Rendering handlers
+│   └── utils/
+│       ├── domHelpers.js           # DOM utilities
+│       └── searchHelpers.js        # Search & filter utilities
+├── LICENSE
+└── README.md</pre>
+    </div>
+
+    <div class="section">
+        <h2>📊 File Count Summary</h2>
+        <table>
+            <thead>
+                <tr><th>Type</th><th>Files</th><th>Total Lines</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>CSS</td><td>17</td><td>~2,500</td></tr>
+                <tr><td>JavaScript</td><td>28</td><td>~5,500</td></tr>
+                <tr><td>HTML</td><td>1</td><td>~200</td></tr>
+                <tr><td><strong>Total</strong></td><td><strong>46</strong></td><td><strong>~8,200</strong></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>🎯 Features</h2>
+
+        <h3>1. Import/Export</h3>
+        <ul>
+            <li><strong>Chrome Import</strong> — Import bookmarks from Chrome HTML export</li>
+            <li><strong>JSON Export</strong> — Full data export (bookmarks, categories, tags, history)</li>
+            <li><strong>Chrome HTML Export</strong> — Export with categories as folders</li>
+            <li><strong>Import New Only</strong> — Skip duplicate bookmarks during import</li>
+        </ul>
+
+        <h3>2. AI Categorization</h3>
+        <ul>
+            <li><strong>DeepSeek API</strong> — Uses deepseek-v4-flash model</li>
+            <li><strong>Keyword Matching</strong> — Fast pre-matching with extensive keyword lists</li>
+            <li><strong>Batch Processing</strong> — Processes bookmarks in batches of 25</li>
+            <li><strong>Progress Tracking</strong> — Real-time progress bar with ETA</li>
+            <li><strong>Partial Results</strong> — Shows categories as they're classified</li>
+            <li><strong>To Review</strong> — Bookmarks that couldn't be classified go here</li>
+        </ul>
+
+        <h3>3. Categories (18 total)</h3>
+        <div class="two-col">
+            <ul>
+                <li>Career</li>
+                <li>Cooking/Food</li>
+                <li>DIY/Crafts</li>
+                <li>Education</li>
+                <li>Finance</li>
+                <li>Gaming</li>
+                <li>Health & Fitness</li>
+                <li>News</li>
+                <li>Productivity</li>
+            </ul>
+            <ul>
+                <li>Religious</li>
+                <li>Shopping</li>
+                <li>Social Media + Entertainment</li>
+                <li>Sports</li>
+                <li>Technology</li>
+                <li>Travel</li>
+                <li>Business</li>
+                <li>Science</li>
+                <li>To Review</li>
+            </ul>
+        </div>
+
+        <h3>4. Bulk Selection & Actions</h3>
+        <ul>
+            <li>Checkbox Selection</li>
+            <li>Select All</li>
+            <li>Bulk Archive</li>
+            <li>Bulk Unarchive</li>
+            <li>Bulk Delete</li>
+            <li>Move To</li>
+            <li>Selection Counter</li>
+            <li>Clear Selection</li>
+        </ul>
+
+        <h3>5. Link Checker</h3>
+        <ul>
+            <li><strong>Link Status Badges</strong> — ✅ Verified, ❌ Broken, ⚠️ Redirect, ⏱️ Timeout, ❓ Error</li>
+            <li><strong>Progress Modal</strong> — Real-time progress during scanning</li>
+            <li><strong>Results Modal</strong> — Summary with broken links list</li>
+            <li><strong>Bulk Actions</strong> — Move Broken to "To Review", Archive Broken, Delete Broken</li>
+            <li><strong>Re-check Broken</strong> — Re-scan only broken links</li>
+            <li><strong>Status Filter</strong> — Filter bookmarks by link status</li>
+        </ul>
+
+        <h3>6. Domain & URL Grouping</h3>
+        <ul>
+            <li><strong>Domain Groups</strong> — Purple badge with domain name and count</li>
+            <li><strong>URL Groups</strong> — Blue badge for exact URL duplicates</li>
+            <li><strong>Stacked Cards</strong> — Visual stacking with fan-out effect</li>
+            <li><strong>Popup</strong> — Click badge to see all grouped bookmarks</li>
+            <li><strong>Expand View</strong> — Full-screen view of all bookmarks in a group</li>
+        </ul>
+
+        <h3>7. Archive Management</h3>
+        <ul>
+            <li><strong>Archived Category</strong> — 🗄️ Archived in sidebar showing all archived bookmarks</li>
+            <li><strong>Archived Badge</strong> — "📁 Archived" badge on archived cards (right side)</li>
+            <li><strong>Show Archived Toggle</strong> — Toggle visibility of archived bookmarks</li>
+            <li><strong>Bulk Unarchive</strong> — Select and unarchive multiple bookmarks</li>
+            <li><strong>Individual Unarchive</strong> — Unarchive individual bookmarks with 📤 button</li>
+        </ul>
+
+        <h3>8. Alphabetical Navigation</h3>
+        <ul>
+            <li>A-Z Filter</li>
+            <li># Filter for non-letter domains</li>
+            <li>Active Letter indicator</li>
+            <li>Letter Status (bold = has bookmarks, faded = no bookmarks)</li>
+        </ul>
+
+        <h3>9. Search</h3>
+        <ul>
+            <li><strong>Wildcard Support</strong> — <code>*</code> (any characters) and <code>?</code> (single character)</li>
+            <li><strong>Search Fields</strong> — Title, URL, description, folder path, category, tags</li>
+            <li><strong>Real-time</strong> — Updates as you type</li>
+        </ul>
+
+        <h3>10. Sorting</h3>
+        <ul>
+            <li>Date Added (Newest)</li>
+            <li>Date Added (Oldest)</li>
+            <li>Title</li>
+            <li>URL</li>
+            <li>Category</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>🔧 Key Technical Components</h2>
+        <table>
+            <thead>
+                <tr><th>Module</th><th>Responsibility</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>app.js</code></td><td>Thin orchestrator, initializes all managers and handlers</td></tr>
+                <tr><td><code>bookmarkManager.js</code></td><td>CRUD operations, sorting, grouping, stats</td></tr>
+                <tr><td><code>categoryManager.js</code></td><td>Category operations, counts</td></tr>
+                <tr><td><code>storageManager.js</code></td><td>localStorage operations</td></tr>
+                <tr><td><code>classificationManager.js</code></td><td>AI classification with progress tracking</td></tr>
+                <tr><td><code>importManager.js</code></td><td>Chrome HTML & JSON import</td></tr>
+                <tr><td><code>exportManager.js</code></td><td>JSON & Chrome HTML export</td></tr>
+                <tr><td><code>thumbnailManager.js</code></td><td>Thumbnail generation & caching</td></tr>
+                <tr><td><code>linkChecker.js</code></td><td>Link rot detection</td></tr>
+                <tr><td><code>uiManager.js</code></td><td>UI updates, progress, stats, modals, toasts</td></tr>
+                <tr><td><code>uiRenderer.js</code></td><td>Card rendering orchestrator</td></tr>
+                <tr><td><code>cardBuilder.js</code></td><td>Card construction (thumbnail, content, footer)</td></tr>
+                <tr><td><code>badgeManager.js</code></td><td>Badge creation (archived, link status)</td></tr>
+                <tr><td><code>stackRenderer.js</code></td><td>Stacked card rendering</td></tr>
+                <tr><td><code>alphabetNav.js</code></td><td>Alphabetical navigation</td></tr>
+                <tr><td><code>popupManager.js</code></td><td>Popup management with smart positioning</td></tr>
+                <tr><td><code>expandView.js</code></td><td>Expand view with individual cards</td></tr>
+                <tr><td><code>bulkActions.js</code></td><td>Bulk operations logic</td></tr>
+                <tr><td><code>bulkUI.js</code></td><td>Action bar UI management</td></tr>
+                <tr><td><code>linkCheckUI.js</code></td><td>Link check UI (progress & results)</td></tr>
+                <tr><td><code>eventHandlers.js</code></td><td>All event listeners</td></tr>
+                <tr><td><code>importExportHandlers.js</code></td><td>Import/Export handlers</td></tr>
+                <tr><td><code>classificationHandlers.js</code></td><td>AI classification handlers</td></tr>
+                <tr><td><code>linkCheckHandlers.js</code></td><td>Link check handlers</td></tr>
+                <tr><td><code>renderHandlers.js</code></td><td>Rendering handlers</td></tr>
+                <tr><td><code>aiClassifier.js</code></td><td>DeepSeek API integration</td></tr>
+                <tr><td><code>bookmarkParser.js</code></td><td>Chrome HTML parser</td></tr>
+                <tr><td><code>searchHelpers.js</code></td><td>Search & filter functions</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>📦 Data Model</h2>
+        <pre>{
+    id: 'bm_1234567890_abc123',
+    title: 'Bookmark Title',
+    url: 'https://example.com',
+    description: 'Site description',
+    thumbnail: 'https://www.google.com/s2/favicons?domain=example.com&sz=128',
+    domain: 'example.com',
+    category: 'Technology',
+    folderPath: 'Bookmarks Bar > Tech',
+    folderArray: ['Bookmarks Bar', 'Tech'],
+    tags: ['tech', 'coding', 'tutorial'],
+    addedDate: '2024-01-15T12:00:00.000Z',
+    source: 'chrome',
+    importBatch: 1705315200000,
+    isArchived: false,
+    archivedDate: null,
+    linkStatus: {
+        status: 'verified',    // 'verified', 'broken', 'redirect', 'timeout', 'error'
+        statusText: '200 OK',
+        lastChecked: '2024-01-15T12:00:00.000Z',
+        elapsed: 123
+    },
+    isNewest: false
+}</pre>
+    </div>
+
+    <div class="section">
+        <h2>🎨 UI Components</h2>
+        <h3>Badges</h3>
+        <table>
+            <thead>
+                <tr><th>Badge</th><th>Color</th><th>Location</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>📁 Archived</td><td><span class="badge badge-gray">Gray</span></td><td>Right side of archived cards</td></tr>
+                <tr><td>✅ Verified</td><td><span class="badge badge-green">Green</span></td><td>Right side of card</td></tr>
+                <tr><td>❌ Broken</td><td><span class="badge badge-red">Red</span></td><td>Right side of card</td></tr>
+                <tr><td>⚠️ Redirect</td><td><span class="badge badge-yellow">Yellow</span></td><td>Right side of card</td></tr>
+                <tr><td>⏱️ Timeout</td><td><span class="badge badge-yellow">Orange</span></td><td>Right side of card</td></tr>
+                <tr><td>❓ Error</td><td><span class="badge badge-gray">Gray</span></td><td>Right side of card</td></tr>
+                <tr><td>🏢 Domain</td><td><span class="badge badge-purple">Purple</span></td><td>Top-right of stacked cards</td></tr>
+                <tr><td>📦 Duplicate</td><td><span class="badge badge-blue">Blue</span></td><td>Top-right of stacked cards</td></tr>
+                <tr><td>⭐ Newest</td><td><span class="badge badge-green">Green</span></td><td>On date label</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Buttons</h3>
+        <table>
+            <thead>
+                <tr><th>Button</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>📥 Import</td><td>Import Chrome bookmarks</td></tr>
+                <tr><td>💾 Export</td><td>Export bookmarks (JSON or Chrome HTML)</td></tr>
+                <tr><td>🤖 Auto-Classify</td><td>Run AI classification</td></tr>
+                <tr><td>🔗 Check Links</td><td>Scan for broken links</td></tr>
+                <tr><td>🗄️ Show Archived</td><td>Toggle archived visibility</td></tr>
+                <tr><td>🖼️ Clear Thumbnails</td><td>Clear thumbnail cache</td></tr>
+                <tr><td>🗑️ Clear All</td><td>Delete all bookmarks</td></tr>
+                <tr><td>☑ Select All</td><td>Select all visible bookmarks</td></tr>
+                <tr><td>✕ Clear</td><td>Clear selection</td></tr>
+                <tr><td>📥 Archive</td><td>Archive selected bookmarks</td></tr>
+                <tr><td>📤 Unarchive</td><td>Unarchive selected bookmarks</td></tr>
+                <tr><td>🗑️ Delete</td><td>Delete selected bookmarks</td></tr>
+                <tr><td>📂 Move To</td><td>Move selected bookmarks to another category</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>⚡ Keyboard Shortcuts</h2>
+        <table>
+            <thead>
+                <tr><th>Shortcut</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>Ctrl+F</code> / <code>Cmd+F</code></td><td>Focus search bar</td></tr>
+                <tr><td><code>Escape</code></td><td>Clear selection, close modals, close popups</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>🔒 Security</h2>
+        <ul>
+            <li>All data stored in browser localStorage</li>
+            <li>API key stored in memory only (prompted on load)</li>
+            <li>No data sent to external servers (except DeepSeek API)</li>
+            <li>XSS protection via sanitization</li>
+            <li>No tracking or analytics</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>📝 License</h2>
+        <p><strong>MIT License</strong> — Open source, free to use and modify.</p>
+    </div>
+
+    <div class="section">
+        <h2>🚀 Next Steps / Future Enhancements</h2>
+        <table>
+            <thead>
+                <tr><th>Feature</th><th>Description</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Domain Grouping</td><td>Group bookmarks by domain (purple badge)</td><td>✅ Complete</td></tr>
+                <tr><td>Link Rot Check</td><td>Check for broken links</td><td>✅ Complete</td></tr>
+                <tr><td>Archived Category</td><td>Show archived bookmarks in sidebar</td><td>✅ Complete</td></tr>
+                <tr><td>Bulk Unarchive</td><td>Select and unarchive multiple bookmarks</td><td>✅ Complete</td></tr>
+                <tr><td>Status Filter</td><td>Filter by link status</td><td>✅ Complete</td></tr>
+                <tr><td>Offline Reading</td><td>Read bookmarks offline</td><td>📋 Planned</td></tr>
+                <tr><td>Semantic Search</td><td>AI-powered search</td><td>📋 Planned</td></tr>
+                <tr><td>Chrome Extension</td><td>Direct bookmarking from browser</td><td>📋 Planned</td></tr>
+                <tr><td>Mobile App</td><td>iOS and Android apps</td><td>📋 Planned</td></tr>
+                <tr><td>Auto-sync</td><td>Sync across devices</td><td>📋 Planned</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        <p><strong>Bookmark Manager</strong> — Complete Project Summary</p>
+        <p style="font-size: 0.75rem;">Generated: July 3, 2026</p>
+    </div>
+
+</body>
+</html>

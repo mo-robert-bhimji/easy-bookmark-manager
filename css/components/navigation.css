@@ -1,5 +1,5 @@
 /* ========================================
-   🧭 NAVIGATION
+   🧭 NAVIGATION - WITH ARCHIVED CATEGORY
    ======================================== */
 
 /* ----- Categories ----- */
@@ -61,6 +61,68 @@
 .categories-list li.active .count {
     background: rgba(255, 255, 255, 0.2);
     color: white;
+}
+
+/* ----- Archived category special styling ----- */
+.categories-list li:last-child .count {
+    background: #6B7280;
+    color: white;
+}
+
+.categories-list li.active:last-child {
+    background: #6B7280;
+    color: white;
+}
+
+.categories-list li.active:last-child .count {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+/* ----- Link Status Categories ----- */
+.categories-list .status-verified {
+    color: #059669;
+}
+
+.categories-list .status-broken {
+    color: #DC2626;
+}
+
+.categories-list .status-redirect {
+    color: #D97706;
+}
+
+.categories-list .status-timeout {
+    color: #F97316;
+}
+
+.categories-list .status-error {
+    color: #6B7280;
+}
+
+.categories-list .status-verified .count {
+    background: #D1FAE5;
+    color: #059669;
+}
+
+.categories-list .status-broken .count {
+    background: #FEE2E2;
+    color: #DC2626;
+}
+
+.categories-list .status-redirect .count {
+    background: #FEF3C7;
+    color: #D97706;
+}
+
+.categories-list .status-timeout .count {
+    background: #FED7AA;
+    color: #F97316;
+}
+
+.categories-list .status-error .count {
+    background: #F3F4F6;
+    color: #6B7280;
 }
 
 /* ----- Alphabet Navigation ----- */
@@ -126,4 +188,104 @@
     background: transparent;
     color: #D1D5DB;
     transform: none;
+}
+
+/* ----- Link Status Filter ----- */
+.status-filter {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: var(--background);
+    border-radius: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.status-filter .filter-btn {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-secondary);
+}
+
+.status-filter .filter-btn:hover {
+    background: var(--background);
+}
+
+.status-filter .filter-btn.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.status-filter .filter-btn.verified {
+    border-color: #10B981;
+}
+
+.status-filter .filter-btn.verified.active {
+    background: #D1FAE5;
+    color: #059669;
+}
+
+.status-filter .filter-btn.broken {
+    border-color: #EF4444;
+}
+
+.status-filter .filter-btn.broken.active {
+    background: #FEE2E2;
+    color: #DC2626;
+}
+
+.status-filter .filter-btn.redirect {
+    border-color: #F59E0B;
+}
+
+.status-filter .filter-btn.redirect.active {
+    background: #FEF3C7;
+    color: #D97706;
+}
+
+.status-filter .filter-btn.timeout {
+    border-color: #F97316;
+}
+
+.status-filter .filter-btn.timeout.active {
+    background: #FED7AA;
+    color: #F97316;
+}
+
+.status-filter .filter-btn.error {
+    border-color: #6B7280;
+}
+
+.status-filter .filter-btn.error.active {
+    background: #F3F4F6;
+    color: #6B7280;
+}
+
+@media (max-width: 768px) {
+    .alphabet-nav {
+        width: 24px;
+        margin-left: 0.5rem;
+    }
+    
+    .alphabet-nav .letter {
+        width: 18px;
+        height: 18px;
+        font-size: 0.55rem;
+    }
+    
+    .status-filter {
+        gap: 0.3rem;
+        padding: 0.15rem 0.3rem;
+    }
+    
+    .status-filter .filter-btn {
+        font-size: 0.55rem;
+        padding: 0.1rem 0.3rem;
+    }
 }

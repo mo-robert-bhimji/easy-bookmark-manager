@@ -1,6 +1,5 @@
 // ========================================
-// 🎨 UI MANAGER
-// Handles UI updates, progress, stats, modals, toasts
+// 🎨 UI MANAGER (FIXED)
 // ========================================
 
 export class UIManager {
@@ -9,7 +8,6 @@ export class UIManager {
         this.initializeElements();
     }
 
-    // ----- Initialize all DOM element references -----
     initializeElements() {
         this.elements = {
             bookmarksGrid: document.getElementById('bookmarksGrid'),
@@ -51,26 +49,88 @@ export class UIManager {
         };
     }
 
-    // ----- Render categories list -----
     renderCategories(categories, currentCategory, categoryCounts) {
         const list = this.elements.categoriesList;
         if (!list) return;
         
         list.innerHTML = '';
         
-        categories.forEach(category => {
+        // Get archived count
+        const archivedCount = window.app ? window.app.bookmarkManager.getArchivedBookmarks().length : 0;
+        
+        // Start with all categories (including To Review and Anomalies)
+        let allCategories = [...categories];
+        
+        // Ensure To Review and Anomalies are in the list even if they have 0 count
+        if (!allCategories.includes('To Review')) {
+            allCategories.push('To Review');
+        }
+        if (!allCategories.includes('Anomalies')) {
+            allCategories.push('Anomalies');
+        }
+        
+        // Add "Archived" category if there are archived bookmarks
+        if (archivedCount > 0) {
+            allCategories.push('Archived');
+        }
+        
+        // Sort categories (put special ones first)
+        const specialCategories = ['All', 'To Review', 'Anomalies', 'Archived'];
+        const regularCategories = allCategories
+            .filter(c => !specialCategories.includes(c))
+            .sort();
+        
+        const sortedCategories = [
+            ...specialCategories.filter(c => allCategories.includes(c)),
+            ...regularCategories
+        ];
+        
+        sortedCategories.forEach(category => {
             const li = document.createElement('li');
             li.className = category === currentCategory ? 'active' : '';
-            const count = categoryCounts[category] || 0;
+            
+            let count = 0;
+            let icon = '📁';
+            
+            if (category === 'Archived') {
+                count = archivedCount;
+                icon = '🗄️';
+            } else if (category === 'To Review') {
+                count = categoryCounts[category] || 0;
+                icon = '📋';
+            } else if (category === 'Anomalies') {
+                count = categoryCounts[category] || 0;
+                icon = '⚠️';
+            } else if (category === 'All') {
+                count = categoryCounts[category] || 0;
+                icon = '📚';
+            } else {
+                count = categoryCounts[category] || 0;
+                icon = '📁';
+            }
+            
+            // Show badge for To Review even if count is 0 (so users know it exists)
+            const countDisplay = category === 'To Review' || category === 'Anomalies' ? count : count;
+            
             li.innerHTML = `
-                <span>📁 ${category}</span>
-                <span class="count">${count}</span>
+                <span>${icon} ${category}</span>
+                <span class="count">${countDisplay}</span>
             `;
+            
+            // Add visual indicator for empty To Review (shows it's available but empty)
+            if (category === 'To Review' && count === 0) {
+                li.style.opacity = '0.6';
+                li.title = 'No bookmarks awaiting review';
+            }
+            if (category === 'Anomalies' && count === 0) {
+                li.style.opacity = '0.6';
+                li.title = 'No anomaly bookmarks found';
+            }
+            
             list.appendChild(li);
         });
     }
 
-    // ----- Render stats -----
     renderStats(stats) {
         const el = this.elements.stats;
         if (el) {
@@ -84,7 +144,6 @@ export class UIManager {
         }
     }
 
-    // ----- Render import history -----
     renderImportHistory(history) {
         const container = this.elements.importHistory;
         if (!container) return;
@@ -109,12 +168,11 @@ export class UIManager {
         `;
     }
 
-    // ----- Update progress UI -----
     updateProgress(progress) {
         if (!progress) return;
         
         const percentage = progress.total > 0 ? (progress.classified / progress.total) * 100 : 0;
-        const isComplete = progress.classified === progress.total && progress.total > 0;
+        const isComplete = progress.classified === progress.total && progress.total > 0 && !progress.isRunning;
         const remaining = Math.max(0, progress.total - progress.classified);
         
         const bar = this.elements.progressBar;
@@ -134,7 +192,7 @@ export class UIManager {
         
         const badge = this.elements.progressStatusBadge;
         if (badge) {
-            if (isComplete) {
+            if (isComplete || (progress.total > 0 && progress.classified === progress.total && !progress.isRunning)) {
                 badge.className = 'status-badge complete';
                 badge.textContent = '✅ Complete';
             } else if (progress.isRunning && !progress.isPaused) {
@@ -157,7 +215,7 @@ export class UIManager {
         
         const etaEl = this.elements.progressEta;
         if (etaEl) {
-            if (isComplete) {
+            if (isComplete || (progress.total > 0 && progress.classified === progress.total && !progress.isRunning)) {
                 etaEl.innerHTML = '✅ Complete!';
             } else if (progress.isRunning && progress.classified > 0 && progress.startTime) {
                 const elapsed = (Date.now() - progress.startTime) / 1000;
@@ -211,7 +269,42 @@ export class UIManager {
         }
     }
 
-    // ----- Add log entry -----
+    // ----- Reset progress UI (force clean state) -----
+    resetProgressUI() {
+        const progress = {
+            classified: 0,
+            total: 0,
+            isRunning: false,
+            isPaused: false,
+            isCancelled: false,
+            apiCalls: 0,
+            startTime: null
+        };
+        this.updateProgress(progress);
+        
+        // Reset progress bar
+        const bar = this.elements.progressBar;
+        if (bar) bar.style.width = '0%';
+        
+        // Reset status badge
+        const badge = this.elements.progressStatusBadge;
+        if (badge) {
+            badge.className = 'status-badge idle';
+            badge.textContent = '⏸ Idle';
+        }
+        
+        // Clear ETA
+        const etaEl = this.elements.progressEta;
+        if (etaEl) etaEl.innerHTML = '⏸ Waiting...';
+        
+        // Hide progress section
+        const progressSectionEl = document.querySelector('.progress-section');
+        if (progressSectionEl) {
+            progressSectionEl.style.display = 'none';
+            progressSectionEl.classList.remove('active');
+        }
+    }
+
     addLogEntry(entry) {
         const container = this.elements.progressLog;
         if (!container) return;
@@ -242,13 +335,11 @@ export class UIManager {
         }
     }
 
-    // ----- Clear log -----
     clearLog() {
         const container = this.elements.progressLog;
         if (container) container.innerHTML = '';
     }
 
-    // ----- Show toast notification -----
     showToast(message, icon = '✅', duration = 3000) {
         const existing = document.querySelector('.toast');
         if (existing) existing.remove();
@@ -267,7 +358,6 @@ export class UIManager {
         }, duration);
     }
 
-    // ----- Show modal -----
     showModal(title, content) {
         const modal = document.getElementById('modal');
         if (!modal) return;
@@ -281,13 +371,11 @@ export class UIManager {
         modal.style.display = 'block';
     }
 
-    // ----- Hide modal -----
     hideModal() {
         const modal = document.getElementById('modal');
         if (modal) modal.style.display = 'none';
     }
 
-    // ----- Expand progress section -----
     expandProgress() {
         const body = this.elements.progressBody;
         const icon = this.elements.progressToggleIcon;
@@ -295,7 +383,6 @@ export class UIManager {
         if (icon) icon.textContent = '▼';
     }
 
-    // ----- Collapse progress section -----
     collapseProgress() {
         const body = this.elements.progressBody;
         const icon = this.elements.progressToggleIcon;
@@ -303,7 +390,6 @@ export class UIManager {
         if (icon) icon.textContent = '▶';
     }
 
-    // ----- Toggle progress section -----
     toggleProgress() {
         const isExpanded = this.elements.progressBody?.classList.contains('expanded');
         if (isExpanded) {

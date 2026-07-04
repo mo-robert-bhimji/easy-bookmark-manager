@@ -1,5 +1,5 @@
 // ========================================
-// 🤖 CLASSIFICATION MANAGER
+// 🤖 CLASSIFICATION MANAGER (FIXED)
 // Handles AI classification with progress tracking
 // ========================================
 
@@ -8,7 +8,7 @@ export class ClassificationManager {
         this.aiClassifier = aiClassifier;
         this.bookmarkManager = bookmarkManager;
         this.categoryManager = categoryManager;
-        
+
         this.isRunning = false;
         this.isPaused = false;
         this.isCancelled = false;
@@ -21,7 +21,7 @@ export class ClassificationManager {
         this.progressCallbacks = [];
         this.logCallbacks = [];
         this.partialResultsCallbacks = [];
-        
+
         this.batchSize = 25;
         this.batchDelay = 10;
     }
@@ -75,7 +75,7 @@ export class ClassificationManager {
     // ----- Run classification -----
     async classifyAll(categoryNames = null) {
         const activeBookmarks = this.bookmarkManager.getActiveBookmarks();
-        
+
         if (activeBookmarks.length === 0) {
             this.addLog('No active bookmarks to classify.', 'warning');
             return { success: false, message: 'No active bookmarks to classify.' };
@@ -95,7 +95,7 @@ export class ClassificationManager {
         this.apiCalls = 0;
         this.errors = [];
         this.logs = [];
-        
+
         this.addLog(`🚀 Starting classification of ${this.totalToClassify.toLocaleString()} bookmarks...`, 'info');
         this.addLog(`📦 Batch size: ${this.batchSize} bookmarks per call`, 'info');
         this.addLog(`🤖 Using DeepSeek ${this.aiClassifier.model || 'V4'}`, 'info');
@@ -110,11 +110,21 @@ export class ClassificationManager {
 
             let newCategoriesAdded = 0;
             categoryNames.forEach(cat => {
-                if (cat !== 'Uncategorized') {
-                    const added = this.categoryManager.addCategory(cat);
-                    if (added) newCategoriesAdded++;
-                }
+                // Don't filter out 'To Review' or 'Anomalies' - they should always be added
+                const added = this.categoryManager.addCategory(cat);
+                if (added) newCategoriesAdded++;
             });
+
+            // Ensure To Review and Anomalies always exist
+            if (!this.categoryManager.getCategories().includes('To Review')) {
+                this.categoryManager.addCategory('To Review');
+                newCategoriesAdded++;
+            }
+            if (!this.categoryManager.getCategories().includes('Anomalies')) {
+                this.categoryManager.addCategory('Anomalies');
+                newCategoriesAdded++;
+            }
+
             if (newCategoriesAdded > 0) {
                 this.addLog(`➕ Added ${newCategoriesAdded} new categories`, 'info');
             }
@@ -150,9 +160,11 @@ export class ClassificationManager {
 
                 try {
                     const classifications = await this.aiClassifier.classifyBookmarks(batch, categoryNames);
-                    
+
                     batch.forEach((bookmark, idx) => {
-                        bookmark.category = classifications[idx]?.category || 'Uncategorized';
+                        // Use the classification result, default to 'To Review' if not assigned
+                        const category = classifications[idx]?.category || 'To Review';
+                        bookmark.category = category;
                         if (!bookmark.tags || bookmark.tags.length === 0) {
                             bookmark.tags = classifications[idx]?.tags || [];
                         }
@@ -165,9 +177,10 @@ export class ClassificationManager {
                         error: batchError.message,
                         bookmarks: batch.map(b => b.title).join(', ')
                     });
-                    
+
+                    // On error, assign to 'To Review' instead of 'Uncategorized'
                     batch.forEach(bookmark => {
-                        bookmark.category = 'Uncategorized';
+                        bookmark.category = 'To Review';
                     });
                 }
 
@@ -184,12 +197,18 @@ export class ClassificationManager {
                 }
             }
 
-            if (!this.categoryManager.getCategories().includes('Uncategorized')) {
-                this.categoryManager.addCategory('Uncategorized');
+            // Ensure To Review and Anomalies categories exist (even if empty)
+            if (!this.categoryManager.getCategories().includes('To Review')) {
+                this.categoryManager.addCategory('To Review');
+            }
+            if (!this.categoryManager.getCategories().includes('Anomalies')) {
+                this.categoryManager.addCategory('Anomalies');
             }
 
             this.isRunning = false;
-            
+            this.isPaused = false;
+            this.isCancelled = false;
+
             const errorCount = this.errors.length;
             const successMsg = `✅ Classification complete! ${this.totalToClassify.toLocaleString()} bookmarks categorized.`;
             const errorMsg = errorCount > 0 ? `\n⚠️ ${errorCount} batch(es) had errors. Check the log for details.` : '';
@@ -264,7 +283,7 @@ export class ClassificationManager {
     getStats() {
         const elapsed = this.startTime ? Math.floor((Date.now() - this.startTime) / 1000) : 0;
         const speed = this.classifiedCount > 0 && elapsed > 0 ? Math.round(this.classifiedCount / elapsed) : 0;
-        
+
         return {
             classified: this.classifiedCount,
             total: this.totalToClassify,

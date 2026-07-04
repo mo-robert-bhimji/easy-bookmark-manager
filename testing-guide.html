@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmark Manager - Testing Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #F3F4F6;
+            padding: 2rem;
+            line-height: 1.6;
+            color: #111827;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #4F46E5;
+            margin-bottom: 0.25rem;
+        }
+
+        .subtitle {
+            color: #6B7280;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.05rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-green {
+            background: #D1FAE5;
+            color: #059669;
+        }
+        .badge-red {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+        .badge-yellow {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+        .badge-blue {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+        .badge-gray {
+            background: #F3F4F6;
+            color: #6B7280;
+        }
+        .badge-purple {
+            background: #EEF2FF;
+            color: #4F46E5;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #1F2937;
+            border-bottom: 2px solid #E5E7EB;
+            padding-bottom: 0.25rem;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        h4 {
+            font-size: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 0.25rem;
+            color: #4B5563;
+        }
+
+        p {
+            margin-bottom: 0.75rem;
+            color: #4B5563;
+        }
+
+        ul,
+        ol {
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        li {
+            margin-bottom: 0.25rem;
+        }
+
+        code {
+            background: #F3F4F6;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-family: 'Courier New', monospace;
+            color: #DC2626;
+        }
+
+        pre {
+            background: #1F2937;
+            color: #D1D5DB;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            white-space: pre-wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #E5E7EB;
+            text-align: left;
+        }
+
+        th {
+            background: #F9FAFB;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        tr:nth-child(even) {
+            background: #F9FAFB;
+        }
+
+        .step-box {
+            background: #F9FAFB;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #4F46E5;
+        }
+
+        .step-box .step-number {
+            display: inline-block;
+            background: #4F46E5;
+            color: white;
+            width: 28px;
+            height: 28px;
+            text-align: center;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.85rem;
+            line-height: 28px;
+            margin-right: 0.5rem;
+        }
+
+        .step-box strong {
+            color: #111827;
+        }
+
+        .cmd {
+            background: #1F2937;
+            color: #D1D5DB;
+            padding: 0.1rem 0.6rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.5rem;
+            margin: 0.5rem 0 1rem 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0.5rem;
+            background: #F9FAFB;
+            border-radius: 4px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #4F46E5;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            font-size: 0.85rem;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .status-tag {
+            font-size: 0.65rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .status-tag.passed {
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        .status-tag.failed {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .status-tag.pending {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .quick-fix {
+            background: #FEF3C7;
+            border-left: 4px solid #F59E0B;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .quick-fix strong {
+            color: #92400E;
+        }
+
+        .footer {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #E5E7EB;
+            text-align: center;
+            color: #6B7280;
+            font-size: 0.85rem;
+        }
+
+        .print-btn {
+            background: #4F46E5;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .print-btn:hover {
+            background: #4338CA;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+        }
+
+        @media print {
+            .print-btn {
+                display: none;
+            }
+            body {
+                background: white;
+                padding: 0.5in;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+            }
+            .step-box {
+                break-inside: avoid;
+            }
+            .checkbox-grid {
+                break-inside: avoid;
+            }
+            table {
+                break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            .container {
+                padding: 1.25rem;
+            }
+            .checkbox-grid {
+                grid-template-columns: 1fr;
+            }
+            table {
+                font-size: 0.75rem;
+            }
+            th,
+            td {
+                padding: 0.3rem 0.4rem;
+            }
+        }
+
+        .warning {
+            background: #FEF2F2;
+            border-left: 4px solid #EF4444;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .warning strong {
+            color: #DC2626;
+        }
+
+        .success {
+            background: #ECFDF5;
+            border-left: 4px solid #10B981;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .success strong {
+            color: #059669;
+        }
+
+        .info {
+            background: #EFF6FF;
+            border-left: 4px solid #3B82F6;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .info strong {
+            color: #2563EB;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+
+        <h1>📚 Bookmark Manager</h1>
+        <p class="subtitle">Complete Testing Guide — July 3, 2026</p>
+
+        <!-- ============================================================ -->
+        <!-- STEP 1: CLEAR ALL DATA                                        -->
+        <!-- ============================================================ -->
+        <h2>🧪 Full Testing Guide</h2>
+
+        <h3>Step 1: Clear All Data</h3>
+
+        <h4>Option A: From the App</h4>
+        <ol>
+            <li>Click <strong>"🗑️ Clear All"</strong> button in the header</li>
+            <li>Confirm the dialog</li>
+            <li>All bookmarks, categories, and history are cleared</li>
+        </ol>
+
+        <h4>Option B: From Browser Console (F12)</h4>
+        <pre>// Clear everything
+app.bookmarkManager.clearAll();
+app.categoryManager.setCategories(['All']);
+app.importManager.clearImportHistory();
+app.saveData();
+app.renderAll();
+console.log('✅ All data cleared');
+location.reload(); // Optional: reload to reset state</pre>
+
+        <h4>Option C: Clear Browser Data</h4>
+        <ol>
+            <li>Open Dev Tools (F12)</li>
+            <li>Go to <strong>Application</strong> tab</li>
+            <li><strong>Storage → Local Storage</strong></li>
+            <li>Right-click on your domain → <strong>Clear</strong></li>
+        </ol>
+
+        <div class="success">
+            <strong>✅ After clearing:</strong> You should see "All" category only, "0 bookmarks" in the header, empty grid with import button, and no progress bar visible.
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- STEP 2: REFRESH                                               -->
+        <!-- ============================================================ -->
+        <h3>Step 2: Refresh the Page</h3>
+        <p>Refresh the page. You should see:</p>
+        <ul>
+            <li>✅ "All" category only</li>
+            <li>✅ "0 bookmarks" in the header</li>
+            <li>✅ Empty grid with import button</li>
+            <li>✅ No progress bar visible</li>
+        </ul>
+
+        <!-- ============================================================ -->
+        <!-- STEP 3: IMPORT BOOKMARKS                                     -->
+        <!-- ============================================================ -->
+        <h3>Step 3: Import Bookmarks</h3>
+        <ol>
+            <li><strong>Export from Chrome:</strong> Go to <code>chrome://bookmarks/</code> → Click the three dots → "Export bookmarks"</li>
+            <li><strong>Click "📥 Import"</strong> in the app</li>
+            <li><strong>Check "Import new bookmarks only"</strong> (should be checked by default)</li>
+            <li><strong>Select your HTML file</strong></li>
+            <li><strong>Wait for import</strong> — you should see:
+                <pre>Successfully imported X new bookmarks from "file.html"!</pre>
+            </li>
+            <li><strong>Check the sidebar</strong> — "All" should show the total count</li>
+        </ol>
+
+        <div class="info">
+            <strong>💡 Tip:</strong> If you have 2022 bookmarks, the import should show exactly that number.
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- STEP 4: AI CLASSIFICATION                                    -->
+        <!-- ============================================================ -->
+        <h3>Step 4: Run AI Classification</h3>
+        <ol>
+            <li><strong>Click "🤖 Auto-Classify"</strong></li>
+            <li><strong>Enter your DeepSeek API key</strong> when prompted</li>
+            <li><strong>Progress bar appears</strong> showing:
+                <ul>
+                    <li>Total bookmarks</li>
+                    <li>Classified count</li>
+                    <li>ETA</li>
+                    <li>Batch progress</li>
+                </ul>
+            </li>
+            <li><strong>Wait for completion</strong> (5-20 minutes depending on bookmarks)</li>
+            <li><strong>Progress bar auto-hides</strong> when complete</li>
+            <li><strong>Categories appear</strong> in the sidebar with counts</li>
+        </ol>
+
+        <div class="warning">
+            <strong>⚠️ Note:</strong> If you don't have a DeepSeek API key, you can still test all other features except AI classification.
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- STEP 5: LINK CHECKER                                         -->
+        <!-- ============================================================ -->
+        <h3>Step 5: Test Link Checker</h3>
+        <ol>
+            <li><strong>Click "🔗 Check Links"</strong></li>
+            <li><strong>Confirm</strong> the dialog</li>
+            <li><strong>Progress modal appears</strong> showing:
+                <ul>
+                    <li>Progress bar</li>
+                    <li>Working/Broken/Redirect counts</li>
+                </ul>
+            </li>
+            <li><strong>Wait for completion</strong> (2-5 minutes for 2000 bookmarks)</li>
+            <li><strong>Results modal shows</strong>:
+                <ul>
+                    <li>Summary cards with counts</li>
+                    <li>Broken links list (if any)</li>
+                    <li>Action buttons</li>
+                </ul>
+            </li>
+            <li><strong>Check cards</strong> — Link status badges appear (✅ Verified, ❌ Broken, etc.)</li>
+        </ol>
+
+        <div class="info">
+            <strong>💡 Tip:</strong> The link checker uses <code>no-cors</code> mode, so it may not detect all broken links perfectly. It's a best-effort check.
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- STEP 6: CATEGORIES                                           -->
+        <!-- ============================================================ -->
+        <h3>Step 6: Test Categories &amp; Navigation</h3>
+        <ol>
+            <li><strong>Click different categories</strong> in the sidebar</li>
+            <li><strong>Check header count</strong> matches the category count</li>
+            <li><strong>Click "🗄️ Archived"</strong> (should show 0 if none archived)</li>
+            <li><strong>Click "📁 Show Active"</strong> to return</li>
+        </ol>
+
+        <!-- ============================================================ -->
+        <!-- STEP 7: BULK SELECTION                                       -->
+        <!-- ============================================================ -->
+        <h3>Step 7: Test Bulk Selection</h3>
+        <ol>
+            <li><strong>Hover over a card</strong> → Checkbox appears in top-left</li>
+            <li><strong>Select 2-3 bookmarks</strong> by checking boxes</li>
+            <li><strong>Action bar appears</strong> with:
+                <ul>
+                    <li>"X selected" count</li>
+                    <li>📥 Archive button</li>
+                    <li>📤 Unarchive button</li>
+                    <li>🗑️ Delete button</li>
+                    <li>📂 Move To button</li>
+                </ul>
+            </li>
+            <li><strong>Click "📂 Move To"</strong> → Modal opens with categories</li>
+            <li><strong>Select a category</strong> → Bookmark moves to that category</li>
+            <li><strong>Check sidebar</strong> — category counts update</li>
+        </ol>
+
+        <!-- ============================================================ -->
+        <!-- STEP 8: ARCHIVE                                              -->
+        <!-- ============================================================ -->
+        <h3>Step 8: Test Archive</h3>
+        <ol>
+            <li><strong>Select a bookmark</strong> → Click "📥 Archive"</li>
+            <li><strong>Confirm</strong> the dialog</li>
+            <li><strong>Check sidebar</strong> — "🗄️ Archived" appears with count (if first archive)</li>
+            <li><strong>Click "🗄️ Archived"</strong> to see archived bookmarks</li>
+            <li><strong>Archived cards show</strong>:
+                <ul>
+                    <li>"📁 Archived" badge on right side</li>
+                    <li>"📁 Archived (was: [category])" in footer</li>
+                    <li>📤 (Unarchive) button</li>
+                </ul>
+            </li>
+            <li><strong>Select archived items</strong> → "📤 Unarchive" button appears</li>
+            <li><strong>Click "📤 Unarchive"</strong> → Bookmarks restored to original category</li>
+        </ol>
+
+        <!-- ============================================================ -->
+        <!-- STEP 9: ALPHABET NAV                                         -->
+        <!-- ============================================================ -->
+        <h3>Step 9: Test Alphabet Navigation</h3>
+        <ol>
+            <li><strong>Click a letter</strong> in the right-side alphabet nav (e.g., "M")</li>
+            <li><strong>Only bookmarks starting with that letter show</strong></li>
+            <li><strong>Header shows</strong> "All Bookmarks • Letter: M"</li>
+            <li><strong>Letter is highlighted</strong> in the nav</li>
+            <li><strong>Click the letter again</strong> to clear filter</li>
+        </ol>
+
+        <!-- ============================================================ -->
+        <!-- STEP 10: SEARCH                                              -->
+        <!-- ============================================================ -->
+        <h3>Step 10: Test Search</h3>
+        <ol>
+            <li><strong>Type a search term</strong> in the search bar (e.g., "github")</li>
+            <li><strong>Results filter</strong> in real-time</li>
+            <li><strong>Wildcards work</strong>: <code>*reddit*</code>, <code>techn?logy</code></li>
+            <li><strong>Search clears</strong> selection and letter filters</li>
+            <li><strong>Press Escape</strong> to clear search</li>
+        </ol>
+
+        <!-- ============================================================ -->
+        <!-- STEP 11: SORTING                                             -->
+        <!-- ============================================================ -->
+        <h3>Step 11: Test Sorting</h3>
+        <ol>
+            <li><strong>Click "Sort by" dropdown</strong></li>
+            <li><strong>Try each option</strong>:
+                <ul>
+                    <li>Date Added (Newest) → Newest first</li>
+                    <li>Date Added (Oldest) → Oldest first</li>
+                    <li>Title → Alphabetical by title</li>
+                    <li>URL → Alphabetical by URL</li>
+                    <li>Category → Alphabetical by category</li>
+                </ul>
+            </li>
+        </ol>
+
+        <!-- ============================================================ -->
+        <!-- STEP 12: EXPAND VIEW                                         -->
+        <!-- ============================================================ -->
+        <h3>Step 12: Test Expand View (Domain/URL Groups)</h3>
+        <ol>
+            <li><strong>Find a card with a purple badge</strong> (domain group)</li>
+            <li><strong>Click the purple badge</strong> → Popup appears</li>
+            <li><strong>Click "🔍 Expand"</strong> → Full-screen view of all bookmarks in group</li>
+            <li><strong>Click "← Back"</strong> to return</li>
+            <li><strong>Click a card</strong> in expand view → Opens URL in new tab</li>
+        </ol>
+
+        <!-- ============================================================ -->
+        <!-- STEP 13: EXPORT                                              -->
+        <!-- ============================================================ -->
+        <h3>Step 13: Test Export</h3>
+        <ol>
+            <li><strong>Click "💾 Export"</strong></li>
+            <li><strong>Select format</strong>:
+                <ul>
+                    <li><strong>JSON</strong> → Full app data</li>
+                    <li><strong>Chrome HTML</strong> → Categories as folders</li>
+                </ul>
+            </li>
+            <li><strong>Download the file</strong></li>
+            <li><strong>Verify</strong> the exported file contains your bookmarks</li>
+        </ol>
+
+        <!-- ============================================================ -->
+        <!-- STEP 14: IMPORT JSON                                         -->
+        <!-- ============================================================ -->
+        <h3>Step 14: Import JSON Backup</h3>
+        <ol>
+            <li><strong>Clear all data</strong> (optional)</li>
+            <li><strong>Click "📥 Import"</strong></li>
+            <li><strong>Select "Import from JSON Export"</strong></li>
+            <li><strong>Choose your exported JSON file</strong></li>
+            <li><strong>Verify</strong> all bookmarks and categories are restored</li>
+        </ol>
+
+        <!-- ============================================================ -->
+        <!-- TESTING CHECKLIST                                            -->
+        <!-- ============================================================ -->
+        <h2>📋 Testing Checklist</h2>
+
+        <div class="checkbox-grid">
+            <div class="checkbox-item">
+                <input type="checkbox" id="c1">
+                <label for="c1">Clear All</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c2">
+                <label for="c2">Import Bookmarks</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c3">
+                <label for="c3">Auto-Classify</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c4">
+                <label for="c4">Link Checker</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c5">
+                <label for="c5">Categories</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c6">
+                <label for="c6">Archived Category</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c7">
+                <label for="c7">Bulk Selection</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c8">
+                <label for="c8">Move To</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c9">
+                <label for="c9">Archive/Unarchive</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c10">
+                <label for="c10">Alphabet Navigation</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c11">
+                <label for="c11">Search</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c12">
+                <label for="c12">Sorting</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c13">
+                <label for="c13">Expand View</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c14">
+                <label for="c14">Export JSON</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c15">
+                <label for="c15">Export Chrome HTML</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c16">
+                <label for="c16">Import JSON</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c17">
+                <label for="c17">Link Status Badges</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c18">
+                <label for="c18">Status Filter</label>
+            </div>
+        </div>
+
+        <div class="info">
+            <strong>💡 Tip:</strong> Click the checkboxes as you complete each test. You can also print this page to have a physical checklist.
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- QUICK FIXES                                                  -->
+        <!-- ============================================================ -->
+        <h2>🐛 Quick Fix Console Commands</h2>
+
+        <table>
+            <thead>
+                <tr><th>Issue</th><th>Command</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Fix category counts</td><td><code>app.renderAll();</code></td></tr>
+                <tr><td>Force re-render</td><td><code>app.renderBookmarks();</code></td></tr>
+                <tr><td>Save data</td><td><code>app.saveData();</code></td></tr>
+                <tr><td>Check total bookmarks</td><td><code>app.bookmarkManager.getBookmarks().length;</code></td></tr>
+                <tr><td>Check category counts</td><td><code>app.categoryManager.getCategoryCounts(app.bookmarkManager.getBookmarks());</code></td></tr>
+                <tr><td>Clear selection</td><td><code>app.bulkActions.clearSelection();</code></td></tr>
+                <tr><td>Reset UI</td><td><code>app.resetUI();</code></td></tr>
+            </tbody>
+        </table>
+
+        <!-- ============================================================ -->
+        <!-- CLASSIFICATION FIX                                           -->
+        <!-- ============================================================ -->
+        <h3>If AI Classification Fails</h3>
+        <pre>// Check if AI is available
+console.log('AI available:', !!app.aiClassifier);
+
+// Check classification manager
+console.log('Classification running:', app.classificationManager?.isRunning);
+
+// Reset classification state
+app.classificationManager.isRunning = false;
+app.classificationManager.isPaused = false;
+app.classificationManager.isCancelled = false;
+app.resetUI();</pre>
+
+        <!-- ============================================================ -->
+        <!-- LINK CHECKER FIX                                             -->
+        <!-- ============================================================ -->
+        <h3>If Link Checker Fails</h3>
+        <pre>// Check link checker state
+console.log('Link checker running:', app.linkChecker.isRunning);
+
+// Reset link checker
+app.linkChecker.isRunning = false;
+app.linkChecker.cancelled = false;</pre>
+
+        <!-- ============================================================ -->
+        <!-- BULK ACTIONS FIX                                             -->
+        <!-- ============================================================ -->
+        <h3>If Bulk Actions Don't Work</h3>
+        <pre>// Check bulk actions
+console.log('BulkActions:', app.bulkActions);
+console.log('Selected IDs:', app.bulkActions.getSelectedIds());
+
+// Force sync selection
+app.bulkActions.syncSelection();</pre>
+
+        <!-- ============================================================ -->
+        <!-- FINAL STATE                                                  -->
+        <!-- ============================================================ -->
+        <h2>✅ Expected Final State</h2>
+
+        <table>
+            <thead>
+                <tr><th>Item</th><th>Value</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Total Bookmarks</td><td>~2022</td></tr>
+                <tr><td>Categories</td><td>18 (including To Review)</td></tr>
+                <tr><td>Archived</td><td>0 (or whatever you archived)</td></tr>
+                <tr><td>Link Status</td><td>Verified/Broken/etc. badges on cards</td></tr>
+                <tr><td>Selection</td><td>Cleared</td></tr>
+                <tr><td>Search</td><td>Empty</td></tr>
+                <tr><td>Filters</td><td>None</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ============================================================ -->
+        <!-- SAVE AFTER TESTING                                           -->
+        <!-- ============================================================ -->
+        <h2>💾 Save Your Data</h2>
+
+        <p>Once everything is working, save your data and create a backup:</p>
+
+        <pre>// Save to localStorage
+app.saveData();
+
+// Export a backup
+app.showExportModal();</pre>
+
+        <div class="success">
+            <strong>✅ Testing Complete!</strong> Your Bookmark Manager is fully functional and ready to use.
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- FOOTER                                                       -->
+        <!-- ============================================================ -->
+        <div class="footer">
+            <p><strong>📚 Bookmark Manager</strong> — Complete Testing Guide</p>
+            <p style="font-size: 0.75rem; margin-top: 0.25rem;">Generated: July 3, 2026</p>
+        </div>
+
+    </div>
+
+</body>
+</html>
