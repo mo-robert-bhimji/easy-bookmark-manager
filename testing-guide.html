@@ -220,39 +220,43 @@
             flex: 1;
         }
 
-        .status-tag {
-            font-size: 0.65rem;
-            padding: 0.05rem 0.5rem;
-            border-radius: 10px;
-            font-weight: 500;
-        }
-
-        .status-tag.passed {
-            background: #D1FAE5;
-            color: #059669;
-        }
-
-        .status-tag.failed {
-            background: #FEE2E2;
-            color: #DC2626;
-        }
-
-        .status-tag.pending {
-            background: #FEF3C7;
-            color: #D97706;
-        }
-
-        .quick-fix {
-            background: #FEF3C7;
-            border-left: 4px solid #F59E0B;
+        .warning {
+            background: #FEF2F2;
+            border-left: 4px solid #EF4444;
             padding: 0.75rem 1rem;
             border-radius: 4px;
             margin: 0.5rem 0;
             font-size: 0.9rem;
         }
 
-        .quick-fix strong {
-            color: #92400E;
+        .warning strong {
+            color: #DC2626;
+        }
+
+        .success {
+            background: #ECFDF5;
+            border-left: 4px solid #10B981;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .success strong {
+            color: #059669;
+        }
+
+        .info {
+            background: #EFF6FF;
+            border-left: 4px solid #3B82F6;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .info strong {
+            color: #2563EB;
         }
 
         .footer {
@@ -324,45 +328,6 @@
                 padding: 0.3rem 0.4rem;
             }
         }
-
-        .warning {
-            background: #FEF2F2;
-            border-left: 4px solid #EF4444;
-            padding: 0.75rem 1rem;
-            border-radius: 4px;
-            margin: 0.5rem 0;
-            font-size: 0.9rem;
-        }
-
-        .warning strong {
-            color: #DC2626;
-        }
-
-        .success {
-            background: #ECFDF5;
-            border-left: 4px solid #10B981;
-            padding: 0.75rem 1rem;
-            border-radius: 4px;
-            margin: 0.5rem 0;
-            font-size: 0.9rem;
-        }
-
-        .success strong {
-            color: #059669;
-        }
-
-        .info {
-            background: #EFF6FF;
-            border-left: 4px solid #3B82F6;
-            padding: 0.75rem 1rem;
-            border-radius: 4px;
-            margin: 0.5rem 0;
-            font-size: 0.9rem;
-        }
-
-        .info strong {
-            color: #2563EB;
-        }
     </style>
 </head>
 <body>
@@ -371,14 +336,17 @@
         <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
 
         <h1>📚 Bookmark Manager</h1>
-        <p class="subtitle">Complete Testing Guide — July 3, 2026</p>
+        <p class="subtitle">Complete Testing Guide — Updated July 3, 2026</p>
 
         <!-- ============================================================ -->
         <!-- STEP 1: CLEAR ALL DATA                                        -->
         <!-- ============================================================ -->
         <h2>🧪 Full Testing Guide</h2>
 
-        <h3>Step 1: Clear All Data</h3>
+        <div class="step-box">
+            <span class="step-number">1</span>
+            <strong>Clear All Data</strong>
+        </div>
 
         <h4>Option A: From the App</h4>
         <ol>
@@ -406,44 +374,53 @@ location.reload(); // Optional: reload to reset state</pre>
         </ol>
 
         <div class="success">
-            <strong>✅ After clearing:</strong> You should see "All" category only, "0 bookmarks" in the header, empty grid with import button, and no progress bar visible.
+            <strong>✅ After clearing:</strong> You should see "All" category only, "0 bookmarks" in the header, empty grid with no duplicate import button, and no progress bar visible.
         </div>
 
         <!-- ============================================================ -->
         <!-- STEP 2: REFRESH                                               -->
         <!-- ============================================================ -->
-        <h3>Step 2: Refresh the Page</h3>
+        <div class="step-box">
+            <span class="step-number">2</span>
+            <strong>Refresh the Page</strong>
+        </div>
         <p>Refresh the page. You should see:</p>
         <ul>
             <li>✅ "All" category only</li>
             <li>✅ "0 bookmarks" in the header</li>
-            <li>✅ Empty grid with import button</li>
+            <li>✅ Empty grid with no duplicate import button</li>
             <li>✅ No progress bar visible</li>
         </ul>
 
         <!-- ============================================================ -->
         <!-- STEP 3: IMPORT BOOKMARKS                                     -->
         <!-- ============================================================ -->
-        <h3>Step 3: Import Bookmarks</h3>
+        <div class="step-box">
+            <span class="step-number">3</span>
+            <strong>Import Bookmarks</strong>
+        </div>
         <ol>
             <li><strong>Export from Chrome:</strong> Go to <code>chrome://bookmarks/</code> → Click the three dots → "Export bookmarks"</li>
             <li><strong>Click "📥 Import"</strong> in the app</li>
             <li><strong>Check "Import new bookmarks only"</strong> (should be checked by default)</li>
             <li><strong>Select your HTML file</strong></li>
             <li><strong>Wait for import</strong> — you should see:
-                <pre>Successfully imported X new bookmarks from "file.html"!</pre>
+                <pre>✅ Imported X new bookmarks from "file.html"!</pre>
             </li>
             <li><strong>Check the sidebar</strong> — "All" should show the total count</li>
         </ol>
 
         <div class="info">
-            <strong>💡 Tip:</strong> If you have 2022 bookmarks, the import should show exactly that number.
+            <strong>💡 Tip:</strong> The import modal now has proper contrast with dark text on light background and buttons matching the header style.
         </div>
 
         <!-- ============================================================ -->
         <!-- STEP 4: AI CLASSIFICATION                                    -->
         <!-- ============================================================ -->
-        <h3>Step 4: Run AI Classification</h3>
+        <div class="step-box">
+            <span class="step-number">4</span>
+            <strong>Run AI Classification</strong>
+        </div>
         <ol>
             <li><strong>Click "🤖 Auto-Classify"</strong></li>
             <li><strong>Enter your DeepSeek API key</strong> when prompted</li>
@@ -458,6 +435,7 @@ location.reload(); // Optional: reload to reset state</pre>
             <li><strong>Wait for completion</strong> (5-20 minutes depending on bookmarks)</li>
             <li><strong>Progress bar auto-hides</strong> when complete</li>
             <li><strong>Categories appear</strong> in the sidebar with counts</li>
+            <li><strong>"To Review" and "Anomalies" categories</strong> always appear in sidebar</li>
         </ol>
 
         <div class="warning">
@@ -467,7 +445,10 @@ location.reload(); // Optional: reload to reset state</pre>
         <!-- ============================================================ -->
         <!-- STEP 5: LINK CHECKER                                         -->
         <!-- ============================================================ -->
-        <h3>Step 5: Test Link Checker</h3>
+        <div class="step-box">
+            <span class="step-number">5</span>
+            <strong>Test Link Checker</strong>
+        </div>
         <ol>
             <li><strong>Click "🔗 Check Links"</strong></li>
             <li><strong>Confirm</strong> the dialog</li>
@@ -495,18 +476,25 @@ location.reload(); // Optional: reload to reset state</pre>
         <!-- ============================================================ -->
         <!-- STEP 6: CATEGORIES                                           -->
         <!-- ============================================================ -->
-        <h3>Step 6: Test Categories &amp; Navigation</h3>
+        <div class="step-box">
+            <span class="step-number">6</span>
+            <strong>Test Categories &amp; Navigation</strong>
+        </div>
         <ol>
             <li><strong>Click different categories</strong> in the sidebar</li>
             <li><strong>Check header count</strong> matches the category count</li>
             <li><strong>Click "🗄️ Archived"</strong> (should show 0 if none archived)</li>
             <li><strong>Click "📁 Show Active"</strong> to return</li>
+            <li><strong>Verify "To Review" and "Anomalies"</strong> appear even with 0 count</li>
         </ol>
 
         <!-- ============================================================ -->
         <!-- STEP 7: BULK SELECTION                                       -->
         <!-- ============================================================ -->
-        <h3>Step 7: Test Bulk Selection</h3>
+        <div class="step-box">
+            <span class="step-number">7</span>
+            <strong>Test Bulk Selection</strong>
+        </div>
         <ol>
             <li><strong>Hover over a card</strong> → Checkbox appears in top-left</li>
             <li><strong>Select 2-3 bookmarks</strong> by checking boxes</li>
@@ -527,7 +515,10 @@ location.reload(); // Optional: reload to reset state</pre>
         <!-- ============================================================ -->
         <!-- STEP 8: ARCHIVE                                              -->
         <!-- ============================================================ -->
-        <h3>Step 8: Test Archive</h3>
+        <div class="step-box">
+            <span class="step-number">8</span>
+            <strong>Test Archive</strong>
+        </div>
         <ol>
             <li><strong>Select a bookmark</strong> → Click "📥 Archive"</li>
             <li><strong>Confirm</strong> the dialog</li>
@@ -547,7 +538,10 @@ location.reload(); // Optional: reload to reset state</pre>
         <!-- ============================================================ -->
         <!-- STEP 9: ALPHABET NAV                                         -->
         <!-- ============================================================ -->
-        <h3>Step 9: Test Alphabet Navigation</h3>
+        <div class="step-box">
+            <span class="step-number">9</span>
+            <strong>Test Alphabet Navigation</strong>
+        </div>
         <ol>
             <li><strong>Click a letter</strong> in the right-side alphabet nav (e.g., "M")</li>
             <li><strong>Only bookmarks starting with that letter show</strong></li>
@@ -559,7 +553,10 @@ location.reload(); // Optional: reload to reset state</pre>
         <!-- ============================================================ -->
         <!-- STEP 10: SEARCH                                              -->
         <!-- ============================================================ -->
-        <h3>Step 10: Test Search</h3>
+        <div class="step-box">
+            <span class="step-number">10</span>
+            <strong>Test Search</strong>
+        </div>
         <ol>
             <li><strong>Type a search term</strong> in the search bar (e.g., "github")</li>
             <li><strong>Results filter</strong> in real-time</li>
@@ -571,7 +568,10 @@ location.reload(); // Optional: reload to reset state</pre>
         <!-- ============================================================ -->
         <!-- STEP 11: SORTING                                             -->
         <!-- ============================================================ -->
-        <h3>Step 11: Test Sorting</h3>
+        <div class="step-box">
+            <span class="step-number">11</span>
+            <strong>Test Sorting</strong>
+        </div>
         <ol>
             <li><strong>Click "Sort by" dropdown</strong></li>
             <li><strong>Try each option</strong>:
@@ -588,7 +588,10 @@ location.reload(); // Optional: reload to reset state</pre>
         <!-- ============================================================ -->
         <!-- STEP 12: EXPAND VIEW                                         -->
         <!-- ============================================================ -->
-        <h3>Step 12: Test Expand View (Domain/URL Groups)</h3>
+        <div class="step-box">
+            <span class="step-number">12</span>
+            <strong>Test Expand View (Domain/URL Groups)</strong>
+        </div>
         <ol>
             <li><strong>Find a card with a purple badge</strong> (domain group)</li>
             <li><strong>Click the purple badge</strong> → Popup appears</li>
@@ -600,7 +603,10 @@ location.reload(); // Optional: reload to reset state</pre>
         <!-- ============================================================ -->
         <!-- STEP 13: EXPORT                                              -->
         <!-- ============================================================ -->
-        <h3>Step 13: Test Export</h3>
+        <div class="step-box">
+            <span class="step-number">13</span>
+            <strong>Test Export</strong>
+        </div>
         <ol>
             <li><strong>Click "💾 Export"</strong></li>
             <li><strong>Select format</strong>:
@@ -616,7 +622,10 @@ location.reload(); // Optional: reload to reset state</pre>
         <!-- ============================================================ -->
         <!-- STEP 14: IMPORT JSON                                         -->
         <!-- ============================================================ -->
-        <h3>Step 14: Import JSON Backup</h3>
+        <div class="step-box">
+            <span class="step-number">14</span>
+            <strong>Import JSON Backup</strong>
+        </div>
         <ol>
             <li><strong>Clear all data</strong> (optional)</li>
             <li><strong>Click "📥 Import"</strong></li>
@@ -624,6 +633,42 @@ location.reload(); // Optional: reload to reset state</pre>
             <li><strong>Choose your exported JSON file</strong></li>
             <li><strong>Verify</strong> all bookmarks and categories are restored</li>
         </ol>
+
+        <!-- ============================================================ -->
+        <!-- STEP 15: IMPORT MODAL CONTRAST                               -->
+        <!-- ============================================================ -->
+        <div class="step-box">
+            <span class="step-number">15</span>
+            <strong>Verify Modal Contrast Fix</strong>
+        </div>
+        <ol>
+            <li><strong>Click "📥 Import"</strong></li>
+            <li><strong>Verify</strong> all text is dark and readable on light background</li>
+            <li><strong>Verify</strong> buttons match the header button style</li>
+            <li><strong>Verify</strong> checkboxes have proper contrast</li>
+        </ol>
+
+        <div class="success">
+            <strong>✅ Expected:</strong> The import modal should have dark text, properly styled buttons, and clear contrast throughout.
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- STEP 16: CARD HEIGHT CONSISTENCY                            -->
+        <!-- ============================================================ -->
+        <div class="step-box">
+            <span class="step-number">16</span>
+            <strong>Verify Card Height Consistency</strong>
+        </div>
+        <ol>
+            <li><strong>Browse through bookmarks</strong></li>
+            <li><strong>Verify</strong> all cards are the same height</li>
+            <li><strong>Verify</strong> stacked cards (with purple/blue badges) match regular card height</li>
+            <li><strong>Verify</strong> cards with less content still fill the full height</li>
+        </ol>
+
+        <div class="success">
+            <strong>✅ Expected:</strong> All cards, including stacked cards, should have consistent height regardless of content length.
+        </div>
 
         <!-- ============================================================ -->
         <!-- TESTING CHECKLIST                                            -->
@@ -703,6 +748,26 @@ location.reload(); // Optional: reload to reset state</pre>
                 <input type="checkbox" id="c18">
                 <label for="c18">Status Filter</label>
             </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c19">
+                <label for="c19">Modal Contrast Fix</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c20">
+                <label for="c20">Card Height Consistency</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c21">
+                <label for="c21">Stack Card Height Fix</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c22">
+                <label for="c22">To Review Category</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="c23">
+                <label for="c23">Anomalies Category</label>
+            </div>
         </div>
 
         <div class="info">
@@ -778,12 +843,16 @@ app.bulkActions.syncSelection();</pre>
             </thead>
             <tbody>
                 <tr><td>Total Bookmarks</td><td>~2022</td></tr>
-                <tr><td>Categories</td><td>18 (including To Review)</td></tr>
+                <tr><td>Categories</td><td>18 (including To Review and Anomalies)</td></tr>
                 <tr><td>Archived</td><td>0 (or whatever you archived)</td></tr>
                 <tr><td>Link Status</td><td>Verified/Broken/etc. badges on cards</td></tr>
                 <tr><td>Selection</td><td>Cleared</td></tr>
                 <tr><td>Search</td><td>Empty</td></tr>
                 <tr><td>Filters</td><td>None</td></tr>
+                <tr><td>Card Heights</td><td>All cards equal height</td></tr>
+                <tr><td>Stacked Cards</td><td>Match regular card height</td></tr>
+                <tr><td>To Review Category</td><td>Visible in sidebar (even with 0)</td></tr>
+                <tr><td>Anomalies Category</td><td>Visible in sidebar (even with 0)</td></tr>
             </tbody>
         </table>
 
@@ -809,7 +878,7 @@ app.showExportModal();</pre>
         <!-- ============================================================ -->
         <div class="footer">
             <p><strong>📚 Bookmark Manager</strong> — Complete Testing Guide</p>
-            <p style="font-size: 0.75rem; margin-top: 0.25rem;">Generated: July 3, 2026</p>
+            <p style="font-size: 0.75rem; margin-top: 0.25rem;">Updated: July 3, 2026</p>
         </div>
 
     </div>

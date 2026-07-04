@@ -21,8 +21,9 @@
                 <button id="importBtn" class="btn btn-primary">📥 Import</button>
                 <button id="exportBtn" class="btn btn-secondary">💾 Export</button>
                 <button id="classifyBtn" class="btn btn-secondary">🤖 Auto-Classify</button>
+                <button id="checkLinksBtn" class="btn btn-secondary">🔗 Check Links</button>
                 <button id="showArchivedBtn" class="btn btn-secondary">🗄️ Show Archived</button>
-                <button id="clearThumbnailCacheBtn" class="btn btn-secondary" style="font-size:0.7rem; padding:0.2rem 0.5rem;">🖼️ Clear Thumbnails</button>
+                <button id="clearThumbnailCacheBtn" class="btn btn-secondary">🖼️ Clear Thumbnails</button>
                 <button id="clearAllBtn" class="btn btn-danger">🗑️ Clear All</button>
             </div>
         </header>
@@ -68,12 +69,13 @@
                     <div class="action-left">
                         <input type="checkbox" id="selectAll" title="Select all visible bookmarks">
                         <span id="selectionCount">0 selected</span>
+                        <button id="clearSelectionBtn" class="btn btn-secondary" style="display:none;" title="Clear selection">✕ Clear</button>
                     </div>
                     <div class="action-right">
                         <button id="bulkArchiveBtn" class="btn btn-secondary" disabled title="Archive selected bookmarks">📥 Archive</button>
+                        <button id="bulkUnarchiveBtn" class="btn btn-secondary" disabled title="Unarchive selected bookmarks">📤 Unarchive</button>
                         <button id="bulkDeleteBtn" class="btn btn-danger" disabled title="Delete selected bookmarks">🗑️ Delete</button>
-                        <button id="bulkReclassifyBtn" class="btn btn-secondary" disabled title="Reclassify selected bookmarks">🤖 Reclassify</button>
-                        <button id="clearSelectionBtn" class="btn btn-secondary" style="display:none;" title="Clear selection">✕ Clear</button>
+                        <button id="bulkMoveBtn" class="btn btn-secondary" disabled title="Move selected bookmarks to another category">📂 Move To</button>
                     </div>
                 </div>
 
@@ -171,6 +173,142 @@
         </div>
     </div>
 
+    <!-- Link Check Configuration Modal -->
+    <div id="linkCheckConfigModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 650px;">
+            <div class="modal-header">
+                <h2>🔗 Check Links for Broken URLs</h2>
+                <button class="modal-close" onclick="closeLinkCheckConfig()">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem;">
+
+                <!-- Warning Section -->
+                <div style="background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 0.75rem 1rem; border-radius: 4px; margin-bottom: 1.25rem;">
+                    <strong style="color: #92400E;">⚠️ About This Tool</strong>
+                    <p style="font-size: 0.85rem; color: #78350F; margin-top: 0.25rem;">
+                        This tool checks all your bookmarks by making HTTP requests to each URL.
+                        Choose a speed that matches your environment.
+                    </p>
+                </div>
+
+                <!-- Stats -->
+                <div style="display: flex; gap: 1.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; font-size: 0.9rem; background: #F9FAFB; padding: 0.75rem 1rem; border-radius: 6px;">
+                    <span>📊 <strong id="configTotalBookmarks">0</strong> bookmarks</span>
+                    <span>⏱️ Est. time: <strong id="estTimeDisplay">2-20 min</strong></span>
+                    <span style="color: var(--text-secondary);">💡 Change speed below</span>
+                </div>
+
+                <!-- Speed Options -->
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">🚀 Scanning Speed</label>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                        <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.4rem 0.6rem; border-radius: 6px; cursor: pointer; background: #EEF2FF; border: 2px solid #4F46E5;">
+                            <input type="radio" name="scanSpeed" value="fast" checked>
+                            <div>
+                                <strong style="font-size: 0.9rem;">Fast</strong>
+                                <span style="font-size: 0.75rem; color: #6B7280; margin-left: 0.5rem;">(1-2 min)</span>
+                                <br>
+                                <span style="font-size: 0.7rem; color: #DC2626;">⚠️ Aggressive - may trigger rate limits on shared hosting</span>
+                            </div>
+                        </label>
+
+                        <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.4rem 0.6rem; border-radius: 6px; cursor: pointer; border: 1px solid #E5E7EB;">
+                            <input type="radio" name="scanSpeed" value="balanced">
+                            <div>
+                                <strong style="font-size: 0.9rem;">Balanced</strong>
+                                <span style="font-size: 0.75rem; color: #6B7280; margin-left: 0.5rem;">(3-5 min)</span>
+                                <br>
+                                <span style="font-size: 0.7rem; color: #059669;">✅ Safe for most users</span>
+                            </div>
+                        </label>
+
+                        <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.4rem 0.6rem; border-radius: 6px; cursor: pointer; border: 1px solid #E5E7EB;">
+                            <input type="radio" name="scanSpeed" value="safe">
+                            <div>
+                                <strong style="font-size: 0.9rem;">Safe</strong>
+                                <span style="font-size: 0.75rem; color: #6B7280; margin-left: 0.5rem;">(8-10 min)</span>
+                                <br>
+                                <span style="font-size: 0.7rem; color: #059669;">✅ Safe for shared hosting</span>
+                            </div>
+                        </label>
+
+                        <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.4rem 0.6rem; border-radius: 6px; cursor: pointer; border: 1px solid #E5E7EB;">
+                            <input type="radio" name="scanSpeed" value="very-safe">
+                            <div>
+                                <strong style="font-size: 0.9rem;">Very Safe</strong>
+                                <span style="font-size: 0.75rem; color: #6B7280; margin-left: 0.5rem;">(15-20 min)</span>
+                                <br>
+                                <span style="font-size: 0.7rem; color: #059669;">✅ Safest - minimal server load</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Safety Options -->
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">🛡️ Safety Options</label>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.85rem;">
+                            <input type="checkbox" id="adaptiveBackoff" checked>
+                            ✅ Automatically slow down if errors occur <span style="color: #6B7280; font-size: 0.75rem;">(recommended)</span>
+                        </label>
+
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.85rem;">
+                            <input type="checkbox" id="skipChecked">
+                            🔄 Skip already checked links (re-check only)
+                        </label>
+
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.85rem;">
+                            <input type="checkbox" id="showAdvanced">
+                            ⚙️ Show advanced settings
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div style="background: #F3F4F6; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1rem;">
+                    <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem;">📝 Summary</div>
+                    <div style="font-size: 0.8rem; color: #4B5563; display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem;">
+                        <span>Mode: <strong id="summaryMode">Fast</strong></span>
+                        <span>Batch Size: <strong id="summaryBatch">15</strong></span>
+                        <span>Delay: <strong id="summaryDelay">200ms</strong></span>
+                        <span>Timeout: <strong id="summaryTimeout">5s</strong></span>
+                    </div>
+                </div>
+
+                <!-- Advanced Settings (hidden by default) -->
+                <div id="advancedSettings" style="display: none; border-top: 1px solid #E5E7EB; padding-top: 1rem; margin-top: 0.5rem;">
+                    <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem;">⚙️ Advanced Settings</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.85rem;">
+                        <div>
+                            <label>Batch Size</label>
+                            <input type="number" id="advBatchSize" value="15" min="1" max="50" style="width: 100%; padding: 0.2rem 0.4rem; border: 1px solid #E5E7EB; border-radius: 4px;">
+                        </div>
+                        <div>
+                            <label>Delay (ms)</label>
+                            <input type="number" id="advDelay" value="200" min="50" max="5000" style="width: 100%; padding: 0.2rem 0.4rem; border: 1px solid #E5E7EB; border-radius: 4px;">
+                        </div>
+                        <div>
+                            <label>Timeout (s)</label>
+                            <input type="number" id="advTimeout" value="5" min="2" max="30" style="width: 100%; padding: 0.2rem 0.4rem; border: 1px solid #E5E7EB; border-radius: 4px;">
+                        </div>
+                        <div>
+                            <label>Max Retries</label>
+                            <input type="number" id="advRetries" value="2" min="0" max="5" style="width: 100%; padding: 0.2rem 0.4rem; border: 1px solid #E5E7EB; border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer" style="padding: 1rem 1.5rem; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end; gap: 0.5rem;">
+                <button class="btn btn-secondary" onclick="closeLinkCheckConfig()">Cancel</button>
+                <button class="btn btn-primary" id="startScanBtn">🔍 Start Scan</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Hidden file input for importing -->
     <input type="file" id="fileInput" accept=".html,.htm,.json" style="display: none;">
 
@@ -189,6 +327,6 @@
     </script>
 
     <!-- Main App Script -->
-    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/app.js?v=2"></script>
 </body>
 </html>

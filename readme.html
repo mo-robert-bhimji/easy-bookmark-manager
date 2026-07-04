@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>README - Bookmark Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: white;
+            color: #111827;
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #4F46E5;
+        }
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+            color: #1F2937;
+            border-bottom: 2px solid #E5E7EB;
+            padding-bottom: 0.25rem;
+        }
+        h3 {
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.25rem;
+            color: #374151;
+        }
+        h4 {
+            font-size: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 0.25rem;
+            color: #4B5563;
+        }
+        p {
+            margin-bottom: 0.75rem;
+        }
+        ul,
+        ol {
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        li {
+            margin-bottom: 0.25rem;
+        }
+        code {
+            background: #F3F4F6;
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: #1F2937;
+            color: #D1D5DB;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            margin-bottom: 0.75rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+        th,
+        td {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #E5E7EB;
+            text-align: left;
+        }
+        th {
+            background: #F9FAFB;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #F9FAFB;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.05rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        .badge-green {
+            background: #D1FAE5;
+            color: #059669;
+        }
+        .badge-red {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+        .badge-yellow {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+        .badge-gray {
+            background: #F3F4F6;
+            color: #6B7280;
+        }
+        .badge-purple {
+            background: #EEF2FF;
+            color: #4F46E5;
+        }
+        .badge-blue {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+        .footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #E5E7EB;
+            text-align: center;
+            color: #6B7280;
+            font-size: 0.85rem;
+        }
+        hr {
+            border: none;
+            border-top: 2px solid #E5E7EB;
+            margin: 1.5rem 0;
+        }
+        .subtitle {
+            color: #6B7280;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        .print-btn {
+            background: #4F46E5;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 1.5rem;
+        }
+        .print-btn:hover {
+            background: #4338CA;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+        }
+        @media print {
+            .print-btn {
+                display: none;
+            }
+            body {
+                padding: 0.5in;
+            }
+            pre {
+                break-inside: avoid;
+                background: #F3F4F6;
+                color: #111827;
+            }
+            table {
+                break-inside: avoid;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            pre {
+                font-size: 0.7rem;
+            }
+            table {
+                font-size: 0.75rem;
+            }
+            th,
+            td {
+                padding: 0.3rem 0.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+
+    <h1>📚 Bookmark Manager</h1>
+    <p class="subtitle">A web-based bookmark manager with AI-powered categorization using DeepSeek API.</p>
+
+    <hr>
+
+    <h2>Features</h2>
+    <ul>
+        <li><strong>Import Chrome Bookmarks</strong> — Upload HTML export files</li>
+        <li><strong>AI-Powered Categorization</strong> — Automatically sorts bookmarks using DeepSeek API</li>
+        <li><strong>Smart Grouping</strong> — Groups bookmarks by domain and URL duplicates</li>
+        <li><strong>Alphabetical Navigation</strong> — Quick access by domain letter</li>
+        <li><strong>Search</strong> — Supports wildcard characters (* and ?)</li>
+        <li><strong>Archive &amp; Delete</strong> — Manage your bookmarks</li>
+        <li><strong>Export</strong> — Export to Chrome HTML with categories</li>
+        <li><strong>Bulk Operations</strong> — Select, archive, unarchive, delete, and move multiple bookmarks</li>
+        <li><strong>Link Checking</strong> — Scan bookmarks for broken links with status badges</li>
+        <li><strong>Stacked Card View</strong> — Visual grouping of domain and URL duplicates</li>
+        <li><strong>Dark/Light Mode</strong> — Follows system preference</li>
+    </ul>
+
+    <h2>Tech Stack</h2>
+    <ul>
+        <li>Vanilla JavaScript (ES Modules)</li>
+        <li>CSS3 with responsive design</li>
+        <li>DeepSeek API for AI classification</li>
+        <li>localStorage for data persistence</li>
+    </ul>
+
+    <hr>
+
+    <h2>Directory Structure</h2>
+    <pre>
+bookmark-manager/
+├── index.html                      # Main entry point
+├── css/
+│   ├── style.css                   # Main CSS import
+│   ├── base/
+│   │   ├── variables.css           # CSS custom properties
+│   │   ├── reset.css               # Reset & base styles
+│   │   ├── typography.css          # Fonts & text styles
+│   │   └── layout.css              # App layout
+│   ├── components/
+│   │   ├── badges.css              # Domain & duplicate badges
+│   │   ├── buttons.css             # All button styles
+│   │   ├── cards.css               # Bookmark card styles
+│   │   ├── expand-view.css         # Expand view styles
+│   │   ├── grid.css                # Bookmark grid layout
+│   │   ├── import-history.css      # Import history section
+│   │   ├── modals.css              # Import/Export modals
+│   │   ├── navigation.css          # Categories & alphabet nav
+│   │   ├── popups.css              # Duplicate popup styles
+│   │   ├── progress.css            # Classification progress
+│   │   ├── search.css              # Search bar & filters
+│   │   ├── stacks.css              # Stacked card styles
+│   │   └── toast.css               # Toast notifications
+│   └── responsive/
+│       └── media-queries.css       # All responsive styles
+├── js/
+│   ├── app.js                      # Main orchestrator
+│   ├── aiClassifier.js             # DeepSeek API integration
+│   ├── bookmarkParser.js           # Chrome HTML parser
+│   ├── core/
+│   │   ├── bookmarkManager.js      # Bookmark CRUD & grouping
+│   │   ├── categoryManager.js      # Category operations
+│   │   └── storageManager.js       # localStorage operations
+│   ├── features/
+│   │   ├── classificationManager.js # AI classification with progress
+│   │   ├── exportManager.js        # JSON & Chrome HTML export
+│   │   ├── importManager.js        # Chrome HTML & JSON import
+│   │   ├── linkChecker.js          # Link rot detection
+│   │   └── thumbnailManager.js     # Thumbnail generation & caching
+│   ├── handlers/
+│   │   ├── eventHandlers.js        # Event listeners
+│   │   ├── importExportHandlers.js # Import/Export handlers
+│   │   ├── classificationHandlers.js # AI classification handlers
+│   │   ├── linkCheckHandlers.js    # Link check handlers
+│   │   └── renderHandlers.js       # Rendering handlers
+│   ├── ui/
+│   │   ├── alphabetNav.js          # Alphabetical navigation
+│   │   ├── expandView.js           # Expand view (full-screen grid)
+│   │   ├── popupManager.js         # Popup management
+│   │   ├── stackRenderer.js        # Stacked card rendering
+│   │   ├── uiManager.js            # UI updates & progress
+│   │   └── uiRenderer.js           # Individual card rendering
+│   └── utils/
+│       ├── domHelpers.js           # DOM utility functions
+│       └── searchHelpers.js        # Search & filter functions
+├── LICENSE
+├── README.md
+├── testing-guide.html              # Complete testing guide
+└── project-summary.html            # Project architecture summary
+</pre>
+
+    <hr>
+
+    <h2>File Descriptions</h2>
+
+    <h3>Core Files</h3>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code>index.html</code></td><td>Main HTML file. Contains the app structure, header, sidebar, content area, and modals.</td></tr>
+            <tr><td><code>css/style.css</code></td><td>Main CSS import file. Pulls in all component CSS files.</td></tr>
+        </tbody>
+    </table>
+
+    <h3>CSS (Base)</h3>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code>reset.css</code></td><td>CSS reset and CSS variables (colors, spacing, shadows).</td></tr>
+            <tr><td><code>typography.css</code></td><td>Font sizes, weights, and text styles.</td></tr>
+            <tr><td><code>layout.css</code></td><td>App layout: header, sidebar, content area, and main structure.</td></tr>
+        </tbody>
+    </table>
+
+    <h3>CSS (Components)</h3>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code>badges.css</code></td><td>Purple (domain) and blue (duplicate) badges.</td></tr>
+            <tr><td><code>buttons.css</code></td><td>All button styles: primary, secondary, danger, icon buttons.</td></tr>
+            <tr><td><code>cards.css</code></td><td>Bookmark card styling with equal height support.</td></tr>
+            <tr><td><code>expand-view.css</code></td><td>Full-screen expand view with individual cards.</td></tr>
+            <tr><td><code>grid.css</code></td><td>Bookmark grid layout and empty state.</td></tr>
+            <tr><td><code>import-history.css</code></td><td>Import history section in sidebar.</td></tr>
+            <tr><td><code>modals.css</code></td><td>Import/Export modal dialogs with proper contrast.</td></tr>
+            <tr><td><code>navigation.css</code></td><td>Categories list and alphabetical navigation.</td></tr>
+            <tr><td><code>popups.css</code></td><td>Duplicate/domain popup styles.</td></tr>
+            <tr><td><code>progress.css</code></td><td>Classification progress bar, steps, log, and controls.</td></tr>
+            <tr><td><code>search.css</code></td><td>Search bar, filters, and sort dropdown.</td></tr>
+            <tr><td><code>stacks.css</code></td><td>Stacked card positioning and height fixes.</td></tr>
+            <tr><td><code>toast.css</code></td><td>Toast notification styles.</td></tr>
+        </tbody>
+    </table>
+
+    <h3>JavaScript (Handlers)</h3>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code>eventHandlers.js</code></td><td>All event listeners for buttons, keyboard shortcuts, and UI interactions.</td></tr>
+            <tr><td><code>importExportHandlers.js</code></td><td>Import/Export modal content and handlers.</td></tr>
+            <tr><td><code>classificationHandlers.js</code></td><td>AI classification handlers with button state management.</td></tr>
+            <tr><td><code>linkCheckHandlers.js</code></td><td>Link check handlers with speed options and progress tracking.</td></tr>
+            <tr><td><code>renderHandlers.js</code></td><td>Rendering handlers for categories, bookmarks, stats, and import history.</td></tr>
+        </tbody>
+    </table>
+
+    <h3>JavaScript (Core)</h3>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code>app.js</code></td><td>Main orchestrator. Initializes all managers, handles events, and coordinates the app.</td></tr>
+            <tr><td><code>aiClassifier.js</code></td><td>DeepSeek API integration. Handles category suggestions, bookmark classification, and keyword matching.</td></tr>
+            <tr><td><code>bookmarkParser.js</code></td><td>Parses Chrome bookmarks HTML export. Extracts title, URL, ADD_DATE, folder path, and domain.</td></tr>
+            <tr><td><code>bookmarkManager.js</code></td><td>Bookmark CRUD operations: add, delete, archive, sort, group by URL/domain.</td></tr>
+            <tr><td><code>categoryManager.js</code></td><td>Category operations: add, remove, get counts, extract from bookmarks.</td></tr>
+            <tr><td><code>storageManager.js</code></td><td>localStorage operations: save, load, clear, export/import.</td></tr>
+            <tr><td><code>classificationManager.js</code></td><td>AI classification with progress tracking, pause/resume, error handling.</td></tr>
+            <tr><td><code>exportManager.js</code></td><td>JSON and Chrome HTML export. Chrome HTML exports categories as folders.</td></tr>
+            <tr><td><code>importManager.js</code></td><td>Chrome HTML and JSON import. Supports "new only" mode to skip duplicates.</td></tr>
+            <tr><td><code>linkChecker.js</code></td><td>Link rot detection with progress tracking and status badges.</td></tr>
+            <tr><td><code>thumbnailManager.js</code></td><td>Thumbnail generation using Google Favicon API. Caches thumbnails in localStorage.</td></tr>
+            <tr><td><code>alphabetNav.js</code></td><td>Alphabetical navigation (A-Z, #). Filters bookmarks by domain letter.</td></tr>
+            <tr><td><code>expandView.js</code></td><td>Full-screen expand view showing all bookmarks in a group as individual cards.</td></tr>
+            <tr><td><code>popupManager.js</code></td><td>Popup management for domain/duplicate groups. Smart positioning near the card.</td></tr>
+            <tr><td><code>stackRenderer.js</code></td><td>Renders stacked cards (overlapping) with badges.</td></tr>
+            <tr><td><code>uiManager.js</code></td><td>UI updates: categories, stats, import history, progress, modals, toasts.</td></tr>
+            <tr><td><code>uiRenderer.js</code></td><td>Individual bookmark card rendering.</td></tr>
+            <tr><td><code>domHelpers.js</code></td><td>DOM utility functions: create elements, query selectors, toggle visibility.</td></tr>
+            <tr><td><code>searchHelpers.js</code></td><td>Search and filter functions: wildcard matching, alphabetical indexing.</td></tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>Data Flow</h2>
+
+    <h3>Import Flow</h3>
+    <pre>
+User imports Chrome HTML → bookmarkParser.js parses the file → importManager.js adds bookmarks → storageManager.js saves to localStorage → UI updates
+</pre>
+
+    <h3>Classification Flow</h3>
+    <pre>
+User clicks "Auto-Classify" → aiClassifier.js gets categories from DeepSeek → classificationManager.js processes in batches → Each bookmark gets a category and tags → UI updates with progress → Completion state saved
+</pre>
+
+    <h3>View Flow</h3>
+    <pre>
+User views bookmarks → app.js renders categories and bookmarks → bookmarkManager.js groups by domain/URL → uiRenderer.js creates cards → stackRenderer.js creates stacked cards for groups
+</pre>
+
+    <h3>Link Check Flow</h3>
+    <pre>
+User clicks "Check Links" → linkChecker.js scans each URL → Progress updates in real-time → Results displayed with status badges → Bulk actions available for broken links
+</pre>
+
+    <h3>Group Interaction Flow</h3>
+    <pre>
+User clicks a badge (purple/blue) → popupManager.js shows popup with all bookmarks in group → User clicks "Expand" → expandView.js shows full-screen view of all bookmarks
+</pre>
+
+    <hr>
+
+    <h2>Key Concepts</h2>
+
+    <h3>Categories</h3>
+    <p>Bookmarks are organized into categories (e.g., Technology, Career, Gaming). Categories are determined by AI or manually assigned. <strong>"To Review"</strong> and <strong>"Anomalies"</strong> are special categories that always appear in the sidebar.</p>
+
+    <h3>Groups</h3>
+    <ul>
+        <li><strong>URL Groups</strong> (Blue badge): Exact duplicate URLs stacked together</li>
+        <li><strong>Domain Groups</strong> (Purple badge): Different URLs from the same domain stacked together</li>
+    </ul>
+
+    <h3>Badges</h3>
+    <table>
+        <thead>
+            <tr><th>Badge</th><th>Color</th><th>Location</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>📁 Archived</td><td><span class="badge badge-gray">Gray</span></td><td>Right side of archived cards</td></tr>
+            <tr><td>✅ Verified</td><td><span class="badge badge-green">Green</span></td><td>Right side of card</td></tr>
+            <tr><td>❌ Broken</td><td><span class="badge badge-red">Red</span></td><td>Right side of card</td></tr>
+            <tr><td>⚠️ Redirect</td><td><span class="badge badge-yellow">Yellow</span></td><td>Right side of card</td></tr>
+            <tr><td>⏱️ Timeout</td><td><span class="badge badge-yellow">Orange</span></td><td>Right side of card</td></tr>
+            <tr><td>❓ Error</td><td><span class="badge badge-gray">Gray</span></td><td>Right side of card</td></tr>
+            <tr><td>🏢 Domain</td><td><span class="badge badge-purple">Purple</span></td><td>Top-right of stacked cards</td></tr>
+            <tr><td>📦 Duplicate</td><td><span class="badge badge-blue">Blue</span></td><td>Top-right of stacked cards</td></tr>
+            <tr><td>⭐ Newest</td><td><span class="badge badge-green">Green</span></td><td>On date label</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Sorting</h3>
+    <ul>
+        <li>Date Added (Newest/Oldest)</li>
+        <li>Title</li>
+        <li>URL</li>
+        <li>Category</li>
+    </ul>
+
+    <h3>Search</h3>
+    <ul>
+        <li>Supports wildcards: <code>*</code> (any characters) and <code>?</code> (single character)</li>
+        <li>Searches: title, URL, description, folder path, category, tags</li>
+        <li>Real-time filtering as you type</li>
+    </ul>
+
+    <hr>
+
+    <h2>Configuration</h2>
+
+    <h3>DeepSeek API</h3>
+    <p>The app uses DeepSeek API for AI classification. You'll be prompted for your API key on first load. The key is stored in memory only and not persisted.</p>
+
+    <h3>Thumbnails</h3>
+    <p>Thumbnails use Google's free favicon API and are cached in localStorage for performance.</p>
+
+    <h3>Stack Styles</h3>
+    <p>Two stack styles available:</p>
+    <ul>
+        <li><strong>Fan</strong>: Cards fan out to the right (default)</li>
+        <li><strong>Subtle</strong>: Minimal fan effect</li>
+    </ul>
+    <p>To change: In <code>js/ui/stackRenderer.js</code>, modify <code>this.stackStyle</code>.</p>
+
+    <hr>
+
+    <h2>Keyboard Shortcuts</h2>
+    <table>
+        <thead>
+            <tr><th>Shortcut</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code>Ctrl+F</code> / <code>Cmd+F</code></td><td>Focus search bar</td></tr>
+            <tr><td><code>Escape</code></td><td>Clear selection, close modals, close popups</td></tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>Testing</h2>
+    <p>A complete testing guide is available at <code>testing-guide.html</code>. It includes:</p>
+    <ul>
+        <li>Step-by-step test instructions</li>
+        <li>Interactive checklist</li>
+        <li>Console commands for quick fixes</li>
+        <li>Expected results for each feature</li>
+    </ul>
+
+    <hr>
+
+    <h2>License</h2>
+    <p><strong>MIT License</strong> — Open source, free to use and modify.</p>
+    <p>Copyright (c) 2026 Mohamed (Mo/Robert) Bhimji</p>
+
+    <hr>
+
+    <h2>Next Steps / Future Enhancements</h2>
+    <table>
+        <thead>
+            <tr><th>Feature</th><th>Description</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Domain Grouping</td><td>Group bookmarks by domain (purple badge)</td><td>✅ Complete</td></tr>
+            <tr><td>Link Rot Check</td><td>Check for broken links</td><td>✅ Complete</td></tr>
+            <tr><td>Archived Category</td><td>Show archived bookmarks in sidebar</td><td>✅ Complete</td></tr>
+            <tr><td>Bulk Unarchive</td><td>Select and unarchive multiple bookmarks</td><td>✅ Complete</td></tr>
+            <tr><td>Status Filter</td><td>Filter by link status</td><td>✅ Complete</td></tr>
+            <tr><td>Modal Contrast Fix</td><td>Fixed white text on white background in modals</td><td>✅ Complete</td></tr>
+            <tr><td>Button Height Consistency</td><td>All buttons now have consistent height</td><td>✅ Complete</td></tr>
+            <tr><td>Card Height Consistency</td><td>All cards now have equal height</td><td>✅ Complete</td></tr>
+            <tr><td>Stack Card Height Fix</td><td>Stacked cards now match regular card height</td><td>✅ Complete</td></tr>
+            <tr><td>Offline Reading</td><td>Read bookmarks offline</td><td>📋 Planned</td></tr>
+            <tr><td>Semantic Search</td><td>AI-powered search</td><td>📋 Planned</td></tr>
+            <tr><td>Chrome Extension</td><td>Direct bookmarking from browser</td><td>📋 Planned</td></tr>
+            <tr><td>Mobile App</td><td>iOS and Android apps</td><td>📋 Planned</td></tr>
+            <tr><td>Auto-sync</td><td>Sync across devices</td><td>📋 Planned</td></tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p><strong>Bookmark Manager</strong> — README</p>
+        <p style="font-size: 0.75rem;">Updated: July 3, 2026</p>
+    </div>
+
+</body>
+</html>
