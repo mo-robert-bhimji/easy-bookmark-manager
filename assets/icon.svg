@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+    <!-- Background -->
+    <rect width="200" height="200" rx="40" fill="#4F46E5"/>
+
+    <!-- Bookmark Shape -->
+    <path d="M50 30 L150 30 L150 150 L100 120 L50 150 Z" fill="white" opacity="0.9"/>
+
+    <!-- Bookmark Fold Line (subtle detail) -->
+    <line x1="50" y1="30" x2="100" y2="120" stroke="#4F46E5" stroke-width="2" opacity="0.15"/>
+
+    <!-- Sparkle Cluster - Three sparkles -->
+    <!-- Main large sparkle -->
+    <text x="125" y="45" font-size="38" fill="#FCD34D">✦</text>
+
+    <!-- Medium sparkle (top-right) -->
+    <text x="150" y="35" font-size="20" fill="#FCD34D" opacity="0.8">✦</text>
+
+    <!-- Small sparkle (right) -->
+    <text x="155" y="60" font-size="14" fill="#FCD34D" opacity="0.6">✦</text>
+</svg>
