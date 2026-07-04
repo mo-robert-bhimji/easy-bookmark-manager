@@ -15,6 +15,11 @@ export class RenderHandlers {
         this.renderStats();
         this.renderImportHistory();
 
+        // Update status filter button states
+        document.querySelectorAll('.status-filter').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.status === this.app.statusFilter);
+        });
+
         if (this.app.classificationManager) {
             this.app.uiManager.updateProgress({
                 total: this.app.classificationManager.totalToClassify || 0,
@@ -73,7 +78,7 @@ export class RenderHandlers {
         }
 
         // Handle link status filter
-        if (this.app.statusFilter) {
+        if (this.app.statusFilter && this.app.statusFilter !== 'all') {
             bookmarksToShow = bookmarksToShow.filter(b =>
                 b.linkStatus && b.linkStatus.status === this.app.statusFilter
             );
@@ -111,7 +116,7 @@ export class RenderHandlers {
         if (letterFilter) {
             titleText += ` • Letter: ${letterFilter.toUpperCase()}`;
         }
-        if (this.app.statusFilter) {
+        if (this.app.statusFilter && this.app.statusFilter !== 'all') {
             const statusLabels = {
                 'verified': '✅ Verified',
                 'broken': '❌ Broken',
@@ -131,7 +136,7 @@ export class RenderHandlers {
             let emptyMessage = 'No bookmarks found';
             if (letterFilter) {
                 emptyMessage = `No bookmarks starting with "${letterFilter.toUpperCase()}"`;
-            } else if (this.app.statusFilter) {
+            } else if (this.app.statusFilter && this.app.statusFilter !== 'all') {
                 const statusLabels = {
                     'verified': '✅ Verified',
                     'broken': '❌ Broken',
@@ -145,8 +150,8 @@ export class RenderHandlers {
                 <div class="empty-state">
                     <div class="icon">📭</div>
                     <h3>${emptyMessage}</h3>
-                    <p>${filteredData || this.app.searchQuery || letterFilter || this.app.statusFilter ? 'Try a different filter or search term.' : 'Import bookmarks or switch to another category.'}</p>
-                    ${(letterFilter || this.app.statusFilter) ? '<button class="btn btn-secondary" onclick="app.alphabetNav.clearFilter();app.statusFilter=null;app.renderAll();">Clear Filter</button>' : ''}
+                    <p>${filteredData || this.app.searchQuery || letterFilter || (this.app.statusFilter && this.app.statusFilter !== 'all') ? 'Try a different filter or search term.' : 'Import bookmarks or switch to another category.'}</p>
+                    ${(letterFilter || (this.app.statusFilter && this.app.statusFilter !== 'all')) ? '<button class="btn btn-secondary" onclick="app.alphabetNav.clearFilter();app.setStatusFilter(\'all\');app.renderAll();">Clear Filters</button>' : ''}
                 </div>
             `;
             return;

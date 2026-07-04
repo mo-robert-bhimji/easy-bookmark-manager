@@ -53,22 +53,32 @@
 
             <!-- Right Content - Bookmark Grid -->
             <main class="content">
-                <div class="content-header">
-                    <div class="left">
-                        <h2 id="currentCategoryTitle">All Bookmarks</h2>
-                        <span id="bookmarkCount">0 bookmarks</span>
-                    </div>
-                    <div class="right">
-                        <label style="font-size: 0.85rem; color: var(--text-secondary);">Sort by:</label>
-                        <select id="sortSelect">
-                            <option value="date-desc">Date Added (Newest)</option>
-                            <option value="date-asc">Date Added (Oldest)</option>
-                            <option value="title">Title</option>
-                            <option value="url">URL</option>
-                            <option value="category">Category</option>
-                        </select>
-                    </div>
-                </div>
+				<div class="content-header">
+					<div class="left">
+						<div class="left-top">
+							<h2 id="currentCategoryTitle">All Bookmarks</h2>
+							<div class="status-filters" id="statusFilters">
+								<button class="status-filter active" data-status="all">All</button>
+								<button class="status-filter" data-status="verified">✅</button>
+								<button class="status-filter" data-status="broken">❌</button>
+								<button class="status-filter" data-status="redirect">⚠️</button>
+								<button class="status-filter" data-status="timeout">⏱️</button>
+								<button class="status-filter" data-status="error">❓</button>
+							</div>
+						</div>
+						<span id="bookmarkCount">0 bookmarks</span>
+					</div>
+					<div class="right">
+						<label style="font-size: 0.85rem; color: var(--text-secondary);">Sort by:</label>
+						<select id="sortSelect" class="sort-select">
+							<option value="date-desc">Date Added (Newest)</option>
+							<option value="date-asc">Date Added (Oldest)</option>
+							<option value="title">Title</option>
+							<option value="url">URL</option>
+							<option value="category">Category</option>
+						</select>
+					</div>
+				</div>
 
                 <!-- Action Bar for Bulk Selection -->
                 <div class="action-bar" id="actionBar">

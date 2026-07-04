@@ -5,243 +5,182 @@
 export class LinkCheckUI {
     constructor(uiManager) {
         this.uiManager = uiManager;
-        this.results = null;
         this.isOpen = false;
+        this.app = window.app;
     }
 
     showProgress(progress) {
-        const { total, checked, working, broken, redirects, errors, timeouts, progress: percentage } = progress;
+        if (!this.isOpen) {
+            this.isOpen = true;
+            this.uiManager.showModal('🔗 Checking Links...', this.buildProgressContent(progress));
+        } else {
+            this.updateProgressContent(progress);
+        }
+    }
 
-        const content = `
-            <div style="margin-bottom: 1rem;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
-                    <span style="font-weight: 600; color: var(--text-primary);">🔗 Checking Links...</span>
-                    <span style="font-weight: 600; color: var(--primary);">${percentage}%</span>
+    buildProgressContent(progress) {
+        const total = progress.total || 0;
+        const checked = progress.checked || 0;
+        const broken = progress.broken || 0;
+        const working = progress.working || 0;
+        const redirects = progress.redirects || 0;
+        const timeouts = progress.timeouts || 0;
+        const errors = progress.errors || 0;
+        const percentage = total > 0 ? Math.round((checked / total) * 100) : 0;
+
+        return `
+            <div id="linkCheckProgress">
+                <div style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.25rem;">
+                        <span>Progress</span>
+                        <span><strong>${percentage}%</strong></span>
+                    </div>
+                    <div style="background: #E5E7EB; border-radius: 8px; height: 8px; overflow: hidden;">
+                        <div id="linkCheckProgressBar" style="width: ${percentage}%; height: 100%; background: #4F46E5; transition: width 0.3s ease;"></div>
+                    </div>
                 </div>
-                <div style="width: 100%; height: 8px; background: var(--background); border-radius: 4px; overflow: hidden;">
-                    <div style="width: ${percentage}%; height: 100%; background: linear-gradient(90deg, var(--primary), #7C3AED); border-radius: 4px; transition: width 0.3s;"></div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
+                    <div style="background: #F3F4F6; padding: 0.5rem; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 0.65rem; color: #6B7280;">Checked</div>
+                        <div style="font-size: 1.2rem; font-weight: 600;" id="linkCheckChecked">${checked}</div>
+                    </div>
+                    <div style="background: #D1FAE5; padding: 0.5rem; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 0.65rem; color: #059669;">✅ Working</div>
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #059669;" id="linkCheckWorking">${working}</div>
+                    </div>
+                    <div style="background: #FEE2E2; padding: 0.5rem; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 0.65rem; color: #DC2626;">❌ Broken</div>
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #DC2626;" id="linkCheckBroken">${broken}</div>
+                    </div>
+                    <div style="background: #FEF3C7; padding: 0.5rem; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 0.65rem; color: #D97706;">⚠️ Redirect</div>
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #D97706;" id="linkCheckRedirects">${redirects}</div>
+                    </div>
                 </div>
-                <div style="display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); flex-wrap: wrap;">
-                    <span>📚 Total: <strong style="color: var(--text-primary);">${total}</strong></span>
-                    <span>✅ Working: <strong style="color: #10B981;">${working}</strong></span>
-                    <span>❌ Broken: <strong style="color: #EF4444;">${broken}</strong></span>
-                    <span>⚠️ Redirects: <strong style="color: #F59E0B;">${redirects}</strong></span>
-                    <span>⏱️ Timeouts: <strong style="color: #F97316;">${timeouts}</strong></span>
-                    <span>❓ Errors: <strong style="color: #6B7280;">${errors}</strong></span>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <div style="background: #FEF3C7; padding: 0.4rem; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 0.65rem; color: #D97706;">⏱️ Timeout</div>
+                        <div style="font-size: 1rem; font-weight: 600; color: #D97706;" id="linkCheckTimeouts">${timeouts}</div>
+                    </div>
+                    <div style="background: #F3F4F6; padding: 0.4rem; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 0.65rem; color: #6B7280;">❓ Error</div>
+                        <div style="font-size: 1rem; font-weight: 600; color: #6B7280;" id="linkCheckErrors">${errors}</div>
+                    </div>
+                </div>
+
+                <div style="font-size: 0.8rem; color: #6B7280; text-align: center; margin-top: 0.5rem;">
+                    ${checked} of ${total} bookmarks checked
                 </div>
             </div>
         `;
+    }
 
-        this.uiManager.showModal('🔗 Link Check in Progress...', content);
-        this.isOpen = true;
+    updateProgressContent(progress) {
+        const total = progress.total || 0;
+        const checked = progress.checked || 0;
+        const broken = progress.broken || 0;
+        const working = progress.working || 0;
+        const redirects = progress.redirects || 0;
+        const timeouts = progress.timeouts || 0;
+        const errors = progress.errors || 0;
+        const percentage = total > 0 ? Math.round((checked / total) * 100) : 0;
+
+        const bar = document.getElementById('linkCheckProgressBar');
+        if (bar) bar.style.width = percentage + '%';
+
+        const checkedEl = document.getElementById('linkCheckChecked');
+        if (checkedEl) checkedEl.textContent = checked;
+
+        const workingEl = document.getElementById('linkCheckWorking');
+        if (workingEl) workingEl.textContent = working;
+
+        const brokenEl = document.getElementById('linkCheckBroken');
+        if (brokenEl) brokenEl.textContent = broken;
+
+        const redirectsEl = document.getElementById('linkCheckRedirects');
+        if (redirectsEl) redirectsEl.textContent = redirects;
+
+        const timeoutsEl = document.getElementById('linkCheckTimeouts');
+        if (timeoutsEl) timeoutsEl.textContent = timeouts;
+
+        const errorsEl = document.getElementById('linkCheckErrors');
+        if (errorsEl) errorsEl.textContent = errors;
     }
 
     showResults(summary) {
-        this.results = summary;
-        const { total, working, broken, redirects, errors, timeouts } = summary;
+        this.isOpen = false;
+        const total = summary.total || 0;
+        const broken = summary.broken || 0;
+        const working = summary.working || 0;
+        const redirects = summary.redirects || 0;
+        const timeouts = summary.timeouts || 0;
+        const errors = summary.errors || 0;
+        const brokenList = summary.brokenList || [];
 
-        let brokenListHtml = '';
-        if (broken > 0) {
-            const brokenResults = summary.results
-                .filter(r => r.status === 'broken')
-                .slice(0, 50);
-
-            brokenListHtml = `
+        let brokenHtml = '';
+        if (brokenList.length > 0) {
+            brokenHtml = `
                 <div style="margin-top: 1rem;">
-                    <div style="font-weight: 600; margin-bottom: 0.5rem; color: #EF4444;">
-                        ❌ Broken Links (${broken})
-                    </div>
-                    <div style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; padding: 0.3rem;">
-                        ${brokenResults.map(r => `
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.3rem 0.5rem; border-bottom: 1px solid var(--border); font-size: 0.8rem;">
-                                <span style="color: var(--text-secondary); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 0.5rem;">
-                                    ${r.bookmark?.title || r.url}
-                                </span>
-                                <span style="color: #EF4444; font-size: 0.7rem; flex-shrink: 0;">
-                                    ${r.statusText}
-                                </span>
+                    <h4 style="color: #DC2626; margin-bottom: 0.5rem;">❌ Broken Links (${brokenList.length})</h4>
+                    <div style="max-height: 200px; overflow-y: auto; background: #F9FAFB; border-radius: 6px; padding: 0.5rem; border: 1px solid #E5E7EB;">
+                        ${brokenList.map(b => `
+                            <div style="padding: 0.25rem 0.5rem; font-size: 0.8rem; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between;">
+                                <span style="color: #1F2937; word-break: break-all;">${b.url || b.title || 'Unknown'}</span>
+                                <span style="color: #6B7280; font-size: 0.7rem;">${b.statusText || 'Error'}</span>
                             </div>
                         `).join('')}
-                        ${broken > 50 ? `<div style="padding: 0.3rem 0.5rem; color: var(--text-secondary); font-size: 0.7rem;">... and ${broken - 50} more</div>` : ''}
                     </div>
                 </div>
             `;
         }
 
         const content = `
-            <div style="margin-bottom: 1rem;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.5rem; margin-bottom: 1rem;">
-                    <div style="padding: 0.5rem; background: #ECFDF5; border-radius: 6px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: #059669;">✅ Verified</div>
-                        <div style="font-weight: 700; font-size: 1.2rem; color: #059669;">${working}</div>
+            <div id="linkCheckResults">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
+                    <div style="background: #D1FAE5; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: #059669;">✅ Working</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #059669;">${working}</div>
                     </div>
-                    <div style="padding: 0.5rem; background: #FEF3C7; border-radius: 6px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: #D97706;">⚠️ Redirects</div>
-                        <div style="font-weight: 700; font-size: 1.2rem; color: #D97706;">${redirects}</div>
-                    </div>
-                    <div style="padding: 0.5rem; background: #FEE2E2; border-radius: 6px; text-align: center;">
+                    <div style="background: #FEE2E2; padding: 0.75rem; border-radius: 8px; text-align: center;">
                         <div style="font-size: 0.7rem; color: #DC2626;">❌ Broken</div>
-                        <div style="font-weight: 700; font-size: 1.2rem; color: #DC2626;">${broken}</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #DC2626;">${broken}</div>
                     </div>
-                    <div style="padding: 0.5rem; background: #FEF3C7; border-radius: 6px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: #D97706;">⏱️ Timeouts</div>
-                        <div style="font-weight: 700; font-size: 1.2rem; color: #D97706;">${timeouts}</div>
+                    <div style="background: #FEF3C7; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: #D97706;">⚠️ Redirect</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #D97706;">${redirects}</div>
                     </div>
-                    <div style="padding: 0.5rem; background: #F3F4F6; border-radius: 6px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: #6B7280;">❓ Errors</div>
-                        <div style="font-weight: 700; font-size: 1.2rem; color: #6B7280;">${errors}</div>
-                    </div>
-                    <div style="padding: 0.5rem; background: #EEF2FF; border-radius: 6px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: #4F46E5;">📚 Total</div>
-                        <div style="font-weight: 700; font-size: 1.2rem; color: #4F46E5;">${total}</div>
+                    <div style="background: #F3F4F6; padding: 0.75rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: #6B7280;">⏱️ Timeout</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #6B7280;">${timeouts}</div>
                     </div>
                 </div>
 
-                ${brokenListHtml}
+                <div style="background: #F3F4F6; padding: 0.5rem; border-radius: 8px; text-align: center; margin-bottom: 1rem;">
+                    <span style="font-size: 0.85rem; color: #6B7280;">❓ Errors: <strong>${errors}</strong></span>
+                    <span style="font-size: 0.85rem; color: #6B7280; margin-left: 1rem;">📊 Total: <strong>${total}</strong></span>
+                </div>
 
-                ${broken > 0 ? `
-                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
-                        <button id="moveBrokenToReview" class="btn btn-secondary" style="font-size: 0.8rem;">
-                            📥 Move Broken to "To Review"
-                        </button>
-                        <button id="archiveBroken" class="btn btn-secondary" style="font-size: 0.8rem;">
-                            📥 Archive Broken
-                        </button>
-                        <button id="deleteBroken" class="btn btn-danger" style="font-size: 0.8rem;">
-                            🗑️ Delete Broken
-                        </button>
-                        <button id="recheckBroken" class="btn btn-secondary" style="font-size: 0.8rem;">
-                            🔄 Re-check Broken
-                        </button>
-                    </div>
-                ` : `
-                    <div style="text-align: center; padding: 1rem; color: #10B981; font-weight: 500;">
-                        🎉 All links are working! No broken links found.
-                    </div>
-                `}
+                ${brokenHtml}
+
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <button class="btn btn-secondary" id="linkCheckCloseBtn" style="min-width: 120px; justify-content: center;">
+                        ✅ Close
+                    </button>
+                </div>
             </div>
         `;
 
         this.uiManager.showModal('🔗 Link Check Results', content);
 
-        setTimeout(() => {
-            document.getElementById('moveBrokenToReview')?.addEventListener('click', () => {
-                this.moveBrokenToCategory('To Review');
-            });
-            document.getElementById('archiveBroken')?.addEventListener('click', () => {
-                this.archiveBroken();
-            });
-            document.getElementById('deleteBroken')?.addEventListener('click', () => {
-                this.deleteBroken();
-            });
-            document.getElementById('recheckBroken')?.addEventListener('click', () => {
-                this.recheckBroken();
-            });
-        }, 100);
-
-        this.isOpen = true;
-    }
-
-    moveBrokenToCategory(category) {
-        if (!this.results) return;
-        const brokenBookmarks = this.results.results
-            .filter(r => r.status === 'broken')
-            .map(r => r.bookmark)
-            .filter(b => b);
-
-        if (brokenBookmarks.length === 0) {
-            alert('No broken bookmarks to move.');
-            return;
-        }
-
-        if (confirm(`Move ${brokenBookmarks.length} broken bookmark(s) to "${category}"?`)) {
-            brokenBookmarks.forEach(b => {
-                b.category = category;
-            });
+        document.getElementById('linkCheckCloseBtn')?.addEventListener('click', () => {
             this.uiManager.hideModal();
-            if (window.app) {
-                window.app.saveData();
-                window.app.renderAll();
+            // Refresh the bookmark grid
+            if (this.app && this.app.renderAll) {
+                this.app.renderAll();
             }
-            this.uiManager.showToast(`✅ Moved ${brokenBookmarks.length} broken bookmark(s) to "${category}"`, '📥');
-        }
-    }
-
-    archiveBroken() {
-        if (!this.results) return;
-        const brokenBookmarks = this.results.results
-            .filter(r => r.status === 'broken')
-            .map(r => r.bookmark)
-            .filter(b => b);
-
-        if (brokenBookmarks.length === 0) {
-            alert('No broken bookmarks to archive.');
-            return;
-        }
-
-        if (confirm(`📥 Archive ${brokenBookmarks.length} broken bookmark(s)?`)) {
-            brokenBookmarks.forEach(b => {
-                b.isArchived = true;
-                b.archivedDate = new Date().toISOString();
-            });
-            this.uiManager.hideModal();
-            if (window.app) {
-                window.app.saveData();
-                window.app.renderAll();
-            }
-            this.uiManager.showToast(`✅ Archived ${brokenBookmarks.length} broken bookmark(s)`, '📥');
-        }
-    }
-
-    deleteBroken() {
-        if (!this.results) return;
-        const brokenBookmarks = this.results.results
-            .filter(r => r.status === 'broken')
-            .map(r => r.bookmark)
-            .filter(b => b);
-
-        if (brokenBookmarks.length === 0) {
-            alert('No broken bookmarks to delete.');
-            return;
-        }
-
-        if (confirm(`🗑️ Permanently delete ${brokenBookmarks.length} broken bookmark(s)?\n\nThis action cannot be undone!`)) {
-            const ids = brokenBookmarks.map(b => b.id);
-            ids.forEach(id => {
-                window.app.bookmarkManager.deleteBookmark(id);
-            });
-            this.uiManager.hideModal();
-            if (window.app) {
-                window.app.saveData();
-                window.app.renderAll();
-            }
-            this.uiManager.showToast(`🗑️ Deleted ${brokenBookmarks.length} broken bookmark(s)`, '🗑️');
-        }
-    }
-
-    recheckBroken() {
-        if (!this.results) return;
-        const brokenBookmarks = this.results.results
-            .filter(r => r.status === 'broken')
-            .map(r => r.bookmark)
-            .filter(b => b);
-
-        if (brokenBookmarks.length === 0) {
-            alert('No broken bookmarks to re-check.');
-            return;
-        }
-
-        this.uiManager.hideModal();
-        alert(`🔄 Re-checking ${brokenBookmarks.length} broken bookmark(s)...\n\nThis will re-check only the broken links.`);
-
-        if (window.app && window.app.linkChecker) {
-            window.app.linkChecker.checkAllBookmarks({
-                filter: (b) => brokenBookmarks.some(bb => bb.id === b.id),
-                batchSize: 10,
-                delayBetweenBatches: 200,
-                timeout: 8000
-            });
-        }
+        });
     }
 
     close() {

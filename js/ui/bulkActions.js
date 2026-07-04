@@ -1,8 +1,6 @@
 // ========================================
-// 📦 BULK ACTIONS - Business Logic
+// 📦 BULK ACTIONS
 // ========================================
-
-import { BulkUI } from './bulkUI.js';
 
 export class BulkActions {
     constructor(bookmarkManager, categoryManager, uiManager, uiRenderer, aiClassifier) {
@@ -12,315 +10,207 @@ export class BulkActions {
         this.uiRenderer = uiRenderer;
         this.aiClassifier = aiClassifier;
         this.selectedIds = new Set();
-        this.pendingMoveIds = [];
-        this.bulkUI = new BulkUI();
-        console.log('📦 BulkActions initialized');
+        this.actionBar = document.getElementById('actionBar');
+        this.selectionCount = document.getElementById('selectionCount');
+        this.selectAllCheckbox = document.getElementById('selectAll');
+        this.clearSelectionBtn = document.getElementById('clearSelectionBtn');
+        this.bulkArchiveBtn = document.getElementById('bulkArchiveBtn');
+        this.bulkUnarchiveBtn = document.getElementById('bulkUnarchiveBtn');
+        this.bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+        this.bulkMoveBtn = document.getElementById('bulkMoveBtn');
     }
 
     getSelectedIds() {
-        return this.selectedIds;
+        return Array.from(this.selectedIds);
     }
 
-    syncSelection() {
-        if (this.uiRenderer) {
-            const rendererIds = this.uiRenderer.getSelectedIds();
-            if (rendererIds.size > 0 && this.selectedIds.size === 0) {
-                console.log('🔄 Syncing selection from uiRenderer:', rendererIds.size);
-                this.selectedIds = rendererIds;
-            }
-        }
-        return this.selectedIds;
+    getSelectedCount() {
+        return this.selectedIds.size;
     }
 
     clearSelection() {
-        console.log('🔍 clearSelection called');
         this.selectedIds.clear();
-        this.pendingMoveIds = [];
         if (this.uiRenderer) {
             this.uiRenderer.clearSelection();
         }
-        const visibleIds = this.getVisibleBookmarkIds();
-        this.bulkUI.updateUI(this.selectedIds, visibleIds);
+        this.updateUI();
     }
 
     toggleSelectAll(checked, visibleIds) {
-        console.log('🔍 toggleSelectAll called, checked:', checked);
         if (checked) {
-            this.selectedIds.clear();
             visibleIds.forEach(id => this.selectedIds.add(id));
             if (this.uiRenderer) {
-                this.uiRenderer.selectAll(visibleIds);
+                this.uiRenderer.toggleSelectAll(true, visibleIds);
             }
         } else {
-            this.selectedIds.clear();
-            if (this.uiRenderer) {
-                this.uiRenderer.clearSelection();
-            }
+            this.clearSelection();
         }
-        this.bulkUI.updateUI(this.selectedIds, visibleIds);
+        this.updateUI();
     }
 
-    updateUI(selectedIds) {
-        if ((!selectedIds || selectedIds.size === 0) && this.uiRenderer) {
-            const rendererIds = this.uiRenderer.getSelectedIds();
-            if (rendererIds.size > 0) {
-                this.selectedIds = rendererIds;
-                selectedIds = this.selectedIds;
+    updateUI(selectedIds = null) {
+        if (selectedIds) {
+            this.selectedIds = new Set(selectedIds);
+        }
+
+        const count = this.selectedIds.size;
+
+        // Update selection count
+        if (this.selectionCount) {
+            this.selectionCount.textContent = `${count} selected`;
+        }
+
+        // Show/hide action bar
+        if (this.actionBar) {
+            if (count > 0) {
+                this.actionBar.classList.add('visible');
+                this.actionBar.style.display = 'flex';
+            } else {
+                this.actionBar.classList.remove('visible');
+                this.actionBar.style.display = 'none';
             }
         }
-        const visibleIds = this.getVisibleBookmarkIds();
-        this.bulkUI.updateUI(selectedIds, visibleIds);
+
+        // Enable/disable bulk buttons
+        const hasSelection = count > 0;
+        if (this.bulkArchiveBtn) this.bulkArchiveBtn.disabled = !hasSelection;
+        if (this.bulkUnarchiveBtn) this.bulkUnarchiveBtn.disabled = !hasSelection;
+        if (this.bulkDeleteBtn) this.bulkDeleteBtn.disabled = !hasSelection;
+        if (this.bulkMoveBtn) this.bulkMoveBtn.disabled = !hasSelection;
+
+        // Update select all checkbox
+        if (this.selectAllCheckbox) {
+            const visibleIds = this.getVisibleIds();
+            const allSelected = visibleIds.every(id => this.selectedIds.has(id));
+            this.selectAllCheckbox.checked = allSelected && visibleIds.length > 0;
+            this.selectAllCheckbox.indeterminate = !allSelected && visibleIds.some(id => this.selectedIds.has(id));
+        }
+
+        // Show/hide clear button
+        if (this.clearSelectionBtn) {
+            this.clearSelectionBtn.style.display = count > 0 ? 'inline-block' : 'none';
+        }
     }
 
-    getVisibleBookmarkIds() {
-        const grid = document.getElementById('bookmarksGrid');
-        if (!grid) return [];
+    getVisibleIds() {
         const ids = [];
-        grid.querySelectorAll('.bookmark-card').forEach(card => {
+        document.querySelectorAll('.bookmark-card').forEach(card => {
             if (card.dataset.id) ids.push(card.dataset.id);
         });
-        grid.querySelectorAll('.stack-container .bookmark-card').forEach(card => {
+        document.querySelectorAll('.stack-container .bookmark-card').forEach(card => {
             if (card.dataset.id) ids.push(card.dataset.id);
         });
         return ids;
     }
 
-    // ----- Bulk Archive -----
-    bulkArchive(ids) {
-        if (!ids || ids.length === 0) return;
-        this.bookmarkManager.bulkArchive(ids);
+    bulkArchive() {
+        const ids = this.getSelectedIds();
+        if (ids.length === 0) return;
+        if (confirm(`Archive ${ids.length} selected bookmark(s)?`)) {
+            this.bulkArchiveIds(ids);
+        }
+    }
+
+    bulkArchiveIds(ids) {
+        let archived = 0;
+        ids.forEach(id => {
+            const bookmark = this.bookmarkManager.archiveBookmark(id);
+            if (bookmark && bookmark.isArchived) archived++;
+        });
         this.clearSelection();
-        if (window.app) {
-            window.app.saveData();
-            window.app.renderAll();
+        this.uiManager.showToast(`✅ Archived ${archived} bookmark(s)`, '📥');
+        if (this.bookmarkManager.saveData) this.bookmarkManager.saveData();
+        if (window.app && window.app.renderAll) window.app.renderAll();
+    }
+
+    bulkUnarchive() {
+        const ids = this.getSelectedIds();
+        if (ids.length === 0) return;
+        if (confirm(`Unarchive ${ids.length} selected bookmark(s)?`)) {
+            this.bulkUnarchiveIds(ids);
         }
     }
 
-    // ----- Bulk Delete -----
-    bulkDelete(ids) {
-        if (!ids || ids.length === 0) return;
-        this.bookmarkManager.bulkDelete(ids);
+    bulkUnarchiveIds(ids) {
+        let unarchived = 0;
+        ids.forEach(id => {
+            const bookmark = this.bookmarkManager.archiveBookmark(id);
+            if (bookmark && !bookmark.isArchived) unarchived++;
+        });
         this.clearSelection();
-        if (window.app) {
-            window.app.saveData();
-            window.app.renderAll();
+        this.uiManager.showToast(`✅ Unarchived ${unarchived} bookmark(s)`, '📤');
+        if (this.bookmarkManager.saveData) this.bookmarkManager.saveData();
+        if (window.app && window.app.renderAll) window.app.renderAll();
+    }
+
+    bulkDelete() {
+        const ids = this.getSelectedIds();
+        if (ids.length === 0) return;
+        if (confirm(`⚠️ PERMANENTLY DELETE ${ids.length} selected bookmark(s)?\n\nThis cannot be undone!`)) {
+            this.bulkDeleteIds(ids);
         }
     }
 
-    // ----- Bulk Archive Selected -----
-    bulkArchiveSelected() {
-        console.log('📥 bulkArchiveSelected called');
-        let ids = this.getSelectedIdsFromUI();
-        if (ids.length === 0) {
-            alert('No bookmarks selected.');
-            return;
-        }
-
-        const activeCount = ids.filter(id => {
-            const bookmark = this.bookmarkManager.getBookmarkById(id);
-            return bookmark && !bookmark.isArchived;
-        }).length;
-
-        if (activeCount === 0) {
-            alert('Selected bookmarks are already archived.');
-            return;
-        }
-
-        if (confirm(`📥 Archive ${activeCount} selected bookmark(s)?`)) {
-            ids.forEach(id => {
-                const bookmark = this.bookmarkManager.getBookmarkById(id);
-                if (bookmark && !bookmark.isArchived) {
-                    bookmark.isArchived = true;
-                    bookmark.archivedDate = new Date().toISOString();
-                }
-            });
-            this.clearSelection();
-            if (this.uiManager) this.uiManager.showToast(`✅ Archived ${activeCount} bookmark(s)`, '📥');
-            if (window.app) {
-                window.app.saveData();
-                window.app.renderAll();
-            }
-        }
+    bulkDeleteIds(ids) {
+        let deleted = 0;
+        ids.forEach(id => {
+            const result = this.bookmarkManager.deleteBookmark(id);
+            if (result) deleted++;
+        });
+        this.clearSelection();
+        this.uiManager.showToast(`🗑️ Deleted ${deleted} bookmark(s)`, '🗑️');
+        if (this.bookmarkManager.saveData) this.bookmarkManager.saveData();
+        if (window.app && window.app.renderAll) window.app.renderAll();
     }
 
-    // ----- Bulk Unarchive Selected -----
-    bulkUnarchiveSelected() {
-        console.log('📤 bulkUnarchiveSelected called');
-        let ids = this.getSelectedIdsFromUI();
-        if (ids.length === 0) {
-            alert('No bookmarks selected.');
-            return;
-        }
-
-        const archivedCount = ids.filter(id => {
-            const bookmark = this.bookmarkManager.getBookmarkById(id);
-            return bookmark && bookmark.isArchived;
-        }).length;
-
-        if (archivedCount === 0) {
-            alert('Selected bookmarks are not archived.');
-            return;
-        }
-
-        if (confirm(`📤 Unarchive ${archivedCount} selected bookmark(s)?`)) {
-            ids.forEach(id => {
-                const bookmark = this.bookmarkManager.getBookmarkById(id);
-                if (bookmark && bookmark.isArchived) {
-                    bookmark.isArchived = false;
-                    bookmark.archivedDate = null;
-                }
-            });
-            this.clearSelection();
-            if (this.uiManager) this.uiManager.showToast(`✅ Unarchived ${archivedCount} bookmark(s)`, '📤');
-            if (window.app) {
-                window.app.saveData();
-                window.app.renderAll();
-            }
-        }
-    }
-
-    // ----- Bulk Delete Selected -----
-    bulkDeleteSelected() {
-        console.log('🗑️ bulkDeleteSelected called');
-        let ids = this.getSelectedIdsFromUI();
-        if (ids.length === 0) {
-            alert('No bookmarks selected.');
-            return;
-        }
-
-        if (confirm(`🗑️ Permanently delete ${ids.length} selected bookmark(s)?`)) {
-            ids.forEach(id => {
-                this.bookmarkManager.deleteBookmark(id);
-            });
-            this.clearSelection();
-            if (this.uiManager) this.uiManager.showToast(`🗑️ Deleted ${ids.length} bookmark(s)`, '🗑️');
-            if (window.app) {
-                window.app.saveData();
-                window.app.renderAll();
-            }
-        }
-    }
-
-    // ----- Show Move To Modal -----
     showMoveModal() {
-        console.log('📂 showMoveModal called');
-        let ids = this.getSelectedIdsFromUI();
-        if (ids.length === 0) {
-            alert('No bookmarks selected.');
-            return;
-        }
+        const ids = this.getSelectedIds();
+        if (ids.length === 0) return;
 
-        this.pendingMoveIds = ids;
         const categories = this.categoryManager.getCategories().filter(c => c !== 'All');
+        let options = categories.map(c => `<option value="${c}">${c}</option>`).join('');
 
         const content = `
-            <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
-                Moving <strong>${ids.length}</strong> selected bookmark(s) to:
+            <div class="form-group">
+                <label>Move ${ids.length} selected bookmark(s) to category:</label>
+                <select id="moveCategorySelect" style="width:100%; padding:0.6rem 1rem; border:1px solid var(--border); border-radius:8px; font-size:0.95rem; background:var(--bg-secondary); color:var(--text-primary);">
+                    ${options}
+                </select>
             </div>
-            <div style="
-                display: grid; 
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
-                gap: 0.5rem; 
-                max-height: 350px; 
-                overflow-y: auto; 
-                padding-right: 0.3rem;
-            ">
-                ${categories.map(cat => `
-                    <button class="move-category-btn" data-category="${cat}" style="
-                        padding: 0.6rem 0.8rem;
-                        border: 1px solid var(--border);
-                        border-radius: 8px;
-                        background: white;
-                        cursor: pointer;
-                        text-align: center;
-                        font-size: 0.8rem;
-                        font-weight: 500;
-                        transition: all 0.2s;
-                        font-family: inherit;
-                        color: var(--text-primary);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        min-height: 44px;
-                    ">
-                        📁 ${cat}
-                    </button>
-                `).join('')}
-            </div>
-            <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: flex-end;">
+            <div class="form-actions">
+                <button id="moveConfirmBtn" class="btn btn-primary">📂 Move</button>
                 <button class="btn btn-secondary" onclick="document.getElementById('modal').style.display='none'">Cancel</button>
             </div>
         `;
 
-        console.log('📂 Showing modal');
-        this.uiManager.showModal('📂 Move Selected Bookmarks', content);
+        this.uiManager.showModal('📂 Move To Category', content);
 
-        setTimeout(() => {
-            const btns = document.querySelectorAll('.move-category-btn');
-            btns.forEach(btn => {
-                const newBtn = btn.cloneNode(true);
-                btn.parentNode.replaceChild(newBtn, btn);
-                newBtn.addEventListener('click', () => {
-                    const category = newBtn.dataset.category;
-                    this.moveSelectedToCategory(category);
-                });
-                newBtn.addEventListener('mouseenter', () => {
-                    newBtn.style.borderColor = 'var(--primary)';
-                    newBtn.style.background = 'var(--primary-light)';
-                });
-                newBtn.addEventListener('mouseleave', () => {
-                    newBtn.style.borderColor = 'var(--border)';
-                    newBtn.style.background = 'white';
-                });
-            });
-        }, 200);
-    }
-
-    // ----- Move Selected to Category -----
-    moveSelectedToCategory(category) {
-        console.log('📂 moveSelectedToCategory called with:', category);
-        const ids = this.pendingMoveIds.length > 0 ? this.pendingMoveIds : [...this.selectedIds];
-        if (ids.length === 0 || !category) {
-            alert('No bookmarks to move.');
-            return;
-        }
-
-        ids.forEach(id => {
-            const bookmark = this.bookmarkManager.getBookmarkById(id);
-            if (bookmark) {
-                bookmark.category = category;
-                if (bookmark.tags && bookmark.tags.length > 0) {
-                    const oldCategoryTag = bookmark.tags.find(t =>
-                        this.categoryManager.getCategories().includes(t)
-                    );
-                    if (oldCategoryTag) {
-                        bookmark.tags = bookmark.tags.filter(t => t !== oldCategoryTag);
-                    }
-                }
+        document.getElementById('moveConfirmBtn')?.addEventListener('click', () => {
+            const category = document.getElementById('moveCategorySelect')?.value;
+            if (category) {
+                this.bulkMoveToCategory(ids, category);
+                this.uiManager.hideModal();
             }
         });
-
-        this.clearSelection();
-        this.pendingMoveIds = [];
-        this.uiManager.hideModal();
-        if (this.uiManager) this.uiManager.showToast(`✅ Moved ${ids.length} bookmark(s) to "${category}"`, '📂');
-        if (window.app) {
-            window.app.saveData();
-            window.app.renderAll();
-        }
     }
 
-    // ----- Helper: Get selected IDs from UI -----
-    getSelectedIdsFromUI() {
-        let ids = [...this.selectedIds];
-        if (ids.length === 0 && this.uiRenderer) {
-            const rendererIds = this.uiRenderer.getSelectedIds();
-            if (rendererIds.size > 0) {
-                console.log('🔄 Syncing IDs from uiRenderer');
-                this.selectedIds = rendererIds;
-                ids = [...this.selectedIds];
+    bulkMoveToCategory(ids, category) {
+        let moved = 0;
+        ids.forEach(id => {
+            const bookmark = this.bookmarkManager.getBookmark(id);
+            if (bookmark && !bookmark.isArchived) {
+                bookmark.category = category;
+                moved++;
             }
-        }
-        return ids;
+        });
+        this.clearSelection();
+        this.uiManager.showToast(`📂 Moved ${moved} bookmark(s) to "${category}"`, '📂');
+        if (this.bookmarkManager.saveData) this.bookmarkManager.saveData();
+        if (window.app && window.app.renderAll) window.app.renderAll();
     }
+
+    // Legacy method names for compatibility
+    bulkArchiveSelected() { this.bulkArchive(); }
+    bulkUnarchiveSelected() { this.bulkUnarchive(); }
+    bulkDeleteSelected() { this.bulkDelete(); }
 }

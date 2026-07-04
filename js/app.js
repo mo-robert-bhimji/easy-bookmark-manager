@@ -65,7 +65,7 @@ class BookmarkApp {
         this.isClassificationComplete = false;
         this.letterFilter = null;
         this.bulkActions = null;
-        this.statusFilter = null;
+        this.statusFilter = 'all';
 
         this.init();
     }
@@ -127,7 +127,7 @@ class BookmarkApp {
         console.log('🤖 AI Classifier available:', !!this.aiClassifier);
 
         this.setupCallbacks();
-        
+
         // Call setupEventListeners properly
         if (typeof setupEventListeners === 'function') {
             console.log('🎯 Setting up event listeners via imported function...');
@@ -159,31 +159,31 @@ class BookmarkApp {
 
     setupEventListeners() {
         console.log('🎯 Setting up internal event listeners...');
-        
+
         // --- Import/Export ---
         const importBtn = document.getElementById('importBtn');
         const exportBtn = document.getElementById('exportBtn');
-        
+
         if (importBtn) {
             importBtn.addEventListener('click', () => this.showImportModal());
         }
         if (exportBtn) {
             exportBtn.addEventListener('click', () => this.showExportModal());
         }
-        
+
         // --- Classification ---
         const classifyBtn = document.getElementById('classifyBtn');
         if (classifyBtn) {
             classifyBtn.addEventListener('click', () => this.startClassification());
         }
-        
+
         // --- Progress controls ---
         const progressStartBtn = document.getElementById('progressStartBtn');
         const progressPauseBtn = document.getElementById('progressPauseBtn');
         const progressStopBtn = document.getElementById('progressStopBtn');
         const progressClearLogBtn = document.getElementById('progressClearLogBtn');
         const progressToggle = document.getElementById('progressToggle');
-        
+
         if (progressStartBtn) {
             progressStartBtn.addEventListener('click', () => this.startClassification());
         }
@@ -199,7 +199,7 @@ class BookmarkApp {
         if (progressToggle) {
             progressToggle.addEventListener('click', () => this.uiManager.toggleProgress());
         }
-        
+
         // --- Search ---
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
@@ -211,7 +211,7 @@ class BookmarkApp {
                 }
             });
         }
-        
+
         // --- Sort ---
         const sortSelect = document.getElementById('sortSelect');
         if (sortSelect) {
@@ -220,19 +220,39 @@ class BookmarkApp {
                 this.renderAll();
             });
         }
-        
+
+        // --- Status Filters ---
+        document.querySelectorAll('.status-filter').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const status = btn.dataset.status;
+                // Toggle: if clicking the active one, reset to 'all'
+                if (this.statusFilter === status && status !== 'all') {
+                    this.setStatusFilter('all');
+                } else if (status === 'all' && this.statusFilter === 'all') {
+                    // Already on all, do nothing
+                    return;
+                } else {
+                    this.setStatusFilter(status);
+                }
+                // Update active state
+                document.querySelectorAll('.status-filter').forEach(b => {
+                    b.classList.toggle('active', b.dataset.status === this.statusFilter);
+                });
+            });
+        });
+
         // --- Clear All ---
         const clearAllBtn = document.getElementById('clearAllBtn');
         if (clearAllBtn) {
             clearAllBtn.addEventListener('click', () => this.clearAllBookmarks());
         }
-        
+
         // --- Add Category ---
         const addCategoryBtn = document.getElementById('addCategoryBtn');
         if (addCategoryBtn) {
             addCategoryBtn.addEventListener('click', () => this.addNewCategory());
         }
-        
+
         // --- Show Archived Toggle ---
         const showArchivedBtn = document.getElementById('showArchivedBtn');
         if (showArchivedBtn) {
@@ -245,7 +265,7 @@ class BookmarkApp {
                 );
             });
         }
-        
+
         // --- Category list click (delegated) ---
         const categoriesList = document.getElementById('categoriesList');
         if (categoriesList) {
@@ -258,7 +278,7 @@ class BookmarkApp {
                 }
             });
         }
-        
+
         // --- Keyboard shortcuts ---
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
@@ -269,7 +289,7 @@ class BookmarkApp {
                     searchInput.select();
                 }
             }
-            
+
             if (e.key === 'Escape') {
                 if (this.bulkActions) this.bulkActions.clearSelection();
                 if (this.uiManager) this.uiManager.hideModal();
@@ -280,7 +300,7 @@ class BookmarkApp {
                 }
             }
         });
-        
+
         console.log('✅ Internal event listeners set up');
     }
 
@@ -385,7 +405,6 @@ class BookmarkApp {
                     if (isComplete) {
                         progressSectionEl.style.display = 'none';
                         progressSectionEl.classList.remove('active');
-                        // Update button states when complete
                         if (this.classificationHandlers) {
                             this.classificationHandlers.updateButtonStates();
                         }
@@ -443,6 +462,7 @@ class BookmarkApp {
                 this.sortOption = data.sortOption || 'date-desc';
                 this.showArchived = data.showArchived || false;
                 this.isClassificationComplete = data.isClassificationComplete || false;
+                this.statusFilter = data.statusFilter || 'all';
                 window.history.replaceState({}, document.title, window.location.pathname);
                 return;
             }
@@ -456,6 +476,7 @@ class BookmarkApp {
             this.sortOption = saved.sortOption || 'date-desc';
             this.showArchived = saved.showArchived || false;
             this.isClassificationComplete = saved.isClassificationComplete || false;
+            this.statusFilter = saved.statusFilter || 'all';
         }
     }
 
@@ -467,7 +488,8 @@ class BookmarkApp {
             importHistory: this.importManager ? this.importManager.getImportHistory() : [],
             sortOption: this.sortOption,
             showArchived: this.showArchived,
-            isClassificationComplete: this.isClassificationComplete
+            isClassificationComplete: this.isClassificationComplete,
+            statusFilter: this.statusFilter
         };
         this.storage.save(data);
     }
@@ -486,6 +508,27 @@ class BookmarkApp {
     }
 
     // ========================================
+    // STATUS FILTER
+    // ========================================
+
+    setStatusFilter(status) {
+        if (this.statusFilter === status && status !== 'all') {
+            // Toggle off: switch to 'all'
+            this.statusFilter = 'all';
+        } else {
+            this.statusFilter = status;
+        }
+        if (this.bulkActions) this.bulkActions.clearSelection();
+        this.renderAll();
+        this.saveData();
+
+        // Update active state on buttons
+        document.querySelectorAll('.status-filter').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.status === this.statusFilter);
+        });
+    }
+
+    // ========================================
     // SEARCH
     // ========================================
 
@@ -495,7 +538,6 @@ class BookmarkApp {
         const query = input.value.trim();
         this.searchQuery = query;
         this.letterFilter = null;
-        this.statusFilter = null;
         if (this.bulkActions) this.bulkActions.clearSelection();
         this.alphabetNav.clearFilter();
 
@@ -555,7 +597,7 @@ class BookmarkApp {
     switchCategory(category) {
         this.currentCategory = category;
         this.letterFilter = null;
-        this.statusFilter = null;
+        this.statusFilter = 'all';
         if (this.bulkActions) this.bulkActions.clearSelection();
         this.alphabetNav.clearFilter();
         const input = this.uiManager.elements.searchInput;
@@ -563,6 +605,11 @@ class BookmarkApp {
         this.searchQuery = '';
         this.saveData();
         this.renderAll();
+
+        // Update status filter buttons
+        document.querySelectorAll('.status-filter').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.status === this.statusFilter);
+        });
     }
 
     // ========================================
@@ -601,7 +648,7 @@ class BookmarkApp {
             this.currentCategory = 'All';
             this.searchQuery = '';
             this.letterFilter = null;
-            this.statusFilter = null;
+            this.statusFilter = 'all';
             this.isClassificationComplete = false;
             if (this.bulkActions) this.bulkActions.clearSelection();
             this.alphabetNav.clearFilter();

@@ -30,6 +30,10 @@
     align-items: center;
 }
 
+.header-left img {
+    display: block;
+}
+
 .header-right {
     display: flex;
     gap: 0.5rem;
@@ -82,10 +86,31 @@
     gap: 0.25rem;
 }
 
+.content-header .left .left-top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.content-header .left .left-top h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+}
+
 .content-header .right {
     display: flex;
-    gap: 0.5rem;
     align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.content-header .right label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
 }
 
 /* ----- Content with Alphabet Nav ----- */
@@ -112,4 +137,118 @@
 .stats {
     margin-bottom: 0.5rem;
     font-weight: 500;
+}
+
+/* ----- Import History ----- */
+#importHistory {
+    font-size: 0.75rem;
+}
+
+.import-item {
+    padding: 0.25rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.import-item:last-child {
+    border-bottom: none;
+}
+
+.import-item .filename {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.import-item .metadata {
+    color: var(--text-secondary);
+    font-size: 0.65rem;
+}
+
+/* ----- Responsive Adjustments ----- */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 220px;
+        padding: 1rem 0.75rem;
+    }
+
+    .content {
+        padding: 1rem 1.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 0.5rem 1rem;
+        min-height: 56px;
+    }
+
+    .header-right {
+        gap: 0.4rem;
+    }
+
+    .sidebar {
+        width: 180px;
+        padding: 0.75rem 0.5rem;
+    }
+
+    .content {
+        padding: 0.75rem 1rem;
+    }
+
+    .content-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .content-header .right {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .content-header .right .sort-select {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .content-header .left .left-top {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 0.4rem 0.5rem;
+        min-height: 48px;
+        gap: 0.3rem;
+    }
+
+    .header-left img {
+        height: 28px !important;
+    }
+
+    .header-right {
+        gap: 0.3rem;
+    }
+
+    .sidebar {
+        width: 100%;
+        max-height: 180px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    .content {
+        padding: 0.5rem;
+    }
+
+    .content-header .left .left-top h2 {
+        font-size: 1rem;
+    }
+
+    .content-header .right .sort-select {
+        min-width: 80px;
+        font-size: 0.7rem;
+    }
 }

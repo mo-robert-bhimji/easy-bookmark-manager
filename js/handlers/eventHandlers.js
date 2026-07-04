@@ -1,5 +1,5 @@
 // ========================================
-// 🔗 EVENT HANDLERS (FIXED)
+// 🔗 EVENT HANDLERS
 // ========================================
 
 export function setupEventListeners(app) {
@@ -60,6 +60,26 @@ export function setupEventListeners(app) {
     // ----- Error Log & Thumbnails -----
     document.getElementById('downloadErrorLogBtn')?.addEventListener('click', () => app.downloadErrorLog());
 
+    // ----- STATUS FILTERS -----
+    document.querySelectorAll('.status-filter').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const status = btn.dataset.status;
+            // Toggle: if clicking the active one, reset to 'all'
+            if (app.statusFilter === status && status !== 'all') {
+                app.setStatusFilter('all');
+            } else if (status === 'all' && app.statusFilter === 'all') {
+                // Already on all, do nothing
+                return;
+            } else {
+                app.setStatusFilter(status);
+            }
+            // Update active state
+            document.querySelectorAll('.status-filter').forEach(b => {
+                b.classList.toggle('active', b.dataset.status === app.statusFilter);
+            });
+        });
+    });
+
     // ----- BULK ACTION LISTENERS -----
     const selectAllEl = document.getElementById('selectAll');
     if (selectAllEl) {
@@ -109,7 +129,7 @@ export function setupEventListeners(app) {
                     el.searchInput.value = '';
                     app.searchQuery = '';
                     app.letterFilter = null;
-                    app.statusFilter = null;
+                    app.statusFilter = 'all';
                     app.alphabetNav.clearFilter();
                     app.renderAll();
                 }
