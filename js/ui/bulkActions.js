@@ -10,10 +10,10 @@ export class BulkActions {
         this.uiRenderer = uiRenderer;
         this.aiClassifier = aiClassifier;
         this.selectedIds = new Set();
+
         this.actionBar = document.getElementById('actionBar');
+        this.selectToggleBtn = document.getElementById('selectToggleBtn');
         this.selectionCount = document.getElementById('selectionCount');
-        this.selectAllCheckbox = document.getElementById('selectAll');
-        this.clearSelectionBtn = document.getElementById('clearSelectionBtn');
         this.bulkArchiveBtn = document.getElementById('bulkArchiveBtn');
         this.bulkUnarchiveBtn = document.getElementById('bulkUnarchiveBtn');
         this.bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
@@ -36,14 +36,21 @@ export class BulkActions {
         this.updateUI();
     }
 
-    toggleSelectAll(checked, visibleIds) {
-        if (checked) {
+    toggleSelectAll(visibleIds) {
+        if (!visibleIds || visibleIds.length === 0) return;
+
+        const allSelected = visibleIds.every(id => this.selectedIds.has(id));
+
+        if (allSelected) {
+            visibleIds.forEach(id => this.selectedIds.delete(id));
+            if (this.uiRenderer) {
+                this.uiRenderer.clearSelection();
+            }
+        } else {
             visibleIds.forEach(id => this.selectedIds.add(id));
             if (this.uiRenderer) {
                 this.uiRenderer.toggleSelectAll(true, visibleIds);
             }
-        } else {
-            this.clearSelection();
         }
         this.updateUI();
     }
@@ -55,58 +62,67 @@ export class BulkActions {
 
         const count = this.selectedIds.size;
 
-        // Update selection count
+        if (this.selectToggleBtn) {
+            const visibleIds = this.getVisibleIds();
+            const allSelected = visibleIds.length > 0 && visibleIds.every(id => this.selectedIds.has(id));
+
+            if (allSelected && visibleIds.length > 0) {
+                this.selectToggleBtn.textContent = '✕ Clear Selection';
+            } else {
+                this.selectToggleBtn.textContent = '☑ Select All';
+            }
+        }
+
         if (this.selectionCount) {
             this.selectionCount.textContent = `${count} selected`;
         }
 
-        // Show/hide action bar
         if (this.actionBar) {
-            if (count > 0) {
-                this.actionBar.classList.add('visible');
-                this.actionBar.style.display = 'flex';
-            } else {
-                this.actionBar.classList.remove('visible');
-                this.actionBar.style.display = 'none';
-            }
+            this.actionBar.style.display = 'flex';
+            this.actionBar.classList.add('visible');
         }
 
-        // Enable/disable bulk buttons
         const hasSelection = count > 0;
-        if (this.bulkArchiveBtn) this.bulkArchiveBtn.disabled = !hasSelection;
-        if (this.bulkUnarchiveBtn) this.bulkUnarchiveBtn.disabled = !hasSelection;
-        if (this.bulkDeleteBtn) this.bulkDeleteBtn.disabled = !hasSelection;
-        if (this.bulkMoveBtn) this.bulkMoveBtn.disabled = !hasSelection;
-
-        // Update select all checkbox
-        if (this.selectAllCheckbox) {
-            const visibleIds = this.getVisibleIds();
-            const allSelected = visibleIds.every(id => this.selectedIds.has(id));
-            this.selectAllCheckbox.checked = allSelected && visibleIds.length > 0;
-            this.selectAllCheckbox.indeterminate = !allSelected && visibleIds.some(id => this.selectedIds.has(id));
+        if (this.bulkArchiveBtn) {
+            this.bulkArchiveBtn.disabled = !hasSelection;
+            this.bulkArchiveBtn.textContent = '📥 Archive';
         }
-
-        // Show/hide clear button
-        if (this.clearSelectionBtn) {
-            this.clearSelectionBtn.style.display = count > 0 ? 'inline-block' : 'none';
+        if (this.bulkUnarchiveBtn) {
+            this.bulkUnarchiveBtn.disabled = !hasSelection;
+            this.bulkUnarchiveBtn.textContent = '📤 Unarchive';
+        }
+        if (this.bulkDeleteBtn) {
+            this.bulkDeleteBtn.disabled = !hasSelection;
+            this.bulkDeleteBtn.textContent = '🗑️ Delete';
+        }
+        if (this.bulkMoveBtn) {
+            this.bulkMoveBtn.disabled = !hasSelection;
+            this.bulkMoveBtn.textContent = '📂 Move To';
         }
     }
 
     getVisibleIds() {
         const ids = [];
-        document.querySelectorAll('.bookmark-card').forEach(card => {
+        const grid = document.getElementById('bookmarksGrid');
+        if (!grid) return ids;
+
+        grid.querySelectorAll('.bookmark-card').forEach(card => {
             if (card.dataset.id) ids.push(card.dataset.id);
         });
-        document.querySelectorAll('.stack-container .bookmark-card').forEach(card => {
-            if (card.dataset.id) ids.push(card.dataset.id);
+
+        grid.querySelectorAll('.stack-container .bookmark-card').forEach(card => {
+            if (card.dataset.id && !ids.includes(card.dataset.id)) {
+                ids.push(card.dataset.id);
+            }
         });
+
         return ids;
     }
 
     bulkArchive() {
         const ids = this.getSelectedIds();
         if (ids.length === 0) return;
-        if (confirm(`Archive ${ids.length} selected bookmark(s)?`)) {
+        if (confirm(`📥 Archive ${ids.length} selected bookmark(s)?`)) {
             this.bulkArchiveIds(ids);
         }
     }
@@ -119,14 +135,13 @@ export class BulkActions {
         });
         this.clearSelection();
         this.uiManager.showToast(`✅ Archived ${archived} bookmark(s)`, '📥');
-        if (this.bookmarkManager.saveData) this.bookmarkManager.saveData();
         if (window.app && window.app.renderAll) window.app.renderAll();
     }
 
     bulkUnarchive() {
         const ids = this.getSelectedIds();
         if (ids.length === 0) return;
-        if (confirm(`Unarchive ${ids.length} selected bookmark(s)?`)) {
+        if (confirm(`📤 Unarchive ${ids.length} selected bookmark(s)?`)) {
             this.bulkUnarchiveIds(ids);
         }
     }
@@ -139,7 +154,6 @@ export class BulkActions {
         });
         this.clearSelection();
         this.uiManager.showToast(`✅ Unarchived ${unarchived} bookmark(s)`, '📤');
-        if (this.bookmarkManager.saveData) this.bookmarkManager.saveData();
         if (window.app && window.app.renderAll) window.app.renderAll();
     }
 
@@ -159,7 +173,6 @@ export class BulkActions {
         });
         this.clearSelection();
         this.uiManager.showToast(`🗑️ Deleted ${deleted} bookmark(s)`, '🗑️');
-        if (this.bookmarkManager.saveData) this.bookmarkManager.saveData();
         if (window.app && window.app.renderAll) window.app.renderAll();
     }
 
@@ -205,11 +218,9 @@ export class BulkActions {
         });
         this.clearSelection();
         this.uiManager.showToast(`📂 Moved ${moved} bookmark(s) to "${category}"`, '📂');
-        if (this.bookmarkManager.saveData) this.bookmarkManager.saveData();
         if (window.app && window.app.renderAll) window.app.renderAll();
     }
 
-    // Legacy method names for compatibility
     bulkArchiveSelected() { this.bulkArchive(); }
     bulkUnarchiveSelected() { this.bulkUnarchive(); }
     bulkDeleteSelected() { this.bulkDelete(); }

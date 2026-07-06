@@ -41,8 +41,10 @@ export class ExpandView {
 
         let html = `
             <div class="expand-header">
-                <div class="expand-title">📚 <span class="domain-name">${domainName}</span> • ${bookmarks.length} bookmarks (${typeLabel} group)</div>
-                <button class="back-btn" id="expandBackBtn">🔙 Back</button>
+                <div class="expand-title">
+                    📚 <span class="domain-name">${domainName}</span> • ${bookmarks.length} bookmarks (${typeLabel} group)
+                    <button class="back-btn" id="expandBackBtn" style="margin-left: 0.75rem; padding: 0.2rem 0.8rem; font-size: 0.85rem; border: none; border-radius: 6px; background: #4F46E5; color: white; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem;">🔙 Back</button>
+                </div>
             </div>
             <div class="expand-grid">
         `;
@@ -152,7 +154,7 @@ export class ExpandView {
     hide() {
         console.log('🔙 Hiding expand view');
         console.trace('🔍 Stack trace for hide() call:');
-        
+
         const container = document.getElementById('expandViewContainer');
         if (container) {
             container.className = '';

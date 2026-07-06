@@ -42,8 +42,8 @@
                     <div class="title-row">
                         <h2 id="currentCategoryTitle">All Bookmarks</h2>
                         <div class="status-filters" id="statusFilters">
+                        <button class="status-filter" data-status="verified">✅</button>
                             <button class="status-filter active" data-status="all">All</button>
-                            <button class="status-filter" data-status="verified">✅</button>
                             <button class="status-filter" data-status="broken">❌</button>
                             <button class="status-filter" data-status="redirect">⚠️</button>
                             <button class="status-filter" data-status="timeout">⏱️</button>
@@ -62,6 +62,16 @@
                         <option value="category">Category</option>
                     </select>
                 </div>
+            </div>
+
+            <!-- ACTION BAR - MOVED INTO FIXED HEADER -->
+            <div class="action-bar" id="actionBar">
+                <button class="btn btn-sm btn-toggle" id="selectToggleBtn">☑ Select All</button>
+                <span class="selection-count" id="selectionCount">0 selected</span>
+                <button class="btn btn-sm" id="bulkArchiveBtn" disabled>📥 Archive</button>
+                <button class="btn btn-sm" id="bulkUnarchiveBtn" disabled>📤 Unarchive</button>
+                <button class="btn btn-sm btn-danger" id="bulkDeleteBtn" disabled>🗑️ Delete</button>
+                <button class="btn btn-sm" id="bulkMoveBtn" disabled>📂 Move To</button>
             </div>
         </div>
 
@@ -84,16 +94,6 @@
 
             <!-- Right Content - Bookmark Grid -->
             <main class="content">
-                <!-- Action Bar (Always Visible) -->
-                <div class="action-bar" id="actionBar">
-                    <button class="btn btn-sm btn-toggle" id="selectToggleBtn">☑ Select All</button>
-                    <span class="selection-count" id="selectionCount">0 selected</span>
-                    <button class="btn btn-sm" id="bulkArchiveBtn" disabled>📥 Archive</button>
-                    <button class="btn btn-sm" id="bulkUnarchiveBtn" disabled>📤 Unarchive</button>
-                    <button class="btn btn-sm btn-danger" id="bulkDeleteBtn" disabled>🗑️ Delete</button>
-                    <button class="btn btn-sm" id="bulkMoveBtn" disabled>📂 Move To</button>
-                </div>
-
                 <!-- Classification Progress Section -->
                 <div class="progress-section">
                     <div class="progress-header" id="progressToggle">
@@ -342,6 +342,6 @@
     </script>
 
     <!-- Main App Script -->
-    <script type="module" src="js/app.js?v=3"></script>
+    <script type="module" src="js/app.js?v=2"></script>
 </body>
 </html>

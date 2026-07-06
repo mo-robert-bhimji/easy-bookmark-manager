@@ -64,16 +64,13 @@ export function setupEventListeners(app) {
     document.querySelectorAll('.status-filter').forEach(btn => {
         btn.addEventListener('click', () => {
             const status = btn.dataset.status;
-            // Toggle: if clicking the active one, reset to 'all'
             if (app.statusFilter === status && status !== 'all') {
                 app.setStatusFilter('all');
             } else if (status === 'all' && app.statusFilter === 'all') {
-                // Already on all, do nothing
                 return;
             } else {
                 app.setStatusFilter(status);
             }
-            // Update active state
             document.querySelectorAll('.status-filter').forEach(b => {
                 b.classList.toggle('active', b.dataset.status === app.statusFilter);
             });
@@ -81,17 +78,12 @@ export function setupEventListeners(app) {
     });
 
     // ----- BULK ACTION LISTENERS -----
-    const selectAllEl = document.getElementById('selectAll');
-    if (selectAllEl) {
-        selectAllEl.addEventListener('change', (e) => {
-            if (app.bulkActions) {
-                app.bulkActions.toggleSelectAll(e.target.checked, app.getVisibleBookmarkIds());
-            }
-        });
-    }
-
-    document.getElementById('clearSelectionBtn')?.addEventListener('click', () => {
-        if (app.bulkActions) app.bulkActions.clearSelection();
+    // Select All / Clear Selection Toggle Button
+    document.getElementById('selectToggleBtn')?.addEventListener('click', () => {
+        if (app.bulkActions) {
+            const visibleIds = app.getVisibleBookmarkIds();
+            app.bulkActions.toggleSelectAll(visibleIds);
+        }
     });
 
     document.getElementById('bulkArchiveBtn')?.addEventListener('click', () => {
