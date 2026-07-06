@@ -21,14 +21,14 @@ export class ExpandView {
 
     show(bookmarks, domainName, isDomainStack) {
         console.log('📚 ExpandView.show() called');
-        
+
         if (!bookmarks || bookmarks.length === 0) {
             console.warn('⚠️ No bookmarks to expand');
             return;
         }
 
         this.isActive = true;
-        
+
         let container = document.getElementById('expandViewContainer');
         if (!container) {
             console.log('📦 Creating expand view container');
@@ -36,9 +36,9 @@ export class ExpandView {
             container.id = 'expandViewContainer';
             document.body.appendChild(container);
         }
-        
+
         const typeLabel = isDomainStack ? 'Domain' : 'URL';
-        
+
         let html = `
             <div class="expand-header">
                 <div class="expand-title">📚 <span class="domain-name">${domainName}</span> • ${bookmarks.length} bookmarks (${typeLabel} group)</div>
@@ -46,7 +46,7 @@ export class ExpandView {
             </div>
             <div class="expand-grid">
         `;
-        
+
         bookmarks.forEach((bookmark) => {
             const domain = bookmark.domain || this.uiRenderer.extractDomain(bookmark.url) || '?';
             const fallbackIcon = this.getFallbackIcon(domain);
@@ -54,7 +54,7 @@ export class ExpandView {
             const title = bookmark.title || 'Untitled';
             const url = bookmark.url || '';
             const category = bookmark.category || 'Uncategorized';
-            
+
             html += `
                 <div class="expand-card" data-id="${bookmark.id}" data-url="${url}">
                     <div class="card-thumbnail">${fallbackIcon}</div>
@@ -71,19 +71,19 @@ export class ExpandView {
                 </div>
             `;
         });
-        
+
         html += `
             </div>
         `;
-        
+
         container.innerHTML = html;
-        
+
         container.className = 'active';
         container.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-        
+
         console.log('✅ Expand view rendered');
-        
+
         // Make cards clickable
         container.querySelectorAll('.expand-card').forEach(card => {
             const url = card.dataset.url;
@@ -97,7 +97,7 @@ export class ExpandView {
                 });
             }
         });
-        
+
         // Back button - BIGGER
         const backBtn = document.getElementById('expandBackBtn');
         if (backBtn) {
@@ -108,7 +108,7 @@ export class ExpandView {
                 this.hide();
             });
         }
-        
+
         // Actions
         if (this.actions) {
             container.querySelectorAll('[data-action="archive"]').forEach(btn => {
@@ -127,7 +127,7 @@ export class ExpandView {
                     }
                 });
             });
-            
+
             container.querySelectorAll('[data-action="delete"]').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -151,6 +151,8 @@ export class ExpandView {
 
     hide() {
         console.log('🔙 Hiding expand view');
+        console.trace('🔍 Stack trace for hide() call:');
+        
         const container = document.getElementById('expandViewContainer');
         if (container) {
             container.className = '';
@@ -159,8 +161,9 @@ export class ExpandView {
         }
         document.body.style.overflow = '';
         this.isActive = false;
-        
+
         if (this.onClose) {
+            console.log('📢 Calling onClose callback');
             this.onClose();
         }
     }
@@ -174,7 +177,7 @@ export class ExpandView {
     showToast(message, icon = '✅') {
         const existing = document.querySelector('.toast');
         if (existing) existing.remove();
-        
+
         const toast = document.createElement('div');
         toast.className = 'toast show';
         toast.innerHTML = `
@@ -182,7 +185,7 @@ export class ExpandView {
             <span>${message}</span>
         `;
         document.body.appendChild(toast);
-        
+
         setTimeout(() => {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);

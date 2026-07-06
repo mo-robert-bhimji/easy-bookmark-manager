@@ -123,6 +123,7 @@
     font-weight: 500;
     white-space: nowrap;
     cursor: pointer;
+    pointer-events: auto !important; /* - ADD THIS */
 }
 
 .bookmark-card .badge-stack .badge-stack-domain:hover {
@@ -133,6 +134,14 @@
 /* Duplicate Badge (blue) */
 .bookmark-card .badge-stack .badge-stack-duplicate {
     background: #3B82F6;
+    color: white;
+    padding: 0.1rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.6rem;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    pointer-events: auto !important;  /* ⬅️ ADD THIS */
 }
 
 /* ----- Archived Badge ----- */

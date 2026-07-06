@@ -235,7 +235,16 @@ export class UIRenderer {
 
         // ---- Card click (open URL) ----
         card.addEventListener('click', (e) => {
-            if (e.target.closest('.bookmark-checkbox') || e.target.closest('.card-actions')) {
+            // If clicking on badge-stack, stop propagation and return
+            // This allows the badge's own click handler to fire
+            if (e.target.closest('.badge-stack')) {
+                e.stopPropagation();
+                return;
+            }
+            
+            // Don't open if clicking checkbox or actions
+            if (e.target.closest('.bookmark-checkbox') || 
+                e.target.closest('.card-actions')) {
                 return;
             }
             if (bookmark.url) {

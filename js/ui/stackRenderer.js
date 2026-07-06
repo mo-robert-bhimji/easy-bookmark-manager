@@ -59,19 +59,55 @@ export class StackRenderer {
         }
 
         // Make it clickable to expand
+        const self = this;
+        const stackCopy = stack;
+        const domainCopy = firstBookmark.domain || 'unknown';
+        const isDomainCopy = isDomainStack;
+
         stackBadge.style.cursor = 'pointer';
-        stackBadge.addEventListener('click', (e) => {
+        stackBadge.setAttribute('role', 'button');
+        stackBadge.setAttribute('tabindex', '0');
+
+        // Use BOTH onclick and addEventListener to ensure it works
+        stackBadge.onclick = function(e) {
+            e = e || window.event;
             e.stopPropagation();
-            if (this.onExpand) {
-                this.onExpand(stack, firstBookmark.domain || 'unknown', isDomainStack);
+            e.preventDefault();
+
+            console.log('🔥 Badge clicked via onclick!');
+            console.log('📚 stack length:', stackCopy ? stackCopy.length : 'undefined');
+
+            if (self.onExpand) {
+                self.onExpand(stackCopy, domainCopy, isDomainCopy);
+            } else {
+                console.warn('⚠️ self.onExpand is null!');
+            }
+            return false;
+        };
+
+        stackBadge.addEventListener('click', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+
+            console.log('🔥 Badge clicked via addEventListener!');
+            console.log('📚 stack length:', stackCopy ? stackCopy.length : 'undefined');
+
+            if (self.onExpand) {
+                self.onExpand(stackCopy, domainCopy, isDomainCopy);
+            } else {
+                console.warn('⚠️ self.onExpand is null!');
             }
         });
+
         badgeStack.appendChild(stackBadge);
 
         // ---- Double-click on card to expand ----
-        card.addEventListener('dblclick', (e) => {
-            if (this.onExpand) {
-                this.onExpand(stack, firstBookmark.domain || 'unknown', isDomainStack);
+        card.addEventListener('dblclick', function(e) {
+            if (e.target.closest('.badge-stack') || e.target.closest('.card-actions')) {
+                return;
+            }
+            if (self.onExpand) {
+                self.onExpand(stack, firstBookmark.domain || 'unknown', isDomainStack);
             }
         });
 
