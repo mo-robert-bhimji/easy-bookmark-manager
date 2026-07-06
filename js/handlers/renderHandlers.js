@@ -1,5 +1,5 @@
 // ========================================
-// 🎨 RENDER HANDLERS
+// 🎨 RENDER HANDLERS - COMPLETE
 // ========================================
 
 import { SearchHelpers } from '../utils/searchHelpers.js';
@@ -72,7 +72,6 @@ export class RenderHandlers {
         // Handle "Archived" category
         if (this.app.currentCategory === 'Archived') {
             bookmarksToShow = bookmarksToShow.filter(b => b.isArchived);
-            // Temporarily show archived so they render
             const originalShowArchived = this.app.showArchived;
             this.app.showArchived = true;
         }
@@ -112,20 +111,12 @@ export class RenderHandlers {
 
         this.app.alphabetNav.render(this.app.bookmarkManager.getBookmarks());
 
+        // Title - only show category name, not filter text
         let titleText = title || (this.app.searchQuery ? `Search: "${this.app.searchQuery}"` : this.app.currentCategory);
         if (letterFilter) {
             titleText += ` • Letter: ${letterFilter.toUpperCase()}`;
         }
-        if (this.app.statusFilter && this.app.statusFilter !== 'all') {
-            const statusLabels = {
-                'verified': '✅ Verified',
-                'broken': '❌ Broken',
-                'redirect': '⚠️ Redirect',
-                'timeout': '⏱️ Timeout',
-                'error': '❓ Error'
-            };
-            titleText += ` • ${statusLabels[this.app.statusFilter] || this.app.statusFilter}`;
-        }
+        // Status filter is shown via the active button, not in the title
         if (titleEl) titleEl.textContent = titleText;
 
         const totalBookmarksInStacks = stacks.reduce((sum, stack) => sum + stack.length, 0);
@@ -159,6 +150,7 @@ export class RenderHandlers {
 
         grid.innerHTML = '';
 
+        // Render singles
         singles.forEach(bookmark => {
             const card = this.app.uiRenderer.createBookmarkCard(bookmark, {
                 onDelete: (id) => this.app.deleteBookmark(id),
@@ -167,25 +159,32 @@ export class RenderHandlers {
             grid.appendChild(card);
         });
 
+        // Render stacks - ensure proper stacking
         stacks.forEach(stack => {
-            const firstBookmark = stack[0];
-            const isDomainStack = stack.length > 1 && stack.every(b =>
-                b.domain === firstBookmark.domain &&
-                b.url !== firstBookmark.url
-            );
+            if (stack.length > 1) {
+                const firstBookmark = stack[0];
+                const isDomainStack = stack.some(b => b.url !== firstBookmark.url);
 
-            const container = this.app.stackRenderer.createStackedCard(stack, {
-                onDelete: (id) => this.app.deleteBookmark(id),
-                onArchive: (id) => this.app.archiveBookmark(id),
-                onBulkArchive: (ids) => {
-                    if (this.app.bulkActions) this.app.bulkActions.bulkArchive(ids);
-                },
-                onBulkDelete: (ids) => {
-                    if (this.app.bulkActions) this.app.bulkActions.bulkDelete(ids);
-                },
-                isDomainStack: isDomainStack
-            });
-            grid.appendChild(container);
+                const container = this.app.stackRenderer.createStackedCard(stack, {
+                    onDelete: (id) => this.app.deleteBookmark(id),
+                    onArchive: (id) => this.app.archiveBookmark(id),
+                    onBulkArchive: (ids) => {
+                        if (this.app.bulkActions) this.app.bulkActions.bulkArchive(ids);
+                    },
+                    onBulkDelete: (ids) => {
+                        if (this.app.bulkActions) this.app.bulkActions.bulkDelete(ids);
+                    },
+                    isDomainStack: isDomainStack
+                });
+                grid.appendChild(container);
+            } else {
+                // If only 1, render as single
+                const card = this.app.uiRenderer.createBookmarkCard(stack[0], {
+                    onDelete: (id) => this.app.deleteBookmark(id),
+                    onArchive: (id) => this.app.archiveBookmark(id)
+                });
+                grid.appendChild(card);
+            }
         });
 
         if (this.app.showArchived) {
@@ -218,7 +217,6 @@ export class RenderHandlers {
         const archived = stats.archived || 0;
         const categories = this.app.categoryManager.getCategories().length || 0;
 
-        // Remove the duplicate import options - ONLY show stats
         el.innerHTML = `
             <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
                 <div><strong>${active}</strong> active bookmarks</div>

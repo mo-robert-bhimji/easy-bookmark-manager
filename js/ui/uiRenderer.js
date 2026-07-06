@@ -21,7 +21,6 @@ export class UIRenderer {
 
     clearSelection() {
         this.selectedIds.clear();
-        // Update checkbox states
         document.querySelectorAll('.bookmark-checkbox').forEach(cb => {
             cb.checked = false;
         });
@@ -76,6 +75,56 @@ export class UIRenderer {
         });
         card.appendChild(checkbox);
 
+        // ---- Badge Stack ----
+        const badgeStack = document.createElement('div');
+        badgeStack.className = 'badge-stack';
+
+        // Link Status Badge (if exists)
+        if (bookmark.linkStatus && bookmark.linkStatus.status) {
+            const statusColors = {
+                'verified': '10B981',
+                'broken': 'EF4444',
+                'redirect': 'F59E0B',
+                'timeout': 'F97316',
+                'error': '6B7280'
+            };
+            const statusIcons = {
+                'verified': '✅',
+                'broken': '❌',
+                'redirect': '⚠️',
+                'timeout': '⏱️',
+                'error': '❓'
+            };
+            const statusLabels = {
+                'verified': 'Verified',
+                'broken': 'Broken',
+                'redirect': 'Redirect',
+                'timeout': 'Timeout',
+                'error': 'Error'
+            };
+
+            const statusBadge = document.createElement('span');
+            const color = statusColors[bookmark.linkStatus.status] || '6B7280';
+            const icon = statusIcons[bookmark.linkStatus.status] || '';
+            const label = statusLabels[bookmark.linkStatus.status] || bookmark.linkStatus.status;
+
+            let lastCheckedText = '';
+            if (bookmark.linkStatus.lastChecked) {
+                const checkedDate = new Date(bookmark.linkStatus.lastChecked);
+                lastCheckedText = ` • ${checkedDate.toLocaleDateString()}`;
+            }
+
+            statusBadge.className = `badge badge-status ${bookmark.linkStatus.status === 'broken' ? 'broken' : bookmark.linkStatus.status === 'redirect' ? 'redirect' : bookmark.linkStatus.status === 'timeout' ? 'timeout' : bookmark.linkStatus.status === 'error' ? 'error' : ''}`;
+            statusBadge.textContent = `${icon} ${label}${lastCheckedText}`;
+            badgeStack.appendChild(statusBadge);
+        }
+
+        // Stack Badge (purple) - only if this card is part of a stack
+        // This will be handled by the stack renderer, but we keep it here for compatibility
+        // The stack renderer adds its own badge
+
+        card.appendChild(badgeStack);
+
         // ---- Thumbnail ----
         const thumbnail = document.createElement('div');
         thumbnail.className = 'bookmark-thumbnail';
@@ -98,25 +147,21 @@ export class UIRenderer {
         const content = document.createElement('div');
         content.className = 'bookmark-content';
 
-        // Title
         const title = document.createElement('div');
         title.className = 'bookmark-title';
         title.textContent = bookmark.title || 'Untitled';
         content.appendChild(title);
 
-        // URL
         const url = document.createElement('div');
         url.className = 'bookmark-url';
         url.textContent = bookmark.url || '';
         content.appendChild(url);
 
-        // Description
         const desc = document.createElement('div');
         desc.className = 'bookmark-description';
         desc.textContent = bookmark.description || 'No description available';
         content.appendChild(desc);
 
-        // Date
         const date = document.createElement('div');
         date.className = 'bookmark-date';
         const addedDate = bookmark.addedDate ? new Date(bookmark.addedDate) : new Date();
@@ -128,60 +173,6 @@ export class UIRenderer {
             date.appendChild(badge);
         }
         content.appendChild(date);
-
-        // ---- Link Status Badge (if exists) ----
-        if (bookmark.linkStatus && bookmark.linkStatus.status) {
-            const statusColors = {
-                'verified': '#10B981',
-                'broken': '#EF4444',
-                'redirect': '#F59E0B',
-                'timeout': '#F97316',
-                'error': '#6B7280'
-            };
-            const statusIcons = {
-                'verified': '✅',
-                'broken': '❌',
-                'redirect': '⚠️',
-                'timeout': '⏱️',
-                'error': '❓'
-            };
-            const statusLabels = {
-                'verified': 'Verified',
-                'broken': 'Broken',
-                'redirect': 'Redirect',
-                'timeout': 'Timeout',
-                'error': 'Error'
-            };
-
-            const statusBadge = document.createElement('div');
-            statusBadge.className = 'link-status-badge';
-            const color = statusColors[bookmark.linkStatus.status] || '#6B7280';
-            const icon = statusIcons[bookmark.linkStatus.status] || '';
-            const label = statusLabels[bookmark.linkStatus.status] || bookmark.linkStatus.status;
-
-            let lastCheckedText = '';
-            if (bookmark.linkStatus.lastChecked) {
-                const checkedDate = new Date(bookmark.linkStatus.lastChecked);
-                lastCheckedText = ` • ${checkedDate.toLocaleDateString()}`;
-            }
-
-            statusBadge.style.cssText = `
-                position: absolute;
-                top: 8px;
-                right: 8px;
-                background: ${color};
-                color: white;
-                padding: 0.1rem 0.5rem;
-                border-radius: 12px;
-                font-size: 0.6rem;
-                font-weight: 500;
-                z-index: 10;
-                pointer-events: none;
-                white-space: nowrap;
-            `;
-            statusBadge.textContent = `${icon} ${label}${lastCheckedText}`;
-            card.appendChild(statusBadge);
-        }
 
         // ---- Tags ----
         if (bookmark.tags && bookmark.tags.length > 0) {
@@ -208,7 +199,6 @@ export class UIRenderer {
         const footer = document.createElement('div');
         footer.className = 'bookmark-footer';
 
-        // Source (category)
         const source = document.createElement('span');
         source.className = 'source';
         source.textContent = `📎 ${bookmark.category || 'Uncategorized'}`;
@@ -217,11 +207,9 @@ export class UIRenderer {
         }
         footer.appendChild(source);
 
-        // Actions
         const actionsContainer = document.createElement('div');
         actionsContainer.className = 'card-actions';
 
-        // Archive button
         const archiveBtn = document.createElement('button');
         archiveBtn.className = 'btn-icon';
         archiveBtn.title = bookmark.isArchived ? 'Unarchive' : 'Archive';
@@ -232,7 +220,6 @@ export class UIRenderer {
         });
         actionsContainer.appendChild(archiveBtn);
 
-        // Delete button
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'btn-icon delete';
         deleteBtn.title = 'Delete permanently';

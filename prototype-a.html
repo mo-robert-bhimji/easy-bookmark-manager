@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookmark Manager - Prototype</title>
+    <style>
+        /* ========================================
+           RESET & BASE
+        ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #F3F4F6;
+            color: #1F2937;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ========================================
+           FIXED HEADER
+        ======================================== */
+        .fixed-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: white;
+            border-bottom: 1px solid #E5E7EB;
+            flex-shrink: 0;
+        }
+
+        /* ----- Top Bar ----- */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 2rem;
+            background: white;
+            border-bottom: 1px solid #E5E7EB;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .top-bar .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #4F46E5;
+        }
+
+        .top-bar .right {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .top-bar .right input[type="text"] {
+            padding: 0.3rem 0.6rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            width: 180px;
+            background: #F9FAFB;
+        }
+
+        .top-bar .right input[type="text"]:focus {
+            outline: none;
+            border-color: #4F46E5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 0 14px;
+            height: 32px;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            background: #F9FAFB;
+            color: #1F2937;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background: #F3F4F6;
+            border-color: #9CA3AF;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-primary {
+            background: #4F46E5;
+            border-color: #4F46E5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338CA;
+            border-color: #4338CA;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #EF4444;
+            border-color: #EF4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+            border-color: #DC2626;
+            color: white;
+        }
+
+        .btn-success {
+            background: #10B981;
+            border-color: #10B981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            border-color: #059669;
+            color: white;
+        }
+
+        .btn-sm {
+            height: 28px;
+            font-size: 0.7rem;
+            padding: 0 10px;
+        }
+
+        /* ----- Category Bar ----- */
+        .category-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 2rem;
+            background: #F9FAFB;
+            border-bottom: 1px solid #E5E7EB;
+            overflow-x: auto;
+            flex-wrap: nowrap;
+        }
+
+        .category-bar .cat-btn {
+            padding: 0.2rem 0.8rem;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            background: transparent;
+            color: #6B7280;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .category-bar .cat-btn:hover {
+            background: #E5E7EB;
+            color: #1F2937;
+        }
+
+        .category-bar .cat-btn.active {
+            background: #4F46E5;
+            color: white;
+        }
+
+        /* ----- Content Header (Sticky with top bar) ----- */
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 2rem;
+            background: white;
+            border-bottom: 1px solid #E5E7EB;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .content-header .left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+        }
+
+        .content-header .left .title-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .content-header .left .title-row h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .content-header .left .count {
+            font-size: 0.85rem;
+            color: #6B7280;
+        }
+
+        .content-header .right {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* ----- Status Filters ----- */
+        .status-filters {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-filter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            height: 30px;
+            border: 1px solid #D1D5DB;
+            border-radius: 15px;
+            background: #F9FAFB;
+            color: #6B7280;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .status-filter:hover:not(.active) {
+            background: #F3F4F6;
+            border-color: #9CA3AF;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .status-filter.active {
+            background: #4F46E5;
+            border-color: #4F46E5;
+            color: white;
+        }
+
+        .status-filter[data-status="all"] {
+            font-weight: 600;
+            padding: 0 14px;
+        }
+
+        /* ----- Sort Select ----- */
+        .sort-select {
+            padding: 0.2rem 0.5rem;
+            height: 30px;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            background: #F9FAFB;
+            color: #1F2937;
+            font-size: 0.75rem;
+            cursor: pointer;
+            outline: none;
+            min-width: 120px;
+        }
+
+        .sort-select:focus {
+            border-color: #4F46E5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+
+        /* ========================================
+           MAIN LAYOUT
+        ======================================== */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ----- Sidebar ----- */
+        .sidebar {
+            width: 200px;
+            background: white;
+            border-right: 1px solid #E5E7EB;
+            padding: 1rem;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar h3 {
+            font-size: 0.8rem;
+            color: #6B7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s ease;
+        }
+
+        .sidebar ul li:hover {
+            background: #F3F4F6;
+        }
+
+        .sidebar ul li.active {
+            background: #EEF2FF;
+            color: #4F46E5;
+            font-weight: 500;
+        }
+
+        .sidebar ul li .count {
+            font-size: 0.7rem;
+            color: #6B7280;
+            background: #F3F4F6;
+            padding: 0.05rem 0.4rem;
+            border-radius: 10px;
+        }
+
+        .sidebar ul li.active .count {
+            background: #DBEAFE;
+            color: #4F46E5;
+        }
+
+        /* ----- Content ----- */
+        .content {
+            flex: 1;
+            padding: 1rem 2rem;
+            overflow-y: auto;
+            background: #F9FAFB;
+        }
+
+        /* ----- Action Bar ----- */
+        .action-bar {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #E5E7EB;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-bar.visible {
+            display: flex;
+        }
+
+        .action-bar .select-all {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-bar .select-all input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #4F46E5;
+            cursor: pointer;
+        }
+
+        .action-bar .select-all label {
+            font-size: 0.8rem;
+            color: #6B7280;
+        }
+
+        .action-bar .selection-count {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #1F2937;
+        }
+
+        .action-bar .btn {
+            font-size: 0.75rem;
+            padding: 0 12px;
+            height: 28px;
+        }
+
+        /* ========================================
+           BOOKMARK GRID
+        ======================================== */
+        .bookmarks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+
+        /* ----- Bookmark Card ----- */
+        .bookmark-card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #E5E7EB;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            min-height: 280px;
+            position: relative;
+        }
+
+        .bookmark-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .bookmark-card.selected {
+            border: 2px solid #4F46E5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+
+        .bookmark-card .checkbox {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 5;
+            width: 16px;
+            height: 16px;
+            accent-color: #4F46E5;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .bookmark-card:hover .checkbox,
+        .bookmark-card.selected .checkbox {
+            opacity: 1;
+        }
+
+        /* ----- Badge Stacking ----- */
+        .bookmark-card .badge-stack {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .bookmark-card .badge-stack .badge {
+            padding: 0.1rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: 500;
+            white-space: nowrap;
+            color: white;
+            pointer-events: none;
+            cursor: default;
+        }
+
+        .bookmark-card .badge-stack .badge-status {
+            background: #10B981;
+        }
+        .bookmark-card .badge-stack .badge-status.broken {
+            background: #EF4444;
+        }
+        .bookmark-card .badge-stack .badge-status.redirect {
+            background: #F59E0B;
+        }
+        .bookmark-card .badge-stack .badge-status.timeout {
+            background: #F97316;
+        }
+        .bookmark-card .badge-stack .badge-status.error {
+            background: #6B7280;
+        }
+
+        .bookmark-card .badge-stack .badge-stack-domain {
+            background: #8B5CF6;
+        }
+
+        .bookmark-card .badge-stack .badge-stack-duplicate {
+            background: #3B82F6;
+        }
+
+        /* ----- Thumbnail ----- */
+        .bookmark-card .thumbnail {
+            height: 120px;
+            background: #E5E7EB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #9CA3AF;
+            flex-shrink: 0;
+        }
+
+        .bookmark-card .thumbnail .domain {
+            font-size: 0.8rem;
+            color: #6B7280;
+        }
+
+        /* ----- Content ----- */
+        .bookmark-card .card-content {
+            padding: 0.75rem 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .bookmark-card .card-content .title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.3;
+        }
+
+        .bookmark-card .card-content .url {
+            font-size: 0.7rem;
+            color: #6B7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bookmark-card .card-content .description {
+            font-size: 0.75rem;
+            color: #6B7280;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+            margin: 0.1rem 0;
+        }
+
+        .bookmark-card .card-content .date {
+            font-size: 0.6rem;
+            color: #9CA3AF;
+            margin-top: 0.2rem;
+        }
+
+        .bookmark-card .card-content .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-top: 0.25rem;
+        }
+
+        .bookmark-card .card-content .tags .tag {
+            background: #F3F4F6;
+            padding: 0.05rem 0.4rem;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            color: #6B7280;
+        }
+
+        /* ----- Footer ----- */
+        .bookmark-card .card-footer {
+            padding: 0.4rem 1rem;
+            border-top: 1px solid #E5E7EB;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.65rem;
+            color: #6B7280;
+            flex-shrink: 0;
+            margin-top: auto;
+        }
+
+        .bookmark-card .card-footer .actions {
+            display: flex;
+            gap: 0.3rem;
+            opacity: 0.4;
+            transition: opacity 0.2s ease;
+        }
+
+        .bookmark-card:hover .card-footer .actions {
+            opacity: 1;
+        }
+
+        .bookmark-card .card-footer .actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 0.1rem 0.2rem;
+            border-radius: 4px;
+            transition: background 0.2s ease;
+        }
+
+        .bookmark-card .card-footer .actions button:hover {
+            background: #F3F4F6;
+        }
+
+        .bookmark-card .card-footer .actions .delete:hover {
+            color: #EF4444;
+            background: #FEE2E2;
+        }
+
+        /* ========================================
+           STACKED CARD
+        ======================================== */
+        .stack-container {
+            position: relative;
+            height: 100%;
+            min-height: 280px;
+        }
+
+        .stack-container .stack {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .stack-container .bookmark-card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 280px;
+        }
+
+        .stack-container .bookmark-card:nth-child(2) {
+            transform: translate(6px, 6px) scale(0.98);
+            z-index: 2;
+            opacity: 0.7;
+        }
+
+        .stack-container .bookmark-card:nth-child(3) {
+            transform: translate(12px, 12px) scale(0.96);
+            z-index: 1;
+            opacity: 0.5;
+        }
+
+        .stack-container .bookmark-card .checkbox {
+            opacity: 0;
+        }
+
+        .stack-container:hover .bookmark-card .checkbox,
+        .stack-container .bookmark-card.selected .checkbox {
+            opacity: 1;
+        }
+
+        /* ========================================
+           MODAL
+        ======================================== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            max-width: 560px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 0;
+        }
+
+        .modal .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal .modal-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .modal .modal-header .close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6B7280;
+            padding: 0 0.25rem;
+        }
+
+        .modal .modal-header .close:hover {
+            color: #1F2937;
+        }
+
+        .modal .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal .modal-body .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .modal .modal-body .form-group label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+            color: #374151;
+        }
+
+        .modal .modal-body .form-group input,
+        .modal .modal-body .form-group select,
+        .modal .modal-body .form-group textarea {
+            width: 100%;
+            padding: 0.4rem 0.6rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+
+        .modal .modal-body .form-group input:focus,
+        .modal .modal-body .form-group select:focus,
+        .modal .modal-body .form-group textarea:focus {
+            outline: none;
+            border-color: #4F46E5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+
+        .modal .modal-body .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .modal .modal-body .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .modal .modal-body .form-row .new-category {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-top: 0.25rem;
+        }
+
+        .modal .modal-body .form-row .new-category input {
+            flex: 1;
+        }
+
+        .modal .modal-body .form-row .new-category button {
+            padding: 0.2rem 0.6rem;
+            height: 32px;
+            font-size: 0.75rem;
+        }
+
+        .modal .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #E5E7EB;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        /* ========================================
+           STATUS DROPDOWN (Reclassify)
+        ======================================== */
+        .status-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .status-dropdown .status-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+        }
+
+        .status-dropdown .status-toggle:hover {
+            background: #F3F4F6;
+        }
+
+        .status-dropdown .status-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 140px;
+            z-index: 20;
+            padding: 0.25rem 0;
+        }
+
+        .status-dropdown .status-menu.visible {
+            display: block;
+        }
+
+        .status-dropdown .status-menu .status-option {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .status-dropdown .status-menu .status-option:hover {
+            background: #F3F4F6;
+        }
+
+        .status-dropdown .status-menu .status-option.active {
+            background: #EEF2FF;
+            color: #4F46E5;
+        }
+
+        /* ========================================
+           RESPONSIVE
+        ======================================== */
+        @media (max-width: 768px) {
+            .top-bar {
+                padding: 0.5rem 1rem;
+            }
+            .top-bar .right input[type="text"] {
+                width: 120px;
+            }
+            .category-bar {
+                padding: 0.4rem 1rem;
+            }
+            .content-header {
+                padding: 0.5rem 1rem;
+            }
+            .content {
+                padding: 0.75rem 1rem;
+            }
+            .sidebar {
+                width: 150px;
+                padding: 0.75rem 0.5rem;
+            }
+            .bookmarks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            .modal {
+                max-width: 100%;
+                margin: 0.5rem;
+            }
+            .modal .modal-body .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-bar .right input[type="text"] {
+                width: 80px;
+            }
+            .content-header .left .title-row h2 {
+                font-size: 1rem;
+            }
+            .content-header .right {
+                gap: 0.25rem;
+            }
+            .status-filter {
+                padding: 0 6px;
+                height: 24px;
+                font-size: 0.6rem;
+            }
+            .status-filter[data-status="all"] {
+                padding: 0 8px;
+                font-size: 0.6rem;
+            }
+            .sort-select {
+                min-width: 80px;
+                font-size: 0.65rem;
+                height: 24px;
+            }
+            .bookmarks-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ========================================
+           SCROLLBAR
+        ======================================== */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F3F4F6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D1D5DB;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9CA3AF;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========================================
+    FIXED HEADER
+    ======================================== -->
+    <div class="fixed-header">
+
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="logo">📚 Bookmark Manager</div>
+            <div class="right">
+                <input type="text" id="searchInput" placeholder="Search bookmarks..." />
+                <button class="btn">📥 Import</button>
+                <button class="btn">💾 Export</button>
+                <button class="btn btn-primary">🤖 Auto-Classify</button>
+                <button class="btn">🔗 Check Links</button>
+                <button class="btn" id="showArchivedBtn">🗄️ Show Archived</button>
+                <button class="btn">🖼️ Clear Thumbnails</button>
+                <button class="btn btn-danger">🗑️ Clear All</button>
+            </div>
+        </div>
+
+        <!-- Category Bar -->
+        <div class="category-bar" id="categoryBar">
+            <button class="cat-btn active" data-category="All">All</button>
+            <button class="cat-btn" data-category="To Review">📋 To Review</button>
+            <button class="cat-btn" data-category="Anomalies">⚠️ Anomalies</button>
+            <button class="cat-btn" data-category="Technology">💻 Technology</button>
+            <button class="cat-btn" data-category="Career">💼 Career</button>
+            <button class="cat-btn" data-category="Cooking/Food">🍳 Cooking/Food</button>
+            <button class="cat-btn" data-category="Gaming">🎮 Gaming</button>
+            <button class="cat-btn" data-category="Health">💪 Health</button>
+            <button class="cat-btn" data-category="News">📰 News</button>
+            <button class="cat-btn" data-category="Travel">✈️ Travel</button>
+            <button class="cat-btn" data-category="Shopping">🛍️ Shopping</button>
+        </div>
+
+        <!-- Content Header (Sticky) -->
+        <div class="content-header" id="contentHeader">
+            <div class="left">
+                <div class="title-row">
+                    <h2 id="currentCategoryTitle">All Bookmarks</h2>
+                    <div class="status-filters" id="statusFilters">
+                        <button class="status-filter active" data-status="all">All</button>
+                        <button class="status-filter" data-status="verified">✅</button>
+                        <button class="status-filter" data-status="broken">❌</button>
+                        <button class="status-filter" data-status="redirect">⚠️</button>
+                        <button class="status-filter" data-status="timeout">⏱️</button>
+                        <button class="status-filter" data-status="error">❓</button>
+                    </div>
+                </div>
+                <span class="count" id="bookmarkCount">0 bookmarks</span>
+            </div>
+            <div class="right">
+                <label style="font-size:0.8rem;color:#6B7280;">Sort by:</label>
+                <select class="sort-select" id="sortSelect">
+                    <option value="date-desc">Date Added (Newest)</option>
+                    <option value="date-asc">Date Added (Oldest)</option>
+                    <option value="title">Title</option>
+                    <option value="url">URL</option>
+                    <option value="category">Category</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+    MAIN LAYOUT
+    ======================================== -->
+    <div class="main-layout">
+
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <h3>Categories</h3>
+            <ul id="categoriesList">
+                <li class="active" data-category="All">All <span class="count">0</span></li>
+                <li data-category="To Review">📋 To Review <span class="count">0</span></li>
+                <li data-category="Anomalies">⚠️ Anomalies <span class="count">0</span></li>
+                <li data-category="Technology">💻 Technology <span class="count">0</span></li>
+                <li data-category="Career">💼 Career <span class="count">0</span></li>
+                <li data-category="Cooking/Food">🍳 Cooking/Food <span class="count">0</span></li>
+                <li data-category="Gaming">🎮 Gaming <span class="count">0</span></li>
+                <li data-category="Health">💪 Health <span class="count">0</span></li>
+                <li data-category="News">📰 News <span class="count">0</span></li>
+                <li data-category="Travel">✈️ Travel <span class="count">0</span></li>
+                <li data-category="Shopping">🛍️ Shopping <span class="count">0</span></li>
+            </ul>
+            <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid #E5E7EB;font-size:0.75rem;color:#6B7280;">
+                <button class="btn btn-sm" id="addCategoryBtn">➕ Add Category</button>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content" id="content">
+
+            <!-- Action Bar -->
+            <div class="action-bar" id="actionBar">
+                <div class="select-all">
+                    <input type="checkbox" id="selectAll" />
+                    <label for="selectAll">Select All</label>
+                </div>
+                <span class="selection-count" id="selectionCount">0 selected</span>
+                <button class="btn btn-sm" id="clearSelectionBtn">✕ Clear</button>
+                <button class="btn btn-sm" id="bulkArchiveBtn">📥 Archive</button>
+                <button class="btn btn-sm" id="bulkUnarchiveBtn">📤 Unarchive</button>
+                <button class="btn btn-sm btn-danger" id="bulkDeleteBtn">🗑️ Delete</button>
+                <button class="btn btn-sm" id="bulkMoveBtn">📂 Move To</button>
+            </div>
+
+            <!-- Bookmarks Grid -->
+            <div class="bookmarks-grid" id="bookmarksGrid">
+                <!-- Rendered by JS -->
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ========================================
+    EDIT MODAL
+    ======================================== -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>✏️ Edit Bookmark</h2>
+                <button class="close" id="editModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="editTitle" />
+                </div>
+                <div class="form-group">
+                    <label>URL</label>
+                    <input type="text" id="editUrl" />
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="editDescription" rows="2"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="editCategory"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tags</label>
+                        <input type="text" id="editTags" placeholder="tag1, tag2, tag3" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>New Category</label>
+                        <div class="new-category">
+                            <input type="text" id="editNewCategory" placeholder="Enter new category name" />
+                            <button class="btn btn-sm btn-primary" id="addNewCategoryBtn">+ Add</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Link Status</label>
+                        <select id="editStatus">
+                            <option value="verified">✅ Verified</option>
+                            <option value="broken">❌ Broken</option>
+                            <option value="redirect">⚠️ Redirect</option>
+                            <option value="timeout">⏱️ Timeout</option>
+                            <option value="error">❓ Error</option>
+                            <option value="unknown">❓ Unknown</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="font-size:0.75rem;color:#6B7280;margin-top:0.5rem;">
+                    Last checked: <span id="editLastChecked">Never</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="editModalCancel">Cancel</button>
+                <button class="btn btn-primary" id="editModalSave">💾 Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+    RECLASSIFY DROPDOWN (Inline)
+    ======================================== -->
+    <script>
+        // ========================================
+        // MOCK DATA
+        // ========================================
+        const mockData = [
+            { id: '1', title: 'GitHub - Where code lives', url: 'https://github.com', description: 'The world\'s leading platform for version control and collaboration.', category: 'Technology', tags: ['coding', 'git', 'dev'], addedDate: '2024-01-15T12:00:00Z', domain: 'github.com', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '2', title: 'Stack Overflow - Where developers learn', url: 'https://stackoverflow.com', description: 'Q&A for programmers', category: 'Technology', tags: ['coding', 'qa'], addedDate: '2024-02-20T14:30:00Z', domain: 'stackoverflow.com', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '3', title: 'MDN Web Docs', url: 'https://developer.mozilla.org', description: 'Documentation for web technologies', category: 'Technology', tags: ['web', 'docs'], addedDate: '2024-03-10T09:00:00Z', domain: 'developer.mozilla.org', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '4', title: 'LinkedIn - Professional Network', url: 'https://linkedin.com', description: 'Connect with professionals', category: 'Career', tags: ['networking', 'jobs'], addedDate: '2024-04-05T16:45:00Z', domain: 'linkedin.com', linkStatus: { status: 'broken', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '5', title: 'Indeed - Job Search', url: 'https://indeed.com', description: 'Find your next job', category: 'Career', tags: ['jobs', 'hiring'], addedDate: '2024-05-12T11:20:00Z', domain: 'indeed.com', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '6', title: 'AllRecipes - Cooking Community', url: 'https://allrecipes.com', description: 'Recipes and cooking tips', category: 'Cooking/Food', tags: ['recipes', 'cooking'], addedDate: '2024-06-18T08:30:00Z', domain: 'allrecipes.com', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '7', title: 'Serious Eats - Food Science', url: 'https://seriouseats.com', description: 'Food science and recipes', category: 'Cooking/Food', tags: ['food', 'science'], addedDate: '2024-07-22T19:00:00Z', domain: 'seriouseats.com', linkStatus: { status: 'redirect', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '8', title: 'PC Gamer - Gaming News', url: 'https://pcgamer.com', description: 'PC gaming news and reviews', category: 'Gaming', tags: ['games', 'news'], addedDate: '2024-08-01T13:15:00Z', domain: 'pcgamer.com', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '9', title: 'IGN - Entertainment', url: 'https://ign.com', description: 'Gaming and entertainment', category: 'Gaming', tags: ['games', 'reviews'], addedDate: '2024-09-14T10:45:00Z', domain: 'ign.com', linkStatus: { status: 'timeout', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '10', title: 'WebMD - Health Information', url: 'https://webmd.com', description: 'Health and wellness', category: 'Health', tags: ['health', 'medical'], addedDate: '2024-10-02T07:30:00Z', domain: 'webmd.com', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '11', title: 'CNN - Breaking News', url: 'https://cnn.com', description: 'Latest news from around the world', category: 'News', tags: ['news', 'world'], addedDate: '2024-11-11T12:00:00Z', domain: 'cnn.com', linkStatus: { status: 'error', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '12', title: 'BBC - News', url: 'https://bbc.com', description: 'British news and world affairs', category: 'News', tags: ['news', 'uk'], addedDate: '2024-12-25T09:00:00Z', domain: 'bbc.com', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '13', title: 'Lonely Planet - Travel Guides', url: 'https://lonelyplanet.com', description: 'Travel guides and tips', category: 'Travel', tags: ['travel', 'guides'], addedDate: '2025-01-05T16:20:00Z', domain: 'lonelyplanet.com', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '14', title: 'Amazon - Shopping', url: 'https://amazon.com', description: 'Everything online', category: 'Shopping', tags: ['shopping', 'products'], addedDate: '2025-02-14T14:00:00Z', domain: 'amazon.com', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '15', title: 'Etsy - Handmade', url: 'https://etsy.com', description: 'Handmade and vintage items', category: 'Shopping', tags: ['handmade', 'crafts'], addedDate: '2025-03-20T11:30:00Z', domain: 'etsy.com', linkStatus: { status: 'redirect', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '16', title: 'TechCrunch - Tech News', url: 'https://techcrunch.com', description: 'Technology news and startups', category: 'Technology', tags: ['tech', 'news', 'startups'], addedDate: '2025-04-01T08:45:00Z', domain: 'techcrunch.com', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '17', title: 'The Verge - Tech Culture', url: 'https://theverge.com', description: 'Technology and culture', category: 'Technology', tags: ['tech', 'culture', 'reviews'], addedDate: '2025-05-10T15:10:00Z', domain: 'theverge.com', linkStatus: { status: 'broken', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '18', title: 'Ars Technica - Tech', url: 'https://arstechnica.com', description: 'Technology news and analysis', category: 'Technology', tags: ['tech', 'science', 'reviews'], addedDate: '2025-06-22T13:45:00Z', domain: 'arstechnica.com', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '19', title: 'Minecraft - Official Site', url: 'https://minecraft.net', description: 'Official Minecraft website', category: 'Gaming', tags: ['games', 'minecraft'], addedDate: '2024-03-15T10:00:00Z', domain: 'minecraft.net', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '20', title: 'Github Status', url: 'https://githubstatus.com', description: 'GitHub status page', category: 'Technology', tags: ['devops', 'status'], addedDate: '2024-05-20T12:00:00Z', domain: 'githubstatus.com', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '21', title: 'Google Fonts', url: 'https://fonts.google.com', description: 'Free fonts for web', category: 'Technology', tags: ['design', 'fonts', 'web'], addedDate: '2024-07-01T09:30:00Z', domain: 'fonts.google.com', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '22', title: 'Stack Exchange', url: 'https://stackexchange.com', description: 'Q&A network', category: 'Technology', tags: ['qa', 'community'], addedDate: '2024-09-10T14:20:00Z', domain: 'stackexchange.com', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '23', title: 'CodePen - Code Playground', url: 'https://codepen.io', description: 'Frontend code playground', category: 'Technology', tags: ['coding', 'html', 'css', 'js'], addedDate: '2024-11-01T16:00:00Z', domain: 'codepen.io', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '24', title: 'Dev.to - Dev Community', url: 'https://dev.to', description: 'Developer community', category: 'Technology', tags: ['coding', 'community', 'blog'], addedDate: '2025-01-15T11:00:00Z', domain: 'dev.to', linkStatus: { status: 'verified', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+            { id: '25', title: 'Anomaly Test', url: 'chrome://version', description: 'Internal Chrome page', category: 'Anomalies', tags: ['anomaly'], addedDate: '2025-02-01T08:00:00Z', domain: 'chrome://', linkStatus: { status: 'error', lastChecked: '2024-06-01T10:00:00Z' }, isArchived: false },
+        ];
+
+        // Add some archived bookmarks
+        const archivedData = [
+            { id: 'a1', title: 'Old Blog', url: 'https://oldblog.com', description: 'My old personal blog', category: 'Technology', tags: ['blog', 'old'], addedDate: '2023-01-01T00:00:00Z', domain: 'oldblog.com', linkStatus: { status: 'broken', lastChecked: '2023-12-01T10:00:00Z' }, isArchived: true },
+            { id: 'a2', title: 'Old Recipe Site', url: 'https://oldrecipes.com', description: 'Recipes I used to use', category: 'Cooking/Food', tags: ['recipes', 'old'], addedDate: '2023-06-15T00:00:00Z', domain: 'oldrecipes.com', linkStatus: { status: 'verified', lastChecked: '2023-12-01T10:00:00Z' }, isArchived: true },
+        ];
+
+        // ========================================
+        // APP STATE
+        // ========================================
+        let bookmarks = [...mockData, ...archivedData];
+        let currentCategory = 'All';
+        let currentStatusFilter = 'all';
+        let currentSort = 'date-desc';
+        let showArchived = false;
+        let selectedIds = new Set();
+        let editingId = null;
+
+        // ========================================
+        // DOM REFS
+        // ========================================
+        const grid = document.getElementById('bookmarksGrid');
+        const categoriesList = document.getElementById('categoriesList');
+        const categoryBar = document.getElementById('categoryBar');
+        const currentTitle = document.getElementById('currentCategoryTitle');
+        const countEl = document.getElementById('bookmarkCount');
+        const statusFilters = document.getElementById('statusFilters');
+        const sortSelect = document.getElementById('sortSelect');
+        const actionBar = document.getElementById('actionBar');
+        const selectionCount = document.getElementById('selectionCount');
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const clearSelectionBtn = document.getElementById('clearSelectionBtn');
+        const bulkArchiveBtn = document.getElementById('bulkArchiveBtn');
+        const bulkUnarchiveBtn = document.getElementById('bulkUnarchiveBtn');
+        const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+        const bulkMoveBtn = document.getElementById('bulkMoveBtn');
+        const showArchivedBtn = document.getElementById('showArchivedBtn');
+        const searchInput = document.getElementById('searchInput');
+        const addCategoryBtn = document.getElementById('addCategoryBtn');
+
+        // Edit Modal
+        const editModal = document.getElementById('editModal');
+        const editModalClose = document.getElementById('editModalClose');
+        const editModalCancel = document.getElementById('editModalCancel');
+        const editModalSave = document.getElementById('editModalSave');
+        const editTitle = document.getElementById('editTitle');
+        const editUrl = document.getElementById('editUrl');
+        const editDescription = document.getElementById('editDescription');
+        const editCategory = document.getElementById('editCategory');
+        const editTags = document.getElementById('editTags');
+        const editStatus = document.getElementById('editStatus');
+        const editLastChecked = document.getElementById('editLastChecked');
+        const editNewCategory = document.getElementById('editNewCategory');
+        const addNewCategoryBtn = document.getElementById('addNewCategoryBtn');
+
+        // ========================================
+        // UTILITY FUNCTIONS
+        // ========================================
+        function getCategoryCount(category) {
+            let items = bookmarks.filter(b => !b.isArchived);
+            if (category === 'All') return items.length;
+            if (category === 'To Review') return items.filter(b => b.category === 'To Review').length;
+            if (category === 'Anomalies') return items.filter(b => b.category === 'Anomalies').length;
+            return items.filter(b => b.category === category).length;
+        }
+
+        function getFilteredBookmarks() {
+            let items = [...bookmarks];
+
+            // Filter by archived
+            if (!showArchived) {
+                items = items.filter(b => !b.isArchived);
+            } else {
+                // Show ONLY archived
+                items = items.filter(b => b.isArchived);
+            }
+
+            // Filter by category
+            if (currentCategory !== 'All' && currentCategory !== 'To Review' && currentCategory !== 'Anomalies') {
+                items = items.filter(b => b.category === currentCategory);
+            } else if (currentCategory === 'To Review') {
+                items = items.filter(b => b.category === 'To Review');
+            } else if (currentCategory === 'Anomalies') {
+                items = items.filter(b => b.category === 'Anomalies');
+            }
+
+            // Filter by status
+            if (currentStatusFilter !== 'all') {
+                items = items.filter(b => b.linkStatus && b.linkStatus.status === currentStatusFilter);
+            }
+
+            // Search filter
+            const query = searchInput.value.trim().toLowerCase();
+            if (query) {
+                items = items.filter(b =>
+                    b.title.toLowerCase().includes(query) ||
+                    b.url.toLowerCase().includes(query) ||
+                    (b.description && b.description.toLowerCase().includes(query))
+                );
+            }
+
+            // Sort
+            items.sort((a, b) => {
+                switch (currentSort) {
+                    case 'date-desc':
+                        return new Date(b.addedDate) - new Date(a.addedDate);
+                    case 'date-asc':
+                        return new Date(a.addedDate) - new Date(b.addedDate);
+                    case 'title':
+                        return a.title.localeCompare(b.title);
+                    case 'url':
+                        return a.url.localeCompare(b.url);
+                    case 'category':
+                        return a.category.localeCompare(b.category);
+                    default:
+                        return 0;
+                }
+            });
+
+            return items;
+        }
+
+        function getDomainGroup(bookmarks) {
+            const groups = {};
+            bookmarks.forEach(b => {
+                const domain = b.domain || 'unknown';
+                if (!groups[domain]) groups[domain] = [];
+                groups[domain].push(b);
+            });
+            return groups;
+        }
+
+        // ========================================
+        // RENDER FUNCTIONS
+        // ========================================
+        function render() {
+            const filtered = getFilteredBookmarks();
+            const groups = getDomainGroup(filtered);
+
+            // Update title and count
+            currentTitle.textContent = currentCategory;
+            countEl.textContent = `${filtered.length} bookmark${filtered.length !== 1 ? 's' : ''}`;
+
+            // Update categories in sidebar
+            document.querySelectorAll('#categoriesList li').forEach(li => {
+                const cat = li.dataset.category;
+                const count = getCategoryCount(cat);
+                const span = li.querySelector('.count');
+                if (span) span.textContent = count;
+                li.classList.toggle('active', cat === currentCategory);
+            });
+
+            // Update category bar
+            document.querySelectorAll('.category-bar .cat-btn').forEach(btn => {
+                const cat = btn.dataset.category;
+                btn.classList.toggle('active', cat === currentCategory);
+            });
+
+            // Update status filter buttons
+            document.querySelectorAll('.status-filter').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.status === currentStatusFilter);
+            });
+
+            // Update sort select
+            sortSelect.value = currentSort;
+
+            // Show/hide action bar
+            const hasSelection = selectedIds.size > 0;
+            actionBar.classList.toggle('visible', hasSelection);
+            selectionCount.textContent = `${selectedIds.size} selected`;
+            bulkArchiveBtn.disabled = !hasSelection;
+            bulkUnarchiveBtn.disabled = !hasSelection;
+            bulkDeleteBtn.disabled = !hasSelection;
+            bulkMoveBtn.disabled = !hasSelection;
+
+            // Update select all
+            const visibleIds = filtered.map(b => b.id);
+            const allSelected = visibleIds.every(id => selectedIds.has(id));
+            selectAllCheckbox.checked = allSelected && visibleIds.length > 0;
+            selectAllCheckbox.indeterminate = !allSelected && visibleIds.some(id => selectedIds.has(id));
+
+            // Update show archived button
+            showArchivedBtn.textContent = showArchived ? '📁 Show Active' : '🗄️ Show Archived';
+
+            // Render grid
+            renderGrid(filtered, groups);
+        }
+
+        function renderGrid(items, groups) {
+            if (items.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1;text-align:center;padding:4rem 2rem;color:#6B7280;">
+                        <div style="font-size:3rem;margin-bottom:0.5rem;">📭</div>
+                        <h3 style="font-size:1.1rem;color:#1F2937;margin-bottom:0.25rem;">No bookmarks found</h3>
+                        <p style="font-size:0.85rem;">${showArchived ? 'No archived bookmarks in this category.' : 'Try a different category or import some bookmarks.'}</p>
+                        ${!showArchived ? '<button class="btn" style="margin-top:0.5rem;" onclick="alert(\'Import would open here\')">📥 Import Bookmarks</button>' : ''}
+                    </div>
+                `;
+                return;
+            }
+
+            // Build DOM
+            let html = '';
+
+            // Group by domain for stacking
+            const domainGroups = {};
+            const singles = [];
+
+            items.forEach(item => {
+                const domain = item.domain || 'unknown';
+                // Only stack if more than 1 from same domain AND not the same URL
+                const sameDomain = items.filter(b => b.domain === domain);
+                if (sameDomain.length > 1 && sameDomain.some(b => b.url !== item.url)) {
+                    if (!domainGroups[domain]) domainGroups[domain] = [];
+                    // Avoid duplicates in the same group
+                    if (!domainGroups[domain].find(b => b.id === item.id)) {
+                        domainGroups[domain].push(item);
+                    }
+                } else {
+                    // Check if already added to a group
+                    let inGroup = false;
+                    for (const key in domainGroups) {
+                        if (domainGroups[key].find(b => b.id === item.id)) {
+                            inGroup = true;
+                            break;
+                        }
+                    }
+                    if (!inGroup) {
+                        singles.push(item);
+                    }
+                }
+            });
+
+            // Check for any items that might have been missed
+            const groupedIds = new Set();
+            for (const key in domainGroups) {
+                domainGroups[key].forEach(b => groupedIds.add(b.id));
+            }
+            const remaining = items.filter(b => !groupedIds.has(b.id));
+            const allSingles = [...singles, ...remaining];
+
+            // Render singles
+            allSingles.forEach(item => {
+                html += createCardHtml(item);
+            });
+
+            // Render stacks (only if more than 1 in group)
+            for (const domain in domainGroups) {
+                const group = domainGroups[domain];
+                if (group.length > 1) {
+                    html += createStackHtml(group);
+                } else {
+                    // If only 1, render as single
+                    html += createCardHtml(group[0]);
+                }
+            }
+
+            grid.innerHTML = html;
+
+            // Add event listeners to cards
+            grid.querySelectorAll('.bookmark-card').forEach(card => {
+                const id = card.dataset.id;
+                const cb = card.querySelector('.checkbox');
+                if (cb) {
+                    cb.checked = selectedIds.has(id);
+                    cb.addEventListener('change', (e) => {
+                        e.stopPropagation();
+                        if (cb.checked) {
+                            selectedIds.add(id);
+                            // If this is a stack card, select all items in the stack
+                            const stack = card.closest('.stack-container');
+                            if (stack) {
+                                stack.querySelectorAll('.bookmark-card').forEach(c => {
+                                    if (c.dataset.id) {
+                                        selectedIds.add(c.dataset.id);
+                                        const ccb = c.querySelector('.checkbox');
+                                        if (ccb) ccb.checked = true;
+                                        c.classList.add('selected');
+                                    }
+                                });
+                            }
+                            card.classList.add('selected');
+                        } else {
+                            selectedIds.delete(id);
+                            // If this is a stack card, deselect all items in the stack
+                            const stack = card.closest('.stack-container');
+                            if (stack) {
+                                stack.querySelectorAll('.bookmark-card').forEach(c => {
+                                    if (c.dataset.id) {
+                                        selectedIds.delete(c.dataset.id);
+                                        const ccb = c.querySelector('.checkbox');
+                                        if (ccb) ccb.checked = false;
+                                        c.classList.remove('selected');
+                                    }
+                                });
+                            }
+                            card.classList.remove('selected');
+                        }
+                        render();
+                    });
+                }
+
+                // Edit button
+                const editBtn = card.querySelector('.edit-btn');
+                if (editBtn) {
+                    editBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openEditModal(id);
+                    });
+                }
+
+                // Delete button
+                const delBtn = card.querySelector('.delete-btn');
+                if (delBtn) {
+                    delBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (confirm('🗑️ Permanently delete this bookmark?')) {
+                            bookmarks = bookmarks.filter(b => b.id !== id);
+                            selectedIds.delete(id);
+                            render();
+                        }
+                    });
+                }
+
+                // Archive button
+                const archiveBtn = card.querySelector('.archive-btn');
+                if (archiveBtn) {
+                    archiveBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const b = bookmarks.find(b => b.id === id);
+                        if (b) {
+                            b.isArchived = !b.isArchived;
+                            selectedIds.delete(id);
+                            render();
+                        }
+                    });
+                }
+
+                // Status dropdown toggle
+                const statusToggle = card.querySelector('.status-toggle');
+                const statusMenu = card.querySelector('.status-menu');
+                if (statusToggle && statusMenu) {
+                    statusToggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        statusMenu.classList.toggle('visible');
+                    });
+                    statusMenu.querySelectorAll('.status-option').forEach(opt => {
+                        opt.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const newStatus = opt.dataset.status;
+                            const b = bookmarks.find(b => b.id === id);
+                            if (b) {
+                                if (!b.linkStatus) b.linkStatus = {};
+                                b.linkStatus.status = newStatus;
+                                b.linkStatus.lastChecked = new Date().toISOString();
+                                statusMenu.classList.remove('visible');
+                                render();
+                            }
+                        });
+                    });
+                }
+
+                // Click card to open URL
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('.checkbox') || e.target.closest('button') || e.target.closest('.status-dropdown')) return;
+                    const b = bookmarks.find(b => b.id === id);
+                    if (b && b.url && !b.url.startsWith('chrome://')) {
+                        window.open(b.url, '_blank');
+                    }
+                });
+            });
+
+            // Close dropdowns on click outside
+            document.addEventListener('click', () => {
+                document.querySelectorAll('.status-menu.visible').forEach(m => m.classList.remove('visible'));
+            });
+        }
+
+        // ========================================
+        // CARD HTML HELPERS
+        // ========================================
+        function createCardHtml(bookmark) {
+            const status = bookmark.linkStatus?.status || 'unknown';
+            const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+            const statusIcon = {
+                'verified': '✅',
+                'broken': '❌',
+                'redirect': '⚠️',
+                'timeout': '⏱️',
+                'error': '❓',
+                'unknown': '❓'
+            } [status] || '❓';
+
+            const statusClass = status === 'verified' ? '' :
+                status === 'broken' ? 'broken' :
+                status === 'redirect' ? 'redirect' :
+                status === 'timeout' ? 'timeout' :
+                status === 'error' ? 'error' : '';
+
+            const lastChecked = bookmark.linkStatus?.lastChecked ?
+                new Date(bookmark.linkStatus.lastChecked).toLocaleDateString() :
+                'Never';
+
+            const addedDate = bookmark.addedDate ? new Date(bookmark.addedDate).toLocaleDateString() : 'Unknown';
+
+            // Check if this is a domain group (for stacking badge)
+            const isDomainGroup = false; // Handled separately
+
+            return `
+                <div class="bookmark-card" data-id="${bookmark.id}">
+                    <input type="checkbox" class="checkbox" />
+                    <div class="badge-stack">
+                        ${status ? `<span class="badge badge-status ${statusClass}">${statusIcon} ${statusLabel}</span>` : ''}
+                        <span class="badge badge-stack-domain">🏢 ${bookmark.domain || 'unknown'}</span>
+                    </div>
+                    <div class="thumbnail">📄</div>
+                    <div class="card-content">
+                        <div class="title">${bookmark.title}</div>
+                        <div class="url">${bookmark.url}</div>
+                        <div class="description">${bookmark.description || 'No description available'}</div>
+                        <div class="date">📅 Added: ${addedDate}</div>
+                        <div class="tags">
+                            ${bookmark.tags && bookmark.tags.length > 0 ? bookmark.tags.map(t => `<span class="tag">${t}</span>`).join('') : ''}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span>📎 ${bookmark.category || 'Uncategorized'}${bookmark.isArchived ? ' 📁 Archived' : ''}</span>
+                        <div class="actions">
+                            <span class="status-dropdown">
+                                <button class="status-toggle">${statusIcon}</button>
+                                <div class="status-menu">
+                                    <div class="status-option ${status === 'verified' ? 'active' : ''}" data-status="verified">✅ Verified</div>
+                                    <div class="status-option ${status === 'broken' ? 'active' : ''}" data-status="broken">❌ Broken</div>
+                                    <div class="status-option ${status === 'redirect' ? 'active' : ''}" data-status="redirect">⚠️ Redirect</div>
+                                    <div class="status-option ${status === 'timeout' ? 'active' : ''}" data-status="timeout">⏱️ Timeout</div>
+                                    <div class="status-option ${status === 'error' ? 'active' : ''}" data-status="error">❓ Error</div>
+                                    <div class="status-option ${status === 'unknown' ? 'active' : ''}" data-status="unknown">❓ Unknown</div>
+                                </div>
+                            </span>
+                            <button class="edit-btn" title="Edit">✏️</button>
+                            <button class="archive-btn" title="${bookmark.isArchived ? 'Unarchive' : 'Archive'}">${bookmark.isArchived ? '📤' : '📥'}</button>
+                            <button class="delete-btn" title="Delete">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createStackHtml(group) {
+            const domain = group[0].domain || 'unknown';
+            const count = group.length;
+            // Use the first item as the visible card, but show count
+            const first = group[0];
+            const status = first.linkStatus?.status || 'unknown';
+            const statusIcon = {
+                'verified': '✅',
+                'broken': '❌',
+                'redirect': '⚠️',
+                'timeout': '⏱️',
+                'error': '❓',
+                'unknown': '❓'
+            } [status] || '❓';
+            const statusClass = status === 'verified' ? '' :
+                status === 'broken' ? 'broken' :
+                status === 'redirect' ? 'redirect' :
+                status === 'timeout' ? 'timeout' :
+                status === 'error' ? 'error' : '';
+            const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+
+            const addedDate = first.addedDate ? new Date(first.addedDate).toLocaleDateString() : 'Unknown';
+
+            // Build card HTML for each item in the stack
+            let stackCards = '';
+            group.forEach((item, index) => {
+                const isFirst = index === 0;
+                const itemStatus = item.linkStatus?.status || 'unknown';
+                const itemStatusIcon = {
+                    'verified': '✅',
+                    'broken': '❌',
+                    'redirect': '⚠️',
+                    'timeout': '⏱️',
+                    'error': '❓',
+                    'unknown': '❓'
+                } [itemStatus] || '❓';
+                const itemStatusClass = itemStatus === 'verified' ? '' :
+                    itemStatus === 'broken' ? 'broken' :
+                    itemStatus === 'redirect' ? 'redirect' :
+                    itemStatus === 'timeout' ? 'timeout' :
+                    itemStatus === 'error' ? 'error' : '';
+                const itemStatusLabel = itemStatus.charAt(0).toUpperCase() + itemStatus.slice(1);
+
+                stackCards += `
+                    <div class="bookmark-card" data-id="${item.id}" style="${isFirst ? '' : 'position:absolute;top:0;left:0;width:100%;height:100%;'}">
+                        ${isFirst ? `<input type="checkbox" class="checkbox" />` : ''}
+                        <div class="badge-stack">
+                            ${isFirst ? `
+                                ${itemStatus ? `<span class="badge badge-status ${itemStatusClass}">${itemStatusIcon} ${itemStatusLabel}</span>` : ''}
+                                <span class="badge badge-stack-domain">🏢 ${domain} (${count})</span>
+                            ` : ''}
+                        </div>
+                        <div class="thumbnail">📄</div>
+                        <div class="card-content">
+                            <div class="title">${isFirst ? item.title : item.title}</div>
+                            <div class="url">${isFirst ? item.url : item.url}</div>
+                            <div class="description">${isFirst ? (item.description || 'No description available') : (item.description || '')}</div>
+                            <div class="date">📅 Added: ${isFirst ? addedDate : (item.addedDate ? new Date(item.addedDate).toLocaleDateString() : 'Unknown')}</div>
+                            <div class="tags">
+                                ${item.tags && item.tags.length > 0 ? item.tags.map(t => `<span class="tag">${t}</span>`).join('') : ''}
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <span>📎 ${item.category || 'Uncategorized'}${item.isArchived ? ' 📁 Archived' : ''}</span>
+                            ${isFirst ? `
+                                <div class="actions">
+                                    <span class="status-dropdown">
+                                        <button class="status-toggle">${itemStatusIcon}</button>
+                                        <div class="status-menu">
+                                            <div class="status-option ${itemStatus === 'verified' ? 'active' : ''}" data-status="verified">✅ Verified</div>
+                                            <div class="status-option ${itemStatus === 'broken' ? 'active' : ''}" data-status="broken">❌ Broken</div>
+                                            <div class="status-option ${itemStatus === 'redirect' ? 'active' : ''}" data-status="redirect">⚠️ Redirect</div>
+                                            <div class="status-option ${itemStatus === 'timeout' ? 'active' : ''}" data-status="timeout">⏱️ Timeout</div>
+                                            <div class="status-option ${itemStatus === 'error' ? 'active' : ''}" data-status="error">❓ Error</div>
+                                            <div class="status-option ${itemStatus === 'unknown' ? 'active' : ''}" data-status="unknown">❓ Unknown</div>
+                                        </div>
+                                    </span>
+                                    <button class="edit-btn" title="Edit">✏️</button>
+                                    <button class="archive-btn" title="${item.isArchived ? 'Unarchive' : 'Archive'}">${item.isArchived ? '📤' : '📥'}</button>
+                                    <button class="delete-btn" title="Delete">🗑️</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            return `
+                <div class="stack-container" data-domain="${domain}">
+                    <div class="stack">
+                        ${stackCards}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ========================================
+        // EDIT MODAL
+        // ========================================
+        function openEditModal(id) {
+            const b = bookmarks.find(b => b.id === id);
+            if (!b) return;
+            editingId = id;
+            editTitle.value = b.title || '';
+            editUrl.value = b.url || '';
+            editDescription.value = b.description || '';
+            editTags.value = (b.tags || []).join(', ');
+            editStatus.value = b.linkStatus?.status || 'unknown';
+            editLastChecked.textContent = b.linkStatus?.lastChecked ? new Date(b.linkStatus.lastChecked).toLocaleString() : 'Never';
+
+            // Populate categories
+            const categories = ['All', ...new Set(bookmarks.map(b => b.category))].filter(c => c && c !== 'All');
+            editCategory.innerHTML = categories.map(c =>
+                `<option value="${c}" ${c === b.category ? 'selected' : ''}>${c}</option>`
+            ).join('');
+
+            editModal.classList.add('visible');
+        }
+
+        function closeEditModal() {
+            editModal.classList.remove('visible');
+            editingId = null;
+            editNewCategory.value = '';
+        }
+
+        function saveEditModal() {
+            const id = editingId;
+            if (!id) return;
+            const b = bookmarks.find(b => b.id === id);
+            if (!b) return;
+
+            b.title = editTitle.value.trim() || 'Untitled';
+            b.url = editUrl.value.trim() || '';
+            b.description = editDescription.value.trim() || '';
+            b.category = editCategory.value || 'Uncategorized';
+            b.tags = editTags.value.split(',').map(t => t.trim()).filter(t => t);
+            if (!b.linkStatus) b.linkStatus = {};
+            b.linkStatus.status = editStatus.value;
+
+            closeEditModal();
+            render();
+        }
+
+        // ========================================
+        // BULK ACTIONS
+        // ========================================
+        function bulkArchive() {
+            const ids = Array.from(selectedIds);
+            if (ids.length === 0) return;
+            ids.forEach(id => {
+                const b = bookmarks.find(b => b.id === id);
+                if (b) b.isArchived = true;
+            });
+            selectedIds.clear();
+            render();
+        }
+
+        function bulkUnarchive() {
+            const ids = Array.from(selectedIds);
+            if (ids.length === 0) return;
+            ids.forEach(id => {
+                const b = bookmarks.find(b => b.id === id);
+                if (b) b.isArchived = false;
+            });
+            selectedIds.clear();
+            render();
+        }
+
+        function bulkDelete() {
+            const ids = Array.from(selectedIds);
+            if (ids.length === 0) return;
+            if (confirm(`🗑️ Permanently delete ${ids.length} selected bookmark(s)?`)) {
+                bookmarks = bookmarks.filter(b => !ids.includes(b.id));
+                selectedIds.clear();
+                render();
+            }
+        }
+
+        function bulkMove() {
+            const ids = Array.from(selectedIds);
+            if (ids.length === 0) return;
+            const categories = [...new Set(bookmarks.map(b => b.category).filter(c => c && c !== 'All'))];
+            const cat = prompt(`Move ${ids.length} bookmarks to which category?\n\nAvailable: ${categories.join(', ')}`);
+            if (cat && cat.trim()) {
+                ids.forEach(id => {
+                    const b = bookmarks.find(b => b.id === id);
+                    if (b) b.category = cat.trim();
+                });
+                selectedIds.clear();
+                render();
+            }
+        }
+
+        // ========================================
+        // CATEGORY MANAGEMENT
+        // ========================================
+        function addCategory() {
+            const name = prompt('Enter new category name:');
+            if (name && name.trim()) {
+                const cat = name.trim();
+                // Add to sidebar
+                const li = document.createElement('li');
+                li.dataset.category = cat;
+                li.innerHTML = `${cat} <span class="count">0</span>`;
+                li.addEventListener('click', () => {
+                    currentCategory = cat;
+                    selectedIds.clear();
+                    render();
+                });
+                categoriesList.appendChild(li);
+
+                // Add to category bar
+                const btn = document.createElement('button');
+                btn.className = 'cat-btn';
+                btn.dataset.category = cat;
+                btn.textContent = cat;
+                btn.addEventListener('click', () => {
+                    currentCategory = cat;
+                    selectedIds.clear();
+                    render();
+                });
+                categoryBar.appendChild(btn);
+
+                render();
+            }
+        }
+
+        // ========================================
+        // EVENT LISTENERS
+        // ========================================
+
+        // --- Category bar click ---
+        categoryBar.addEventListener('click', (e) => {
+            const btn = e.target.closest('.cat-btn');
+            if (!btn) return;
+            currentCategory = btn.dataset.category;
+            selectedIds.clear();
+            render();
+        });
+
+        // --- Sidebar category click ---
+        categoriesList.addEventListener('click', (e) => {
+            const li = e.target.closest('li');
+            if (!li) return;
+            currentCategory = li.dataset.category;
+            selectedIds.clear();
+            render();
+        });
+
+        // --- Status filters ---
+        statusFilters.addEventListener('click', (e) => {
+            const btn = e.target.closest('.status-filter');
+            if (!btn) return;
+            const status = btn.dataset.status;
+            if (currentStatusFilter === status && status !== 'all') {
+                currentStatusFilter = 'all';
+            } else {
+                currentStatusFilter = status;
+            }
+            selectedIds.clear();
+            render();
+        });
+
+        // --- Sort ---
+        sortSelect.addEventListener('change', (e) => {
+            currentSort = e.target.value;
+            render();
+        });
+
+        // --- Search ---
+        searchInput.addEventListener('input', () => {
+            render();
+        });
+
+        // --- Show Archived ---
+        showArchivedBtn.addEventListener('click', () => {
+            showArchived = !showArchived;
+            selectedIds.clear();
+            render();
+        });
+
+        // --- Select All ---
+        selectAllCheckbox.addEventListener('change', (e) => {
+            const filtered = getFilteredBookmarks();
+            const ids = filtered.map(b => b.id);
+            if (e.target.checked) {
+                ids.forEach(id => selectedIds.add(id));
+            } else {
+                ids.forEach(id => selectedIds.delete(id));
+            }
+            render();
+        });
+
+        // --- Clear Selection ---
+        clearSelectionBtn.addEventListener('click', () => {
+            selectedIds.clear();
+            render();
+        });
+
+        // --- Bulk Actions ---
+        bulkArchiveBtn.addEventListener('click', bulkArchive);
+        bulkUnarchiveBtn.addEventListener('click', bulkUnarchive);
+        bulkDeleteBtn.addEventListener('click', bulkDelete);
+        bulkMoveBtn.addEventListener('click', bulkMove);
+
+        // --- Add Category ---
+        addCategoryBtn.addEventListener('click', addCategory);
+
+        // --- Edit Modal ---
+        editModalClose.addEventListener('click', closeEditModal);
+        editModalCancel.addEventListener('click', closeEditModal);
+        editModal.addEventListener('click', (e) => {
+            if (e.target === editModal) closeEditModal();
+        });
+        editModalSave.addEventListener('click', saveEditModal);
+
+        // --- Add New Category from Modal ---
+        addNewCategoryBtn.addEventListener('click', () => {
+            const name = editNewCategory.value.trim();
+            if (name) {
+                // Check if category already exists
+                const existing = [...editCategory.options].map(o => o.value);
+                if (!existing.includes(name)) {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    editCategory.appendChild(opt);
+                    editCategory.value = name;
+                    editNewCategory.value = '';
+                } else {
+                    alert('Category already exists!');
+                }
+            }
+        });
+
+        // Enter key on new category input
+        editNewCategory.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                addNewCategoryBtn.click();
+            }
+        });
+
+        // --- Edit modal: save on Enter in any field ---
+        editTitle.addEventListener('keydown', (e) => { if (e.key === 'Enter') saveEditModal(); });
+        editUrl.addEventListener('keydown', (e) => { if (e.key === 'Enter') saveEditModal(); });
+        editDescription.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.ctrlKey) saveEditModal(); });
+
+        // --- Keyboard shortcuts ---
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (editModal.classList.contains('visible')) {
+                    closeEditModal();
+                }
+                document.querySelectorAll('.status-menu.visible').forEach(m => m.classList.remove('visible'));
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+                if (!e.target.closest('input') && !e.target.closest('textarea')) {
+                    e.preventDefault();
+                    const filtered = getFilteredBookmarks();
+                    const ids = filtered.map(b => b.id);
+                    const allSelected = ids.every(id => selectedIds.has(id));
+                    if (allSelected) {
+                        ids.forEach(id => selectedIds.delete(id));
+                    } else {
+                        ids.forEach(id => selectedIds.add(id));
+                    }
+                    render();
+                }
+            }
+        });
+
+        // ========================================
+        // INITIAL RENDER
+        // ========================================
+        render();
+
+        console.log('📚 Bookmark Manager Prototype loaded!');
+        console.log(`📊 ${bookmarks.length} bookmarks loaded.`);
+        console.log('💡 Click on a bookmark card to open its URL.');
+        console.log('💡 Click the status icon (✅) on a card to reclassify it.');
+        console.log('💡 Click ✏️ to edit a bookmark.');
+        console.log('💡 Click the checkbox on a card to select it.');
+        console.log('💡 Click "Select All" or press Ctrl+A to select all visible bookmarks.');
+        console.log('💡 Click "Show Archived" to toggle archived bookmarks.');
+    </script>
+
+</body>
+</html>

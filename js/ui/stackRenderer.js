@@ -1,94 +1,88 @@
 // ========================================
-// 📚 STACK RENDERER - WITH CHECKBOXES
+// 📚 STACK RENDERER - Stacked Cards (No Fan Effect)
 // ========================================
-
-import { PopupManager } from './popupManager.js';
 
 export class StackRenderer {
     constructor(uiRenderer) {
         this.uiRenderer = uiRenderer;
-        this.popupManager = new PopupManager();
         this.onExpand = null;
     }
 
+    /**
+     * Set the callback for expanding a stack
+     */
     setOnExpand(callback) {
         this.onExpand = callback;
-        this.popupManager.setOnExpand(callback);
     }
 
-    createStackedCard(bookmarks, actions = {}) {
+    /**
+     * Create a stacked card container for domain or URL groups
+     * Shows a single card with a stack badge - NO fan effect, NO overlay cards
+     */
+    createStackedCard(stack, actions = {}, isDomainStack = true) {
         const container = document.createElement('div');
         container.className = 'stack-container';
-        
-        const stack = document.createElement('div');
-        stack.className = 'stack';
-        
-        const sorted = [...bookmarks].sort((a, b) => 
-            new Date(b.addedDate || 0) - new Date(a.addedDate || 0)
-        );
-        
-        if (sorted.length > 0) {
-            sorted[0].isNewest = true;
+
+        // Get the first bookmark for the visible card
+        const firstBookmark = stack[0];
+        const count = stack.length;
+
+        // Create the base visible card using uiRenderer
+        const card = this.uiRenderer.createBookmarkCard(firstBookmark, actions);
+
+        // Store the stack data on the card for reference
+        card.dataset.stackCount = count;
+        card.dataset.isDomainStack = isDomainStack;
+
+        // ---- Add Stack Badge ----
+        let badgeStack = card.querySelector('.badge-stack');
+        if (!badgeStack) {
+            badgeStack = document.createElement('div');
+            badgeStack.className = 'badge-stack';
+            card.appendChild(badgeStack);
         }
-        
-        const isDomainStack = actions.isDomainStack || false;
-        
-        // Store bookmarks in actions for popup
-        actions._bookmarks = sorted;
-        
-        // ONLY CREATE THE TOP CARD (index 0)
-        const topBookmark = sorted[0];
-        const card = this.uiRenderer.createBookmarkCard(topBookmark, actions);
-        
-        // Add badge to the top card
-        const thumbnail = card.querySelector('.bookmark-thumbnail');
-        if (thumbnail) {
-            const badge = document.createElement('button');
-            
-            if (isDomainStack) {
-                badge.className = 'domain-badge';
-                const domain = topBookmark.domain || this.uiRenderer.extractDomain(topBookmark.url) || 'unknown';
-                badge.innerHTML = `🏢 <span class="domain">${domain}</span> <span class="count">${sorted.length}</span>`;
-            } else {
-                badge.className = 'duplicate-badge';
-                badge.innerHTML = `📦 <span class="count">${sorted.length}</span>`;
+
+        // Remove any existing stack badge
+        const existingStackBadge = badgeStack.querySelector('.badge-stack-domain, .badge-stack-duplicate');
+        if (existingStackBadge) {
+            existingStackBadge.remove();
+        }
+
+        // Create the stack badge
+        const stackBadge = document.createElement('span');
+        if (isDomainStack) {
+            stackBadge.className = 'badge badge-stack-domain';
+            stackBadge.textContent = `🏢 ${count}`;
+        } else {
+            stackBadge.className = 'badge badge-stack-duplicate';
+            stackBadge.textContent = `📦 ${count}`;
+        }
+
+        // Make it clickable to expand
+        stackBadge.style.cursor = 'pointer';
+        stackBadge.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (this.onExpand) {
+                this.onExpand(stack, firstBookmark.domain || 'unknown', isDomainStack);
             }
-            
-            badge.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const popupActions = {
-                    ...actions,
-                    onExpand: this.onExpand
-                };
-                this.popupManager.togglePopup(container, sorted, popupActions);
-            });
-            thumbnail.appendChild(badge);
-        }
-        
-        stack.appendChild(card);
-        container.appendChild(stack);
-        
-        // Store reference to the card for selection updates
-        container._topCard = card;
-        container._bookmarkIds = sorted.map(b => b.id);
-        
+        });
+        badgeStack.appendChild(stackBadge);
+
+        // ---- Double-click on card to expand ----
+        card.addEventListener('dblclick', (e) => {
+            if (this.onExpand) {
+                this.onExpand(stack, firstBookmark.domain || 'unknown', isDomainStack);
+            }
+        });
+
+        container.appendChild(card);
         return container;
     }
 
-    // ----- Update selection state on stacked card -----
-    updateStackSelection(container, selectedIds) {
-        const card = container.querySelector('.bookmark-card');
-        if (card) {
-            const id = card.dataset.id;
-            const checkbox = card.querySelector('.bookmark-checkbox');
-            if (checkbox) {
-                checkbox.checked = selectedIds.has(id);
-            }
-            if (selectedIds.has(id)) {
-                card.classList.add('selected');
-            } else {
-                card.classList.remove('selected');
-            }
-        }
+    /**
+     * Set the stack style (kept for compatibility)
+     */
+    setStackStyle(style) {
+        // No-op - fan effect is removed
     }
 }

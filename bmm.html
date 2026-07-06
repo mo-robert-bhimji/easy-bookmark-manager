@@ -6,33 +6,64 @@
     <title>Bookmark Manager</title>
     <link rel="stylesheet" href="css/style.css">
     <!-- Favicon -->
-	<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-	<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
 </head>
 <body>
     <div class="app-container">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-left">
-			    <img src="assets/logo.svg" alt="Bookmark Manager" height="40" style="display:block;">
-			    <h1 style="display:none;">Bookmark Manager</h1>
-				</div>
-            <div class="header-right">
-                <div class="search-container">
-                    <input type="text" id="searchInput" placeholder="Search (use * or ? wildcards)...">
-                    <button id="searchBtn">🔍</button>
+        <!-- Fixed Header -->
+        <div class="fixed-header">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <img src="assets/logo.svg" alt="Bookmark Manager" height="40" style="display:block;">
+                    <h1 style="display:none;">Bookmark Manager</h1>
                 </div>
-                <button id="importBtn" class="btn btn-primary">📥 Import</button>
-                <button id="exportBtn" class="btn btn-secondary">💾 Export</button>
-                <button id="classifyBtn" class="btn btn-secondary">🤖 Auto-Classify</button>
-                <button id="checkLinksBtn" class="btn btn-secondary">🔗 Check Links</button>
-                <button id="showArchivedBtn" class="btn btn-secondary">🗄️ Show Archived</button>
-                <button id="clearThumbnailCacheBtn" class="btn btn-secondary">🖼️ Clear Thumbnails</button>
-                <button id="clearAllBtn" class="btn btn-danger">🗑️ Clear All</button>
+                <div class="header-right">
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="Search (use * or ? wildcards)...">
+                        <button id="searchBtn">🔍</button>
+                    </div>
+                    <button id="importBtn" class="btn btn-primary">📥 Import</button>
+                    <button id="exportBtn" class="btn btn-secondary">💾 Export</button>
+                    <button id="classifyBtn" class="btn btn-secondary">🤖 Auto-Classify</button>
+                    <button id="checkLinksBtn" class="btn btn-secondary">🔗 Check Links</button>
+                    <button id="showArchivedBtn" class="btn btn-secondary">🗄️ Show Archived</button>
+                    <button id="clearThumbnailCacheBtn" class="btn btn-secondary">🖼️ Clear Thumbnails</button>
+                    <button id="clearAllBtn" class="btn btn-danger">🗑️ Clear All</button>
+                </div>
+            </header>
+
+            <!-- Content Header (Sticky) -->
+            <div class="content-header" id="contentHeader">
+                <div class="left">
+                    <div class="title-row">
+                        <h2 id="currentCategoryTitle">All Bookmarks</h2>
+                        <div class="status-filters" id="statusFilters">
+                            <button class="status-filter active" data-status="all">All</button>
+                            <button class="status-filter" data-status="verified">✅</button>
+                            <button class="status-filter" data-status="broken">❌</button>
+                            <button class="status-filter" data-status="redirect">⚠️</button>
+                            <button class="status-filter" data-status="timeout">⏱️</button>
+                            <button class="status-filter" data-status="error">❓</button>
+                        </div>
+                    </div>
+                    <span class="count" id="bookmarkCount">0 bookmarks</span>
+                </div>
+                <div class="right">
+                    <label style="font-size: 0.85rem; color: var(--text-secondary);">Sort by:</label>
+                    <select id="sortSelect" class="sort-select">
+                        <option value="date-desc">Date Added (Newest)</option>
+                        <option value="date-asc">Date Added (Oldest)</option>
+                        <option value="title">Title</option>
+                        <option value="url">URL</option>
+                        <option value="category">Category</option>
+                    </select>
+                </div>
             </div>
-        </header>
+        </div>
 
         <!-- Main Layout -->
         <div class="main-layout">
@@ -53,46 +84,14 @@
 
             <!-- Right Content - Bookmark Grid -->
             <main class="content">
-				<div class="content-header">
-					<div class="left">
-						<div class="left-top">
-							<h2 id="currentCategoryTitle">All Bookmarks</h2>
-							<div class="status-filters" id="statusFilters">
-								<button class="status-filter active" data-status="all">All</button>
-								<button class="status-filter" data-status="verified">✅</button>
-								<button class="status-filter" data-status="broken">❌</button>
-								<button class="status-filter" data-status="redirect">⚠️</button>
-								<button class="status-filter" data-status="timeout">⏱️</button>
-								<button class="status-filter" data-status="error">❓</button>
-							</div>
-						</div>
-						<span id="bookmarkCount">0 bookmarks</span>
-					</div>
-					<div class="right">
-						<label style="font-size: 0.85rem; color: var(--text-secondary);">Sort by:</label>
-						<select id="sortSelect" class="sort-select">
-							<option value="date-desc">Date Added (Newest)</option>
-							<option value="date-asc">Date Added (Oldest)</option>
-							<option value="title">Title</option>
-							<option value="url">URL</option>
-							<option value="category">Category</option>
-						</select>
-					</div>
-				</div>
-
-                <!-- Action Bar for Bulk Selection -->
+                <!-- Action Bar (Always Visible) -->
                 <div class="action-bar" id="actionBar">
-                    <div class="action-left">
-                        <input type="checkbox" id="selectAll" title="Select all visible bookmarks">
-                        <span id="selectionCount">0 selected</span>
-                        <button id="clearSelectionBtn" class="btn btn-secondary" style="display:none;" title="Clear selection">✕ Clear</button>
-                    </div>
-                    <div class="action-right">
-                        <button id="bulkArchiveBtn" class="btn btn-secondary" disabled title="Archive selected bookmarks">📥 Archive</button>
-                        <button id="bulkUnarchiveBtn" class="btn btn-secondary" disabled title="Unarchive selected bookmarks">📤 Unarchive</button>
-                        <button id="bulkDeleteBtn" class="btn btn-danger" disabled title="Delete selected bookmarks">🗑️ Delete</button>
-                        <button id="bulkMoveBtn" class="btn btn-secondary" disabled title="Move selected bookmarks to another category">📂 Move To</button>
-                    </div>
+                    <button class="btn btn-sm btn-toggle" id="selectToggleBtn">☑ Select All</button>
+                    <span class="selection-count" id="selectionCount">0 selected</span>
+                    <button class="btn btn-sm" id="bulkArchiveBtn" disabled>📥 Archive</button>
+                    <button class="btn btn-sm" id="bulkUnarchiveBtn" disabled>📤 Unarchive</button>
+                    <button class="btn btn-sm btn-danger" id="bulkDeleteBtn" disabled>🗑️ Delete</button>
+                    <button class="btn btn-sm" id="bulkMoveBtn" disabled>📂 Move To</button>
                 </div>
 
                 <!-- Classification Progress Section -->

@@ -5,19 +5,81 @@
 export class BookmarkManager {
     constructor() {
         this.bookmarks = [];
+        this.currentCategory = 'All';
+        this.currentLetter = null;
+        this.showArchived = false;
+        this.importHistory = [];
     }
 
-    setBookmarks(bookmarks) {
-        this.bookmarks = bookmarks || [];
-    }
+    // ----- CRUD Operations -----
 
     getBookmarks() {
         return this.bookmarks;
     }
 
-    // ----- Get a single bookmark by ID (ADD THIS) -----
-    getBookmarkById(id) {
+    setBookmarks(bookmarks) {
+        this.bookmarks = bookmarks || [];
+        this.updateNewestFlag();
+        return this.bookmarks;
+    }
+
+    getBookmark(id) {
         return this.bookmarks.find(b => b.id === id);
+    }
+
+    addBookmark(bookmark) {
+        if (!bookmark.id) {
+            bookmark.id = this.generateId();
+        }
+        this.bookmarks.push(bookmark);
+        this.updateNewestFlag();
+        return bookmark;
+    }
+
+    addBookmarks(newBookmarks) {
+        if (!newBookmarks || newBookmarks.length === 0) return [];
+        const added = [];
+        newBookmarks.forEach(b => {
+            if (!b.id) b.id = this.generateId();
+            this.bookmarks.push(b);
+            added.push(b);
+        });
+        this.updateNewestFlag();
+        return added;
+    }
+
+    deleteBookmark(id) {
+        const index = this.bookmarks.findIndex(b => b.id === id);
+        if (index === -1) return false;
+        this.bookmarks.splice(index, 1);
+        this.updateNewestFlag();
+        return true;
+    }
+
+    archiveBookmark(id) {
+        const bookmark = this.getBookmark(id);
+        if (!bookmark) return null;
+        bookmark.isArchived = !bookmark.isArchived;
+        bookmark.archivedDate = bookmark.isArchived ? new Date().toISOString() : null;
+        this.updateNewestFlag();
+        return bookmark;
+    }
+
+    updateBookmark(id, updates) {
+        const bookmark = this.getBookmark(id);
+        if (!bookmark) return null;
+        Object.assign(bookmark, updates);
+        this.updateNewestFlag();
+        return bookmark;
+    }
+
+    clearAll() {
+        this.bookmarks = [];
+        this.importHistory = [];
+        this.currentCategory = 'All';
+        this.currentLetter = null;
+        this.showArchived = false;
+        this.updateNewestFlag();
     }
 
     getActiveBookmarks() {
@@ -28,207 +90,196 @@ export class BookmarkManager {
         return this.bookmarks.filter(b => b.isArchived);
     }
 
-    addBookmarks(newBookmarks) {
-        this.bookmarks = [...this.bookmarks, ...newBookmarks];
-        return this.bookmarks;
-    }
-
-    deleteBookmark(id) {
-        this.bookmarks = this.bookmarks.filter(b => b.id !== id);
-        return this.bookmarks;
-    }
-
-    archiveBookmark(id) {
-        const bookmark = this.getBookmarkById(id);
-        if (bookmark) {
-            bookmark.isArchived = !bookmark.isArchived;
-            bookmark.archivedDate = bookmark.isArchived ? new Date().toISOString() : null;
-        }
-        return bookmark;
-    }
-
-    bulkArchive(ids) {
-        ids.forEach(id => {
-            const bookmark = this.getBookmarkById(id);
-            if (bookmark) {
-                bookmark.isArchived = true;
-                bookmark.archivedDate = new Date().toISOString();
-            }
-        });
-        return this.bookmarks;
-    }
-
-    bulkDelete(ids) {
-        this.bookmarks = this.bookmarks.filter(b => !ids.includes(b.id));
-        return this.bookmarks;
-    }
-
-    clearAll() {
-        this.bookmarks = [];
-        return this.bookmarks;
-    }
-
-    findNewBookmarks(importedBookmarks) {
-        const existingUrls = new Set(this.bookmarks.map(b => b.url));
-        return importedBookmarks.filter(b => !existingUrls.has(b.url));
-    }
+    // ----- Stats -----
 
     getStats() {
+        const total = this.bookmarks.length;
+        const active = this.bookmarks.filter(b => !b.isArchived).length;
+        const archived = this.bookmarks.filter(b => b.isArchived).length;
+        const categories = new Set(this.bookmarks.map(b => b.category).filter(c => c));
         return {
-            total: this.bookmarks.length,
-            active: this.getActiveBookmarks().length,
-            archived: this.getArchivedBookmarks().length
+            total,
+            active,
+            archived,
+            categories: categories.size
         };
     }
 
-    // ----- Helper: Clean title for sorting -----
-    cleanTitleForSorting(title) {
-        if (!title) return '';
-        let cleaned = title.replace(/^[\s:.\-_\[\]\(\)\{\}\<\>\"\'\,\;\|\!\?\*\&\^\%\$\#\@\~\`\\\/]+/, '');
-        cleaned = cleaned.replace(/^[\d]+[\s\.\-\)\:]+/, '');
-        return cleaned.trim().toLowerCase();
+    // ----- Grouping -----
+
+    /**
+     * Group bookmarks by domain for stacking
+     * Returns { stacks, singles }
+     * - stacks: array of arrays, each containing bookmarks with the same domain (different URLs)
+     * - singles: array of bookmarks that don't belong to any stack
+     */
+    groupBookmarks(bookmarks) {
+        const stacks = [];
+        const singles = [];
+        const processed = new Set();
+
+        // First, group by domain
+        const domainMap = {};
+        bookmarks.forEach(b => {
+            const domain = b.domain || 'unknown';
+            if (!domainMap[domain]) domainMap[domain] = [];
+            domainMap[domain].push(b);
+        });
+
+        // For each domain with more than 1 bookmark, create a stack
+        for (const domain in domainMap) {
+            const group = domainMap[domain];
+            if (group.length > 1) {
+                // Check if they have different URLs (true stack) or same URL (duplicates)
+                const uniqueUrls = new Set(group.map(b => b.url));
+                if (uniqueUrls.size > 1) {
+                    // Different URLs = domain stack
+                    stacks.push(group);
+                    group.forEach(b => processed.add(b.id));
+                } else {
+                    // Same URL = duplicates, treat as singles
+                    group.forEach(b => {
+                        if (!processed.has(b.id)) {
+                            singles.push(b);
+                            processed.add(b.id);
+                        }
+                    });
+                }
+            }
+        }
+
+        // Remaining bookmarks are singles
+        bookmarks.forEach(b => {
+            if (!processed.has(b.id)) {
+                singles.push(b);
+                processed.add(b.id);
+            }
+        });
+
+        // Sort stacks by size (largest first)
+        stacks.sort((a, b) => b.length - a.length);
+
+        return { stacks, singles };
     }
+
+    // ----- Sorting -----
 
     sortBookmarks(bookmarks, sortOption) {
         const sorted = [...bookmarks];
-        switch(sortOption) {
+        switch (sortOption) {
             case 'date-desc':
-                sorted.sort((a, b) => {
-                    const dateA = a.addedDate ? new Date(a.addedDate).getTime() : 0;
-                    const dateB = b.addedDate ? new Date(b.addedDate).getTime() : 0;
-                    return dateB - dateA;
-                });
+                sorted.sort((a, b) => new Date(b.addedDate) - new Date(a.addedDate));
                 break;
             case 'date-asc':
-                sorted.sort((a, b) => {
-                    const dateA = a.addedDate ? new Date(a.addedDate).getTime() : 0;
-                    const dateB = b.addedDate ? new Date(b.addedDate).getTime() : 0;
-                    if (dateA > 0 && dateB > 0) return dateA - dateB;
-                    if (dateA > 0 && dateB === 0) return -1;
-                    if (dateA === 0 && dateB > 0) return 1;
-                    return 0;
-                });
+                sorted.sort((a, b) => new Date(a.addedDate) - new Date(b.addedDate));
                 break;
             case 'title':
-                sorted.sort((a, b) => {
-                    const titleA = this.cleanTitleForSorting(a.title || '');
-                    const titleB = this.cleanTitleForSorting(b.title || '');
-                    return titleA.localeCompare(titleB);
-                });
+                sorted.sort((a, b) => a.title.localeCompare(b.title));
                 break;
             case 'url':
-                sorted.sort((a, b) => {
-                    const urlA = (a.url || '').toLowerCase();
-                    const urlB = (b.url || '').toLowerCase();
-                    return urlA.localeCompare(urlB);
-                });
+                sorted.sort((a, b) => (a.url || '').localeCompare(b.url || ''));
                 break;
             case 'category':
-                sorted.sort((a, b) => {
-                    const catA = (a.category || 'Uncategorized').toLowerCase();
-                    const catB = (b.category || 'Uncategorized').toLowerCase();
-                    return catA.localeCompare(catB);
-                });
+                sorted.sort((a, b) => (a.category || '').localeCompare(b.category || ''));
                 break;
             default:
-                sorted.sort((a, b) => {
-                    const dateA = a.addedDate ? new Date(a.addedDate).getTime() : 0;
-                    const dateB = b.addedDate ? new Date(b.addedDate).getTime() : 0;
-                    return dateB - dateA;
-                });
+                sorted.sort((a, b) => new Date(b.addedDate) - new Date(a.addedDate));
         }
         return sorted;
     }
 
-    extractDomain(url) {
-        if (!url) return null;
-        try {
-            const urlObj = new URL(url);
-            let hostname = urlObj.hostname;
-            if (hostname.startsWith('www.')) {
-                hostname = hostname.substring(4);
-            }
-            return hostname;
-        } catch (e) {
-            return null;
+    // ----- Category -----
+
+    getCurrentCategory() {
+        return this.currentCategory;
+    }
+
+    setCurrentCategory(category) {
+        this.currentCategory = category || 'All';
+    }
+
+    // ----- Letter Filter -----
+
+    getCurrentLetter() {
+        return this.currentLetter;
+    }
+
+    setCurrentLetter(letter) {
+        this.currentLetter = letter;
+    }
+
+    // ----- Archived -----
+
+    getShowArchived() {
+        return this.showArchived;
+    }
+
+    setShowArchived(show) {
+        this.showArchived = show;
+    }
+
+    toggleShowArchived() {
+        this.showArchived = !this.showArchived;
+        return this.showArchived;
+    }
+
+    // ----- Import History -----
+
+    getImportHistory() {
+        return this.importHistory;
+    }
+
+    addImportHistory(entry) {
+        this.importHistory.push(entry);
+        if (this.importHistory.length > 50) {
+            this.importHistory.shift();
         }
+        return this.importHistory;
     }
 
-    groupByUrl(bookmarks) {
-        const groups = new Map();
-        const singles = [];
-        
-        bookmarks.forEach(bookmark => {
-            if (bookmark.isArchived) return;
-            const url = bookmark.url;
-            if (groups.has(url)) {
-                groups.get(url).push(bookmark);
-            } else {
-                groups.set(url, [bookmark]);
-            }
-        });
-        
-        const stacks = [];
-        groups.forEach((group) => {
-            if (group.length > 1) {
-                stacks.push(group);
-            } else {
-                singles.push(group[0]);
-            }
-        });
-        
-        return { stacks, singles };
+    clearImportHistory() {
+        this.importHistory = [];
     }
 
-    groupByDomain(bookmarks) {
-        const groups = new Map();
-        const singles = [];
-        
-        bookmarks.forEach(bookmark => {
-            if (bookmark.isArchived) return;
-            
-            let domain = bookmark.domain;
-            if (!domain) {
-                domain = this.extractDomain(bookmark.url);
-                if (domain) {
-                    bookmark.domain = domain;
-                }
-            }
-            
-            if (!domain) {
-                singles.push(bookmark);
-                return;
-            }
-            
-            if (groups.has(domain)) {
-                groups.get(domain).push(bookmark);
-            } else {
-                groups.set(domain, [bookmark]);
-            }
-        });
-        
-        const stacks = [];
-        const remainingSingles = [];
-        groups.forEach((group) => {
-            if (group.length > 1) {
-                stacks.push(group);
-            } else {
-                remainingSingles.push(group[0]);
-            }
-        });
-        
-        const allSingles = [...singles, ...remainingSingles];
-        return { stacks, singles: allSingles };
+    // ----- Newest Flag -----
+
+    updateNewestFlag() {
+        // Reset all newest flags
+        this.bookmarks.forEach(b => b.isNewest = false);
+        if (this.bookmarks.length === 0) return;
+
+        // Find the 5 most recently added bookmarks
+        const sorted = [...this.bookmarks].sort((a, b) =>
+            new Date(b.addedDate) - new Date(a.addedDate)
+        );
+        sorted.slice(0, 5).forEach(b => b.isNewest = true);
     }
 
-    groupBookmarks(bookmarks) {
-        const { stacks: urlStacks, singles: urlSingles } = this.groupByUrl(bookmarks);
-        const { stacks: domainStacks, singles: finalSingles } = this.groupByDomain(urlSingles);
-        const allStacks = [...urlStacks, ...domainStacks];
-        
+    // ----- ID Generation -----
+
+    generateId() {
+        return 'bm_' + Date.now() + '_' + Math.random().toString(36).substring(2, 10);
+    }
+
+    // ----- Data Export -----
+
+    toJSON() {
         return {
-            stacks: allStacks,
-            singles: finalSingles
+            bookmarks: this.bookmarks,
+            currentCategory: this.currentCategory,
+            currentLetter: this.currentLetter,
+            showArchived: this.showArchived,
+            importHistory: this.importHistory
         };
+    }
+
+    fromJSON(data) {
+        if (!data) return;
+        this.bookmarks = data.bookmarks || [];
+        this.currentCategory = data.currentCategory || 'All';
+        this.currentLetter = data.currentLetter || null;
+        this.showArchived = data.showArchived || false;
+        this.importHistory = data.importHistory || [];
+        this.updateNewestFlag();
     }
 }

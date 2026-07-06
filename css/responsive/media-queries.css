@@ -46,15 +46,6 @@
         gap: 1rem;
     }
     
-    /* Stack containers in mobile */
-    .bookmarks-grid .stack-container {
-        min-height: 280px !important;
-    }
-    
-    .bookmarks-grid .stack-container .bookmark-card {
-        min-height: 280px !important;
-    }
-    
     /* Content */
     .content {
         padding: 1rem;
@@ -71,12 +62,6 @@
     
     #sortSelect {
         flex: 1;
-    }
-    
-    /* Stack */
-    .stack-container {
-        height: 300px !important;
-        min-height: 300px !important;
     }
     
     /* Alphabet Nav */
@@ -111,25 +96,10 @@
         grid-template-columns: 1fr;
     }
     
-    /* Stack containers in small mobile */
-    .bookmarks-grid .stack-container {
-        min-height: 260px !important;
-    }
-    
-    .bookmarks-grid .stack-container .bookmark-card {
-        min-height: 260px !important;
-    }
-    
     /* Modal */
     .modal-content {
         margin: 10% auto;
         width: 95%;
-    }
-    
-    /* Stack */
-    .stack-container {
-        height: 280px !important;
-        min-height: 280px !important;
     }
     
     /* Alphabet Nav */

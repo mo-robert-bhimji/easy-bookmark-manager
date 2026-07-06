@@ -12,10 +12,12 @@
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    min-height: 300px;
     position: relative;
     border: 1px solid #E5E7EB;
-    height: 100%;
+    height: 355px !important;
+    min-height: 355px !important;
+    max-height: 355px !important;
+    width: 100%;
 }
 
 .bookmark-card:hover {
@@ -43,35 +45,97 @@
     font-style: italic;
 }
 
-/* ----- Stack Container - FIXED ----- */
+/* ----- Stack Container - Simple (no overlay) ----- */
 .stack-container {
-    height: 100% !important;
-    min-height: 300px !important;
+    height: 355px !important;
+    min-height: 355px !important;
+    max-height: 355px !important;
+    width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
+}
+
+/* FIX: The stack wrapper needs to fill the container */
+.stack-container .stack {
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
 }
 
 .stack-container .bookmark-card {
     height: 100% !important;
     min-height: 100% !important;
     max-height: 100% !important;
-    flex: 1 1 auto !important;
     display: flex !important;
     flex-direction: column !important;
 }
 
-.stack-container .bookmark-card .bookmark-content {
-    flex: 1 1 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
+/* ----- Badge Stacking ----- */
+.bookmark-card .badge-stack {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
 }
 
-.stack-container .bookmark-card .bookmark-footer {
-    margin-top: auto !important;
-    flex-shrink: 0 !important;
+.bookmark-card .badge-stack .badge {
+    padding: 0.1rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.6rem;
+    font-weight: 500;
+    white-space: nowrap;
+    color: white;
+    pointer-events: none;
+    cursor: default;
 }
 
-/* ----- Archived Badge - Right Side ----- */
+/* Link Status Badge */
+.bookmark-card .badge-stack .badge-status {
+    background: #10B981;
+}
+.bookmark-card .badge-stack .badge-status.broken {
+    background: #EF4444;
+}
+.bookmark-card .badge-stack .badge-status.redirect {
+    background: #F59E0B;
+}
+.bookmark-card .badge-stack .badge-status.timeout {
+    background: #F97316;
+}
+.bookmark-card .badge-stack .badge-status.error {
+    background: #6B7280;
+}
+
+/* Stack Badge (purple) */
+.bookmark-card .badge-stack .badge-stack-domain {
+    background: #8B5CF6;
+    color: white;
+    padding: 0.1rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.6rem;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.bookmark-card .badge-stack .badge-stack-domain:hover {
+    background: #7C3AED;
+    transform: scale(1.05);
+}
+
+/* Duplicate Badge (blue) */
+.bookmark-card .badge-stack .badge-stack-duplicate {
+    background: #3B82F6;
+}
+
+/* ----- Archived Badge ----- */
 .bookmark-card .archived-badge {
     position: absolute;
     top: 8px;
@@ -87,7 +151,7 @@
     pointer-events: none;
 }
 
-/* ----- Link Status Badges ----- */
+/* ----- Link Status Badges (legacy) ----- */
 .bookmark-card .link-status-badge {
     position: absolute;
     top: 8px;
@@ -162,6 +226,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
+    overflow: hidden;
 }
 
 .bookmark-title {
@@ -340,28 +405,29 @@
 }
 
 /* ========================================
-   📐 GRID & ACTION BAR
+   📐 GRID - Fixed Height Cards
    ======================================== */
 
 .bookmarks-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.25rem;
-    align-items: stretch;
 }
 
 .bookmarks-grid .bookmark-card {
-    height: 100%;
-    min-height: 300px;
-    max-height: none;
+    height: 355px !important;
+    min-height: 355px !important;
+    max-height: 355px !important;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .bookmarks-grid .bookmark-card .bookmark-content {
     flex: 1;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .bookmarks-grid .bookmark-card .bookmark-footer {
@@ -369,120 +435,181 @@
     flex-shrink: 0;
 }
 
-/* Fix for stack containers inside grid */
+/* Stack containers inside grid */
 .bookmarks-grid .stack-container {
-    height: 100% !important;
-    min-height: 300px !important;
+    height: 355px !important;
+    min-height: 355px !important;
+    max-height: 355px !important;
     display: flex !important;
     flex-direction: column !important;
+}
+
+/* FIX: The stack wrapper inside the grid needs to fill the container */
+.bookmarks-grid .stack-container .stack {
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
 }
 
 .bookmarks-grid .stack-container .bookmark-card {
     height: 100% !important;
     min-height: 100% !important;
+    max-height: 100% !important;
     flex: 1 1 auto !important;
 }
 
-/* ----- Action Bar - Compact & Auto Width ----- */
+/* ========================================
+   🎯 ACTION BAR
+   ======================================== */
+
 .action-bar {
-    display: none;
-    justify-content: space-between;
+    display: flex;
     align-items: center;
-    padding: 0.3rem 0.75rem;
+    gap: 0.75rem;
+    padding: 0.4rem 1rem;
     background: white;
     border-radius: 8px;
     border: 1px solid var(--border);
     margin-bottom: 1rem;
-    min-height: 36px;
-    transition: all 0.3s ease;
-    width: auto;
-    max-width: fit-content;
+    min-height: 40px;
+    flex-wrap: wrap;
 }
 
-.action-bar.visible {
-    display: flex;
-}
-
-.action-bar .action-left {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.action-bar .action-left #selectAll {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    accent-color: var(--primary);
-    margin: 0;
-}
-
-.action-bar .action-left #selectionCount {
+.action-bar .selection-count {
     font-size: 0.8rem;
-    color: var(--text-secondary);
     font-weight: 500;
-    margin-right: 0.75rem;
-}
-
-.action-bar .action-left #clearSelectionBtn {
-    font-size: 0.7rem;
-    padding: 0.1rem 0.5rem;
-    background: transparent;
-    color: var(--text-secondary);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    cursor: pointer;
-    display: none;
-}
-
-.action-bar .action-left #clearSelectionBtn:hover {
-    background: var(--background);
     color: var(--text-primary);
+    min-width: 70px;
 }
 
-.action-bar .action-right {
-    display: flex;
-    gap: 0.4rem;
-    align-items: center;
-}
-
-.action-bar .action-right .btn {
+.action-bar .btn {
     font-size: 0.75rem;
-    padding: 0.2rem 0.6rem;
+    padding: 0 12px;
+    height: 28px;
 }
 
-.action-bar .action-right .btn:disabled {
+.action-bar .btn-toggle {
+    min-width: 100px;
+    justify-content: center;
+}
+
+.action-bar .btn:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
-.action-bar .action-right .btn:disabled:hover {
-    transform: none;
-    box-shadow: none;
-}
+/* ========================================
+   RESPONSIVE
+   ======================================== */
 
 @media (max-width: 768px) {
+    .bookmarks-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1rem;
+    }
+
+    .bookmarks-grid .bookmark-card {
+        height: 320px !important;
+        min-height: 320px !important;
+        max-height: 320px !important;
+    }
+
+    .bookmarks-grid .stack-container {
+        height: 320px !important;
+        min-height: 320px !important;
+        max-height: 320px !important;
+    }
+
+    .bookmarks-grid .stack-container .stack {
+        height: 100% !important;
+        min-height: 100% !important;
+        max-height: 100% !important;
+    }
+
     .action-bar {
-        flex-wrap: wrap;
-        gap: 0.3rem;
-        padding: 0.3rem 0.5rem;
-        max-width: 100%;
+        gap: 0.4rem;
+        padding: 0.3rem 0.6rem;
     }
-    
-    .action-bar .action-right {
-        flex-wrap: wrap;
-        gap: 0.3rem;
-    }
-    
-    .action-bar .action-right .btn {
+
+    .action-bar .btn {
         font-size: 0.65rem;
-        padding: 0.15rem 0.4rem;
+        padding: 0 8px;
+        height: 24px;
     }
-    
+
+    .action-bar .btn-toggle {
+        min-width: 80px;
+        font-size: 0.65rem;
+    }
+
+    .action-bar .selection-count {
+        font-size: 0.7rem;
+        min-width: 50px;
+    }
+
     .bookmark-checkbox {
         width: 14px;
         height: 14px;
         top: 6px;
         left: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .bookmarks-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .bookmarks-grid .bookmark-card {
+        height: 300px !important;
+        min-height: 300px !important;
+        max-height: 300px !important;
+    }
+
+    .bookmarks-grid .stack-container {
+        height: 300px !important;
+        min-height: 300px !important;
+        max-height: 300px !important;
+    }
+
+    .bookmarks-grid .stack-container .stack {
+        height: 100% !important;
+        min-height: 100% !important;
+        max-height: 100% !important;
+    }
+
+    .action-bar {
+        gap: 0.3rem;
+        padding: 0.25rem 0.4rem;
+        flex-wrap: wrap;
+    }
+
+    .action-bar .btn {
+        font-size: 0.6rem;
+        padding: 0 6px;
+        height: 22px;
+    }
+
+    .action-bar .btn-toggle {
+        min-width: 60px;
+        font-size: 0.6rem;
+    }
+
+    .action-bar .selection-count {
+        font-size: 0.65rem;
+        min-width: 40px;
+    }
+
+    .bookmark-checkbox {
+        width: 12px;
+        height: 12px;
+        top: 4px;
+        left: 4px;
     }
 }
